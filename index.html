@@ -558,6 +558,9 @@ p{margin:0}
 .av-chip.rencontre{background:rgba(255,107,154,.14);border-color:rgba(255,107,154,.5);color:#FF9DBB}.av-chip.rencontre i{background:#FF6B9A}
 .av-chip.diner{background:rgba(255,181,71,.14);border-color:rgba(255,181,71,.5);color:#FFC977}.av-chip.diner i{background:#FFB547}
 .av-chip.chill{background:rgba(90,200,250,.14);border-color:rgba(90,200,250,.5);color:#8FD9FF}.av-chip.chill i{background:#5AC8FA}
+.int-desc{margin-top:10px;padding:12px 14px;border-radius:14px;background:var(--panel-2);border-left:3px solid var(--line)}
+.int-desc b{display:block;font:700 14px var(--display);margin-bottom:3px}.int-desc p{font-size:13px;line-height:1.45;color:var(--t2)}
+.int-desc.chill{border-left-color:#5AC8FA}.int-desc.rencontre{border-left-color:#FF6B9A}.int-desc.diner{border-left-color:#FFB547}
 .icon-btn.mus{color:var(--orange-2)}.icon-btn.mus.off{color:var(--muted);opacity:.55}.icon-btn.mus.off svg path:last-child{opacity:0}
 
 
@@ -1616,7 +1619,11 @@ function coverFor(id,x){const own=safeImg(x.cover);if(own)return own;
 const ZONES={'Gombe':[-4.307,15.300],'Kinshasa (commune)':[-4.328,15.305],'Barumbu':[-4.317,15.320],'Lingwala':[-4.327,15.293],'Kintambo':[-4.330,15.268],'Ngaliema':[-4.360,15.250],'Mont-Ngafula':[-4.450,15.270],'Selembao':[-4.385,15.278],'Bumbu':[-4.370,15.290],'Makala':[-4.370,15.305],'Ngiri-Ngiri':[-4.350,15.295],'Kasa-Vubu':[-4.340,15.305],'Bandalungwa':[-4.343,15.282],'Kalamu':[-4.345,15.315],'Lemba':[-4.390,15.320],'Ngaba':[-4.385,15.322],'Limete':[-4.355,15.345],'Matete':[-4.385,15.345],'Kisenso':[-4.410,15.340],'Ndjili':[-4.385,15.385],'Masina':[-4.385,15.410],'Kimbanseke':[-4.430,15.400],'Nsele':[-4.380,15.500],'Maluku':[-4.070,15.570],
  'Lubumbashi':[-11.664,27.483],'Goma':[-1.679,29.228],'Bukavu':[-2.508,28.861],'Kisangani':[0.515,25.191],'Mbuji-Mayi':[-6.136,23.590],'Kananga':[-5.896,22.417],'Matadi':[-5.826,13.459],'Kolwezi':[-10.716,25.472],'Brazzaville':[-4.263,15.242],'Pointe-Noire':[-4.778,11.864]};
 const AVL={chill:'Dispo pour un duo',rencontre:'Dispo pour une rencontre',diner:'Dispo pour un dîner',off:'Pas dispo'};
-const INTENTS=[['chill','Duo','👫'],['rencontre','Rencontre','💗'],['diner','Dîner','🍽️']];const INT_LBL={chill:'Duo',rencontre:'Rencontre',diner:'Dîner'};
+const INTENTS=[['chill','Duo','👫'],['rencontre','Rencontre','💗'],['diner','Dîner','🍽️']];const INT_DESC={chill:"Complicité et flirt léger, sans prise de tête : on échange, on se taquine, on passe un bon moment à deux et on voit si le courant passe.",
+ rencontre:"Faire connaissance pour de vrai : se voir en face, prendre le temps de se découvrir et, si le feeling est là, construire une belle relation.",
+ diner:"Partager un repas ou un verre dans un restaurant, une terrasse ou un joli coin de la ville, pour se rencontrer dans une ambiance détendue.",
+ off:"Pas le moment pour moi : je suis occupé(e) ou j'ai envie de rester tranquille chez moi. Les autres ne me voient pas comme disponible."};
+const INT_LBL={chill:'Duo',rencontre:'Rencontre',diner:'Dîner'};
 function availUntil(st){return st&&st!=='off'?Date.now()+30*864e5:0}
 const availOf=x=>{const a=x?.avail;if(!a||!a.state||a.state==='off'||!(a.until>Date.now()))return 'off';return a.state==='today'||a.state==='weekend'?'rencontre':(AVL[a.state]?a.state:'off')};
 function zoneOf(x){const z=x?.zone;if(z&&typeof z.lat==='number'&&typeof z.lon==='number')return z;const c=ZONES[x?.city]||null;return c?{name:x.city,lat:c[0],lon:c[1],rough:true}:null}
@@ -1627,6 +1634,7 @@ const availChip=x=>{const st=availOf(x);return st==='off'?'':`<span class="av-ch
 function availPanel(x){const st=availOf(x);const z=x.zone||{};
   return `<div class="avail-box"><div class="ab-h"><b>Ma disponibilité</b><small>${st==='off'?'Les autres ne te voient pas comme disponible.':'Tu apparais dans la rubrique « '+INT_LBL[st]+' » de Découvrir, et Gucko te propose aux membres près de toi.'}</small></div>
    <div class="seg4" role="radiogroup" aria-label="Disponibilité">${[...INTENTS,['off','Pas dispo','🚫']].map(([k,l,e])=>`<button type="button" data-avail="${k}" role="radio" aria-checked="${st===k}" class="${st===k?'on '+k:''}"><span>${e}</span>${l}</button>`).join('')}</div>
+   <div class="int-desc ${st}"><b>${st==='off'?'🚫 Pas dispo':INTENTS.find(t=>t[0]===st)[2]+' '+INT_LBL[st]}</b><p>${esc(INT_DESC[st])}</p></div>
    <div class="zone-row">${I.pin}<select id="zoneSel" aria-label="Ma zone"><option value="">Choisis ta commune / ville</option>${Object.keys(ZONES).map(n=>`<option ${z.name===n&&!z.gps?'selected':''}>${n}</option>`).join('')}${z.gps?`<option selected value="__gps">Ma position (${esc(z.name||'GPS')})</option>`:''}</select><button type="button" class="mini" data-gps="1">Ma position</button></div>
    <p class="hint" style="font-size:11.5px">Seule une zone approximative (à ~1 km près) est partagée, jamais ton adresse exacte.</p></div>`}
 
