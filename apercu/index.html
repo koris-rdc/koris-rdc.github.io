@@ -157,7 +157,7 @@ if(!c0||c0.state==='running'){go()}else{
 :root{
   --ink:#03100E; --panel:#08201C; --panel-2:#0F2E29; --line:rgba(200,240,74,.08);
   --text:#F1FBF7; --muted:#A6C4BC;
-  --t2:#E2F2EC; --t3:#CBE3DC; --ph:#7E9C94; --field:#1E1722; --field-f:#261D2B; --off:#21423B; --chk:#4C6B63; --navbg:rgba(8,32,28,.94); --on-acc:#03100E; --wl-glow:#3A1530; --orange:#C8F04A; --orange-2:#2EE0B0; --orange-deep:#0A5C50;
+  --t2:#E2F2EC; --t3:#CBE3DC; --ph:#7E9C94; --field:#1E1722; --field-f:#261D2B; --off:#21423B; --chk:#4C6B63; --navbg:rgba(8,32,28,.94); --on-acc:#03100E; --wl-glow:#0E3A33; --orange:#C8F04A; --orange-2:#2EE0B0; --orange-deep:#0A5C50;
   --glow:rgba(46,224,176,.30); --ok:#3BC48A; --danger:#FF5A4E;
   --display:"Poppins","Montserrat",system-ui,sans-serif;
   --pink:#0A5C50; --violet:#2EE0B0; --grad:linear-gradient(90deg,#0A5C50,#C8F04A 50%,#E9FF8A);
@@ -1626,7 +1626,6 @@ function vAdmin(){
    <label class="pill">${I.phone}<input data-hc="tel" type="tel" placeholder="Numéro à appeler" value="${esc((S.helpCfg||{}).tel||'')}"></label>
    <label class="pill">${I.mail}<input data-hc="mail" type="email" placeholder="Adresse e-mail" value="${esc((S.helpCfg||{}).mail||'')}"></label></div>
    <button class="btn btn-primary" id="helpBtn" style="width:100%;flex:none">Enregistrer les contacts</button></form>
-  <h2>Mode démo</h2><p class="hint" style="padding:0 2px 8px">${DEMO.on?'Activé : tu vois 9 profils de simulation (Flirt, Rencontre, Dîner), leurs publications et 2 discussions. <b>Toi seul</b> les vois, sur ce téléphone : rien n\'est envoyé aux autres membres.':'Affiche des profils de simulation pour voir l\'app animée. <b>Toi seul</b> les verras : les autres membres ne les voient jamais.'}</p><button class="btn ${DEMO.on?'btn-ghost':'btn-primary'}" data-demo="1" style="width:100%;flex:none;height:46px">${DEMO.on?'Désactiver le mode démo':'Activer le mode démo'}</button>
   ${Object.entries(S.profiles).some(([id,x])=>x.test&&!id.startsWith('demo_'))?`<h2>Profils fictifs</h2><p class="hint" style="padding:0 2px 8px">${Object.entries(S.profiles).filter(([id,x])=>x.test&&!id.startsWith('demo_')).length} profils de test sont visibles par tous les membres. Supprime-les avant d'ouvrir l'app au public.</p><button class="btn btn-ghost" data-deltest="1" style="width:100%;flex:none;height:46px">Supprimer tous les profils fictifs</button>`:''}
   <h2>Déjà validés</h2><div id="admDone">${admDoneHtml()}</div>
   </section>`}
@@ -2236,8 +2235,6 @@ document.addEventListener('click',async e=>{const t=e.target.closest('button,[da
   if(d.certok||d.certno){const id=d.certok||d.certno,x=S.profiles[id];if(!x?.cert||!S.owner)return;const h=String(x.cert.handle).toLowerCase();
     if(d.certok&&Object.entries(S.profiles).some(([k,y])=>k!==id&&y.certified&&String(y.handle||'').toLowerCase()===h)){toast('Ce nom est déjà pris : refuse la demande');return}
     t.disabled=true;try{if(d.certok)await S.be.updateProfileOf(id,{certified:true,handle:h,cert:{...x.cert,status:'ok',checkedAt:Date.now()}});else await S.be.updateProfileOf(id,{cert:{...x.cert,status:'rejected',checkedAt:Date.now()}});d.certok?fx.ok():fx.tap();toast(d.certok?'Membre certifié':'Demande refusée')}catch(_){t.disabled=false;toast("L'action n'a pas abouti. Réessaie.")}return}
-  if(d.demo){if(!S.owner)return;if(DEMO.on){demoOff();toast('Mode démo désactivé');return}const pw=prompt('Mot de passe du mode démo :');if(!pw)return;t.disabled=true;t.textContent='Chargement…';
-    try{await demoOn(pw.trim());attachBe(()=>S.route);toast('Mode démo activé ✨')}catch(_){toast('Mot de passe incorrect');render()}return}
   if(d.deltest){if(!S.owner)return;if(!t.dataset.armed){t.dataset.armed='1';t.textContent='Confirmer la suppression ?';setTimeout(()=>{delete t.dataset.armed;t.textContent='Supprimer tous les profils fictifs'},4000);return}
     t.disabled=true;const ids=Object.entries(S.profiles).filter(([id,x])=>x.test&&!id.startsWith('demo_')).map(([id])=>id);let n=0;for(const id of ids){try{for(const p of S.posts.filter(p=>p.uid===id))await S.be.deletePost(p.id).catch(()=>{});await S.be.deleteProfileOf(id);n++}catch(_){}}toast(n+' profils fictifs supprimés');return}
   if(d.payok||d.payno){const id=d.payok||d.payno,x=S.profiles[id];if(!x||!S.owner)return;t.disabled=true;
@@ -2325,7 +2322,7 @@ function ntWelcome(){if(NT.shown++||!me()||!isActive(me()))return;const fresh=nt
 
 /* =================== Présence : en ligne + « écrit… » (en direct, via la salle partagée) =================== */
 const PR={online:new Set(),typing:{},room:null,tTimer:0,tOn:null,tAt:0};
-function prApply(){if(DEMO.on)DEMO.online.forEach(id=>PR.online.add(id));document.querySelectorAll('[data-on]').forEach(el=>el.classList.toggle('is-on',PR.online.has(el.dataset.on)));
+function prApply(){document.querySelectorAll('[data-on]').forEach(el=>el.classList.toggle('is-on',PR.online.has(el.dataset.on)));
   if(S.route.v!=='chat')return;const o=S.route.param,st=$('#chatSt'),ty=$('#typing'),typing=PR.typing[o]===S.be.uid;
   if(ty){const was=!ty.hidden;ty.hidden=!typing;if(typing&&!was)window.scrollTo(0,document.body.scrollHeight)}
   if(st){const x=S.profiles[o]||{};st.className='chat-st'+(typing?' ty':PR.online.has(o)?' on':'');
@@ -2350,52 +2347,6 @@ function prTyping(to){
 document.addEventListener('submit',e=>{if(e.target.id!=='chatForm')return;prTyping(null);
   if(S.be.mode!=='live'&&S.route.v==='chat'){const o=S.route.param;setTimeout(()=>{PR.typing[o]=S.be.uid;prApply()},700);setTimeout(()=>{delete PR.typing[o];prApply()},3600)}},true);
 
-/* =================== Mode démo : profils de simulation visibles par le propriétaire seul =================== */
-/* Les données sont chiffrées (demo/pack.bin) : sans le mot de passe, personne ne peut les lire.
-   Rien n'est jamais envoyé à la base : tout reste sur le téléphone du propriétaire. */
-const DEMO={on:false,data:null,base:null,online:new Set()};
-async function demoLoad(pass){const r=await fetch('/demo/pack.bin',{cache:'no-store'});if(!r.ok)throw new Error('pack');const b=new Uint8Array(await r.arrayBuffer());
-  const km=await crypto.subtle.importKey('raw',new TextEncoder().encode(pass),'PBKDF2',false,['deriveKey']);
-  const key=await crypto.subtle.deriveKey({name:'PBKDF2',salt:b.slice(0,16),iterations:150000,hash:'SHA-256'},km,{name:'AES-GCM',length:256},false,['decrypt']);
-  const d=JSON.parse(new TextDecoder().decode(await crypto.subtle.decrypt({name:'AES-GCM',iv:b.slice(16,28)},key,b.slice(28))));
-  const mx=Math.max(...d.posts.map(p=>+p.at||0)),sh=Date.now()-20*60e3-mx;
-  Object.entries(d.profiles).forEach(([id,p])=>{p.id=id;p.at=(+p.at||mx)+sh;if(p.avail&&p.avail.state&&p.avail.state!=='off')p.avail={state:p.avail.state,at:Date.now(),until:availUntil(p.avail.state)}});
-  d.posts.forEach(p=>p.at=+p.at+sh);d.comments.forEach(c=>c.at=+c.at+sh);return d}
-function demoWrap(base){const d=DEMO.data,uid=base.uid,W=Object.create(base),H=3600e3;
-  const isD=id=>typeof id==='string'&&id.startsWith('demo_');
-  const st=ls.get('demoState',null)||{likes:{},shares:{},cm:[],gone:[],m:{}};const save=()=>ls.set('demoState',st);
-  const DC={};Object.keys(d.profiles).forEach(id=>DC[chatId(uid,id)]=id);
-  (d.chats||[]).forEach(c=>{const cid=chatId(uid,c.with);if(!st.m[cid])st.m[cid]=c.msgs.map((m,i)=>({id:'dm'+i,from:m[0]==='me'?uid:c.with,text:m[1],at:Date.now()-m[2]*H}))});save();
-  const subs={p:[],po:[],c:[],cm:[],m:{}};const re=k=>subs[k].forEach(f=>f());
-  const wrap=(k,baseOn,merge)=>cb=>{let last=null;const f=()=>{if(last!==null)cb(merge(last))};subs[k].push(f);const un=baseOn.call(base,v=>{last=v;f()});
-    return()=>{const i=subs[k].indexOf(f);if(i>=0)subs[k].splice(i,1);if(typeof un==='function')un()}};
-  const dPosts=()=>d.posts.filter(p=>!st.gone.includes(p.id)).map(p=>({...p,likes:st.likes[p.id]||p.likes||[],shares:st.shares[p.id]??p.shares??0}));
-  const dChats=()=>Object.entries(st.m).filter(([cid,l])=>DC[cid]&&l.length).map(([cid,l])=>{const z=l[l.length-1];return{id:cid,members:[uid,DC[cid]],lastText:z.text,lastAt:z.at,lastFrom:z.from}});
-  W.demo=true;
-  W.onProfiles=wrap('p',base.onProfiles,m=>{const o={...m};Object.entries(d.profiles).forEach(([id,p])=>{if(!st.gone.includes(id))o[id]=p});return o});
-  W.onPosts=wrap('po',base.onPosts,a=>[...a,...dPosts()].sort((x,y)=>(y.at||0)-(x.at||0)));
-  W.onComments=wrap('cm',base.onComments,a=>[...a,...d.comments,...st.cm].sort((x,y)=>(y.at||0)-(x.at||0)));
-  W.onChats=wrap('c',base.onChats,a=>[...a,...dChats()]);
-  W.onMsgs=function(cid,cb){if(!DC[cid])return base.onMsgs(cid,cb);const f=()=>cb([...(st.m[cid]||[])]);(subs.m[cid]=subs.m[cid]||[]).push(f);setTimeout(f,0);
-    return()=>{const a=subs.m[cid],i=a.indexOf(f);if(i>=0)a.splice(i,1)}};
-  const emitM=cid=>{(subs.m[cid]||[]).forEach(f=>f());re('c')};
-  W.sendMsg=async function(other,text){if(!isD(other))return base.sendMsg(other,text);const cid=chatId(uid,other);(st.m[cid]=st.m[cid]||[]).push({id:'dm'+Date.now(),from:uid,text,at:Date.now()});save();emitM(cid);
-    const x=d.profiles[other],rs=(d.replies||{})[availOf(x)]||(d.replies||{}).rencontre||['😊'],n=st.m[cid].filter(m=>m.from===other).length;
-    setTimeout(()=>{PR.typing[other]=uid;prApply()},900);
-    setTimeout(()=>{delete PR.typing[other];prApply();const r=rs[n%rs.length];st.m[cid].push({id:'dm'+Date.now(),from:other,text:r,at:Date.now()});save();emitM(cid)},3200+Math.random()*1500)};
-  W.setLikes=async function(id,likes){if(!isD(id))return base.setLikes(id,likes);st.likes[id]=likes;save();re('po')};
-  W.setShares=async function(id,n){if(!isD(id))return base.setShares(id,n);st.shares[id]=n;save();re('po')};
-  W.addComment=async function(c){if(!isD(c.postId))return base.addComment(c);st.cm.push({...c,id:'demo_cl'+Date.now()});save();re('cm')};
-  W.deleteComment=async function(id){if(!isD(id))return base.deleteComment(id);st.cm=st.cm.filter(c=>c.id!==id);save();re('cm')};
-  W.deletePost=async function(id){if(!isD(id))return base.deletePost(id);st.gone.push(id);save();re('po')};
-  W.deleteProfileOf=async function(id){if(!isD(id))return base.deleteProfileOf(id);st.gone.push(id);save();re('p');re('po')};
-  W.updateProfileOf=async function(id,data){if(!isD(id))return base.updateProfileOf(id,data);Object.assign(d.profiles[id]||{},data);re('p')};
-  DEMO.online=new Set(Object.keys(d.profiles).filter((_,i)=>i%3!==2));
-  return W}
-async function demoOn(pass){const data=await demoLoad(pass);ls.set('demoPass',pass);DEMO.data=data;if(!DEMO.on){DEMO.base=S.be;S.be=demoWrap(S.be);DEMO.on=true}}
-function demoOff(){if(!DEMO.on)return;S.be=DEMO.base;DEMO.on=false;DEMO.online.forEach(id=>PR.online.delete(id));DEMO.online=new Set();ls.set('demoPass',null);const r=S.route;attachBe(()=>(['chat','profile'].includes(r.v)&&String(r.param).startsWith('demo_'))?{v:'admin'}:r)}
-async function demoAuto(){const p=ls.get('demoPass',null);if(!p||DEMO.on)return;try{await demoOn(p)}catch(_){ls.set('demoPass',null)}}
-
 /* =================== Démarrage =================== */
 let UNSUBS=[];
 function restoreRoute(){const p=me();if(!p||!p.firstName)return {v:'onboard'};if(!isActive(p))return {v:'pay'};
@@ -2411,11 +2362,10 @@ function attachBe(firstRoute){UNSUBS.forEach(f=>{try{f()}catch(_){}});UNSUBS=[];
   prInit()}
 async function startLive(uid,afterAuth){const sb=sbClient();S.be=makeSupabaseBackend(sb,uid);
   try{const {data}=await sb.from('admins').select('uid').eq('uid',uid).maybeSingle();S.owner=!!data}catch(_){S.owner=false}
-  if(S.owner)await demoAuto();
   attachBe(afterAuth?()=>{const p=me();return !p||!p.firstName?{v:'signup'}:isActive(p)?{v:'feed'}:{v:'pay'}}:null)}
 async function boot(){
   const sb=sbClient();
-  if(!sb){S.be=makeDemoBackend();S.owner=true;await demoAuto();attachBe();return}
+  if(!sb){S.be=makeDemoBackend();S.owner=true;attachBe();return}
   let session=null;try{session=(await sb.auth.getSession()).data.session}catch(e){console.warn(e)}
   if(session)await startLive(session.user.id,false);else{S.be=makeSupabaseBackend(sb,null);S.owner=false;attachBe()}
   sb.auth.onAuthStateChange(async(ev)=>{
