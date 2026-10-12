@@ -1313,9 +1313,9 @@ const telMail=d=>d+'@'+TEL_DOMAIN;
 const telShow=d=>'+'+d.slice(0,3)+' '+d.slice(3).replace(/(\d{2})(\d{3})(\d+)/,'$1 $2 $3');
 function vAuth(){const mode=S.authMode||'up';const via=S.authVia||ls.get('authVia','tel');
   return `<section class="auth">
-  <div class="top" style="padding-inline:0"><button type="button" class="icon-btn" data-go="onboard" aria-label="Retour">${I.back}</button><span></span></div>
+  <div class="top" style="padding-inline:0"><button type="button" class="icon-btn" data-go="${S.pendingProf?'signup':'onboard'}" aria-label="Retour">${I.back}</button><span></span></div>
   <div class="wordmark" style="justify-content:center;margin:6px 0 4px"><i></i>KORIS</div>
-  <h1>${mode==='up'?'Crée ton compte':mode==='in'?'Content de te revoir':'Mot de passe oublié'}</h1>
+  <h1>${mode==='up'?(S.pendingProf?'Dernière étape':'Crée ton compte'):mode==='in'?'Content de te revoir':'Mot de passe oublié'}</h1>${S.pendingProf&&mode==='up'?`<p class="lead" style="margin-bottom:-4px">Étape 2 sur 3 · Bravo ${esc(S.pendingProf.firstName)} ! Choisis comment te reconnecter à Koris.</p>`:''}
   <p class="lead">${mode==='reset'?(via==='tel'?'Compte créé avec ton numéro : contacte l\'aide Koris pour récupérer ton accès.':'Entre ton e-mail : tu recevras un lien pour choisir un nouveau mot de passe.'):via==='tel'?(mode==='up'?'Ton numéro de téléphone et un mot de passe, sans e-mail.':'Entre ton numéro et ton mot de passe.'):(mode==='up'?'Ton e-mail et un mot de passe : c\'est avec eux que tu te reconnecteras.':'Entre ton e-mail et ton mot de passe.')}</p>
   <div class="auth-tabs" role="tablist"><button type="button" data-auth="up" class="${mode==='up'?'on':''}">Nouveau compte</button><button type="button" data-auth="in" class="${mode==='in'?'on':''}">J'ai un compte</button></div>
   ${mode!=='reset'?`<div class="via" role="radiogroup" aria-label="Façon de s'inscrire"><button type="button" data-via="tel" class="${via==='tel'?'on':''}" role="radio" aria-checked="${via==='tel'}">${I.phone}<span><b>Numéro de téléphone</b><small>Sans e-mail</small></span></button><button type="button" data-via="mail" class="${via==='mail'?'on':''}" role="radio" aria-checked="${via==='mail'}">${I.mail}<span><b>Adresse e-mail</b><small>Gmail ou autre</small></span></button></div>`:''}
@@ -1354,6 +1354,10 @@ document.addEventListener('submit',async e=>{if(e.target.id!=='fAuth')return;e.p
     if(r.error){if(telIn&&/already registered|already exists/i.test(r.error.message||''))throw new Error('tel-exists');if(telIn&&/invalid login|invalid credentials/i.test(r.error.message||''))throw new Error('tel-bad');throw r.error}
     if(!r.data.session){ok.textContent='Compte créé ! Ouvre le lien de confirmation reçu par e-mail, puis reviens te connecter.';S.authMode='in';b.disabled=false;b.textContent=txt;return}
     await startLive(r.data.session.user.id,true);
+    if(S.pendingProf){const pp=S.pendingProf;for(let i=0;i<25&&!S.gotProfiles;i++)await new Promise(z=>setTimeout(z,200));
+      if(!me()){const prof={...pp,at:Date.now()};if(!prof.referredBy&&ls.get('ref','')&&ls.get('ref','')!==refCode(S.be.uid))prof.referredBy=ls.get('ref','');
+        try{await S.be.saveProfile(prof);pendingPhoto=null}catch(_){}}
+      S.pendingProf=null;for(let i=0;i<25&&!me();i++)await new Promise(z=>setTimeout(z,200));go(me()&&isActive(me())?'feed':'pay')}
   }catch(x){err.textContent=authErr(x);b.disabled=false;b.textContent=txt}},true);
 
 /* 2) Démo locale — profils d'exemple, rien n'est enregistré */
@@ -1560,7 +1564,7 @@ const cities=[...DRC_CITIES,'Brazzaville','Pointe-Noire'];
   return `<form class="form su" id="fSign" novalidate>
   <div class="top" style="padding-inline:0"><button type="button" class="icon-btn" data-go="${edit||fresh?'me':'onboard'}" aria-label="Retour">${I.back}</button><button type="button" class="icon-btn mus${ls.get('music',true)?'':' off'}" id="musBtn" aria-label="${ls.get('music',true)?'Couper la musique':'Mettre la musique'}" title="Musique">${I.sound}</button></div>
   <h1>${edit?'Modifier mon profil':'Crée ton compte'}</h1>
-  <p class="lead">${edit?'Ces infos sont visibles sur ton profil.':fresh?'Recommence ton inscription. Ton accès membre reste actif.':'Étape 1 sur 2 · Rejoins les cœurs de Koris.'}</p>
+  <p class="lead">${edit?'Ces infos sont visibles sur ton profil.':fresh?'Recommence ton inscription. Ton accès membre reste actif.':(S.be.mode==='live'&&!S.be.uid?'Étape 1 sur 3 · Présente-toi, puis crée ton accès.':'Étape 1 sur 2 · Rejoins les cœurs de Koris.')}</p>
   <div class="su-photo"><label class="ph" for="fPhoto" aria-label="Ajouter une photo de profil"><span id="avPrev">${av(photo,60)}</span><span class="cam">${I.camera}</span></label>
    <label for="fPhoto"><b>${safeImg(photo.photo)?'Changer ma photo':'Ajouter ma photo'}</b><small>JPG ou PNG · visible par les membres</small></label><input id="fPhoto" type="file" accept="image/*" class="fpick"></div>
   ${pill('user','fFirst','Ton prénom',p.firstName,'autocomplete="given-name" required')}
@@ -1575,7 +1579,7 @@ const cities=[...DRC_CITIES,'Brazzaville','Pointe-Noire'];
   <label class="pill-ta">${I.comment}<textarea id="fBio" maxlength="400" placeholder="À propos de toi : ce que tu aimes, ce que tu cherches…" aria-label="À propos de toi">${esc(p.bio)}</textarea></label>
   ${edit?'':`<label class="terms"><input type="checkbox" id="fTerms"><span>J'accepte <button type="button" data-go="about">les règles de Koris</button></span></label>`}
   <p class="err" id="fErr"></p>
-  <button class="btn btn-primary" id="fSubmit">${edit||fresh?'Enregistrer':'S\'inscrire'}</button>
+  <button class="btn btn-primary" id="fSubmit">${edit||fresh?'Enregistrer':S.be.mode==='live'&&!S.be.uid?'Continuer':'S\'inscrire'}</button>
   ${!me()?'':edit||fresh?'':''}
   </form>`}
 
@@ -1868,8 +1872,7 @@ function render(){const app=$('#app');const r=S.route;
   if(r.v==='loading'){app.innerHTML=`<div class="loading"><div class="spin"></div></div>`;return}
   // garde-fous : pas de profil → onboarding ; profil non payé → paiement
   const open=['onboard','signup','pay','about','auth'];
-  if(r.v==='signup'&&S.be.mode==='live'&&!S.be.uid){S.authMode=S.authMode||'up';S.route={v:'auth'};return render()}
-  if(r.v==='auth'&&S.be.uid){S.route=p?(isActive(p)?{v:'feed'}:{v:'pay'}):{v:'signup'};return render()}
+  if(r.v==='auth'&&S.be.uid&&!S.pendingProf){S.route=p?(isActive(p)?{v:'feed'}:{v:'pay'}):{v:'signup'};return render()}
   if(r.v==='admin'&&!S.owner){S.route={v:'feed'};return render()}
   if(!p&&!open.includes(r.v)){S.route={v:'onboard'};return render()}
   if(p&&!isActive(p)&&!['signup','pay','about','onboard','admin'].includes(r.v)){S.route={v:'pay'};return render()}
@@ -2359,6 +2362,7 @@ document.addEventListener('submit',async e=>{e.preventDefault();
     const sex=document.querySelector('input[name=fSex]:checked')?.value||'';if(!sex){err.textContent='Choisis ton sexe : Femme ou Homme.';return}
     const tc=$('#fTerms');if(tc&&!tc.checked){err.textContent='Coche la case pour accepter les règles de Koris.';return}
     const old=me()||{};const prof={...old,...(!old.referredBy&&ls.get('ref','')&&ls.get('ref','')!==refCode(S.be.uid)?{referredBy:ls.get('ref','')}:{}),firstName:g('fFirst'),lastName:g('fLast'),sex,age,job:g('fJob'),phone:g('fPhone'),city:g('fCity'),commune:g('fCommune'),country:g('fCountry'),bio:g('fBio'),photo:pendingPhoto||(S.route.param==='fresh'?'':old.photo)||'',cover:old.cover||'',paid:!!old.paid,paidAt:old.paidAt||null,at:old.at||Date.now()};
+    if(S.be.mode==='live'&&!S.be.uid){S.pendingProf=prof;const ph=g('fPhone');if(ph&&!ls.get('authPhoneRaw',''))ls.set('authPhoneRaw',ph);S.authMode='up';S.authVia=S.authVia||ls.get('authVia','tel');go('auth');return}
     const b=$('#fSubmit');b.disabled=true;try{await S.be.saveProfile(prof);pendingPhoto=null;go(isActive(prof)?'me':'pay');if(isActive(prof))toast('Profil enregistré')}catch(x){b.disabled=false;err.textContent=x?.code==='invalid_argument'?"Tu n'as pas l'autorisation de créer un compte sur cette page.":"L'enregistrement a échoué. Réessaie."}}
 });
 
@@ -2539,7 +2543,7 @@ function attachBe(firstRoute){UNSUBS.forEach(f=>{try{f()}catch(_){}});UNSUBS=[];
   add(S.be.onHelpCfg(c=>{S.helpCfg=c}));
   add(S.be.onPayCfg(c=>{S.payCfg=c;if(S.route.v==='pay'){const el=$('#payDest');if(el)el.innerHTML=destHtml(S.payOp||me()?.pay?.op||'orange')}}));
   let first=true;
-  add(S.be.onProfiles(m=>{const prev=S.profiles;S.profiles=m;if(first){first=false;S.route=firstRoute?firstRoute():restoreRoute();render();ntWelcome();openFromUrl();pushInvite()}else{try{ntCheck(prev,m)}catch(_){}softRender()}}));
+  add(S.be.onProfiles(m=>{const prev=S.profiles;S.profiles=m;S.gotProfiles=true;if(first){first=false;S.route=firstRoute?firstRoute():restoreRoute();render();ntWelcome();openFromUrl();pushInvite()}else{try{ntCheck(prev,m)}catch(_){}softRender()}}));
   add(S.be.onPosts(a=>{S.posts=a;if(!first)softRender()}));
   add(S.be.onChats(a=>{S.chats=a;chatWatch(a);if(!first)softRender()}));
   add(S.be.onComments(a=>{S.comments=a;refreshComments();if(!first)softRender()}));
