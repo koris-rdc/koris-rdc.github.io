@@ -2414,6 +2414,29 @@ function openShareApp(){const L=$('#layer');const URL_=myShareUrl(),txt=shareTex
   $('#shrCopy').onclick=async()=>{try{await navigator.clipboard.writeText(full);toast('Lien copié, colle-le où tu veux')}catch(_){prompt('Copie ce lien :',URL_)}};
   const nb=$('#shrNative');if(nb)nb.onclick=async()=>{try{await navigator.share({title:'Koris — Rencontres en RDC',text:txt,url:URL_})}catch(_){}};
 }
+
+/* =================== Bouton « retour » du téléphone : revenir à la page précédente =================== */
+const NAVH={pop:false,ready:false,key:r=>r?r.v+'|'+(r.param||'')+'|'+(r.pane||''):''};
+function layerOpen(){const L=$('#layer');return !!(L&&L.children.length)}
+function closeLayer(){const L=$('#layer');if(!L)return;if($('#gk'))try{gkStopVoice()}catch(_){}
+  try{if(typeof cmOpen!=='undefined'&&cmOpen){cmOpen=null;L.innerHTML='';softRender();return}}catch(_){}
+  L.innerHTML=''}
+{const R=render;render=function(){const out=R.apply(this,arguments);try{const r=S.route;
+  if(r&&r.v&&r.v!=='loading'){const k=NAVH.key(r),st=history.state||{};
+    if(!NAVH.ready){NAVH.ready=true;history.replaceState({koris:1,k,r:{...r}},'')}
+    else if(NAVH.pop){NAVH.pop=false;if(st.k!==k)history.replaceState({koris:1,k,r:{...r}},'')}
+    else if(st.k!==k){history.pushState({koris:1,k,r:{...r}},'')}}}catch(_){}return out}}
+/* une fenêtre (Gucko, réglages, commentaires, photo…) ajoute une étape : « retour » la ferme d'abord */
+{const L=$('#layer');if(L)new MutationObserver(()=>{try{const st=history.state||{};
+  if(layerOpen()&&!st.layer&&NAVH.ready)history.pushState({...st,layer:1},'');
+  else if(!layerOpen()&&st.layer&&!NAVH.closing){NAVH.skipPop=true;history.back()}}catch(_){}}).observe(L,{childList:true})}
+window.addEventListener('popstate',e=>{const st=e.state||{};
+  if(NAVH.skipPop){NAVH.skipPop=false;return}
+  if(layerOpen()){NAVH.closing=true;closeLayer();NAVH.closing=false;return}
+  if(st.layer){history.back();return}
+  if(st.koris&&st.r){const r=st.r;if(NAVH.key(r)===NAVH.key(S.route))return;
+    if(S.sub.msgs){S.sub.msgs();S.sub.msgs=null}
+    NAVH.pop=true;S.route={...r};window.scrollTo(0,0);render()}});
 /* =================== Démarrage =================== */
 let UNSUBS=[];
 function restoreRoute(){const p=me();if(!p||!p.firstName)return {v:'onboard'};if(!isActive(p))return {v:'pay'};
