@@ -871,6 +871,13 @@ header.top{margin-inline:-16px;padding-inline:16px;top:0;padding-top:calc(18px +
 .shr-cta div{flex:1;min-width:0}.shr-cta b{display:block;font:700 16px var(--display)}.shr-cta small{display:block;font-size:12px;opacity:.8;margin-top:1px}
 .shr-cta .go{flex:none;height:36px;padding:0 14px;border-radius:999px;display:grid;place-items:center;font:700 13px var(--display);background:#03100E;color:#C8F04A}
 @keyframes shrPulse{0%,100%{box-shadow:0 14px 30px -12px rgba(200,240,74,.7)}50%{box-shadow:0 14px 34px -8px rgba(200,240,74,.95)}}
+.inv-new{display:flex;gap:8px;align-items:center;margin-top:10px}
+.inv-row{display:flex;align-items:center;gap:6px;padding:10px 0 0;border-top:1px solid var(--line);margin-top:10px} .inv-row.off{opacity:.5}
+.inv-row .mid{flex:1;min-width:0} .inv-row b{display:block;font-size:12.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap} .inv-row small{font-size:11.5px;color:var(--muted)}
+.inv-row .mini{padding:0 10px} .inv-row a.mini svg{width:16px;height:16px}
+.inv-box{display:flex;align-items:center;gap:12px;padding:14px;border-radius:18px;background:linear-gradient(120deg,rgba(200,240,74,.18),rgba(46,224,176,.1));border:1px solid rgba(200,240,74,.45)}
+.inv-box .g{font-size:26px} .inv-box .mid{flex:1} .inv-box b{display:block;font:700 15px var(--display)} .inv-box small{font-size:12.5px;color:var(--muted)} .inv-box small b{display:inline;font:inherit;font-weight:700;color:var(--orange)}
+.inv-det{padding:12px 14px;border-radius:16px;background:var(--panel-2);border:1px dashed var(--line)} .inv-det summary{cursor:pointer;font-weight:600;font-size:14px;color:var(--orange)}
 .help-row{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:18px;background:var(--panel-2);border:1px solid var(--line);text-decoration:none;color:var(--text)}
 .help-row .ic{width:40px;height:40px;border-radius:13px;display:grid;place-items:center;flex:none;color:#fff}
 .help-row .ic svg{width:19px;height:19px}
@@ -1572,7 +1579,8 @@ const dueFor=p=>(SUBSCRIPTION?(isNew(p)?REG+FEE:FEE):ACCESS_FEE)-refDisc(p);
 const fc=n=>n.toLocaleString('fr-FR').replace(/\u202f|\u00a0/g,' ')+' FC';
 const isActive=p=>!!p&&!!p.paid&&(!SUBSCRIPTION||!!p.owner||!p.paidUntil||p.paidUntil>Date.now());
 const untilTxt=t=>new Date(t).toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'});
-const opById=id=>OPS.find(o=>o.id===id)||OPS[0];
+const INV_OP={id:'invite',name:'Invitation gratuite',short:'🎁',c:'#C8F04A',ussd:''};
+const opById=id=>id==='invite'?INV_OP:(OPS.find(o=>o.id===id)||OPS[0]);
 function payCfg(id){const c=(S.payCfg||{})[id]||{};const o=opById(id);return{num:String(c.num||'').trim(),holder:String(c.holder||'').trim(),ussd:String(c.ussd||o.ussd).trim()}}
 function destHtml(id){const o=opById(id),c=payCfg(id);
   if(!c.num)return `<div class="warn">Le numéro ${esc(o.name)} de Koris n'est pas encore configuré. Choisis un autre moyen ou réessaie plus tard.</div>`;
@@ -1584,14 +1592,15 @@ function vPay(){const p=me()||{};const pay=p.pay||{};const op=S.payOp||pay.op||'
   const due=dueFor(p);const amount=!SUBSCRIPTION?`<div class="glow amt-card"><div><span class="hint">Accès à Koris</span><div class="amt">${fc(due).replace(' FC','')}<small>FC</small></div></div><span class="tag">une seule fois</span></div>`:`<div class="glow amt-card"><div><span class="hint">${isNew(p)?'Inscription + 1er mois':'Abonnement · 1 mois'}</span><div class="amt">${fc(due).replace(' FC','')}<small>FC</small></div></div><span class="tag">${isNew(p)?'puis 5 000 FC / mois':'30 jours'}</span></div>
    ${isNew(p)?`<div class="fee-lines"><div><span>Frais d'inscription (une seule fois)</span><b>5 000 FC</b></div><div><span>Abonnement du 1er mois</span><b>5 000 FC</b></div><div class="tot"><span>Total à payer</span><b>${fc(due)}</b></div></div>`:''}`;
   if(pay.status==='pending'&&!S.route.repay){const o=opById(pay.op);
-    return `<section class="form pay">${head}<h1>Paiement envoyé</h1><p class="lead">Étape 2 sur 2 · Vérification en cours.</p>${amount}
-    <div class="glow wait"><div class="spin"></div><b>On vérifie ton paiement</b><p>Dès que les ${fc(pay.amount||FEE)} sont confirmés, ton accès s'ouvre tout seul${SUBSCRIPTION?' pour 30 jours':''}.</p>
-     <dl><dt>Montant</dt><dd>${fc(pay.amount||FEE)} · ${pay.kind==='acces'?'accès à Koris':pay.kind==='inscription'?'inscription + 1er mois':'renouvellement'}</dd><dt>Moyen</dt><dd>${esc(o.name)}</dd><dt>Depuis</dt><dd>${esc(pay.from)}</dd><dt>Référence</dt><dd>${esc(pay.ref)}</dd><dt>Envoyé</dt><dd>${ago(pay.at)}</dd></dl></div>
-    <button class="btn btn-ghost" data-repay="1" style="flex:none;height:50px">Corriger les infos du paiement</button>
+    return `<section class="form pay">${head}<h1>${pay.op==='invite'?'Invitation envoyée':'Paiement envoyé'}</h1><p class="lead">Étape 2 sur 2 · Vérification en cours.</p>${pay.op==='invite'?'':amount}
+    <div class="glow wait"><div class="spin"></div><b>${pay.op==='invite'?'On vérifie ton invitation':'On vérifie ton paiement'}</b><p>${pay.op==='invite'?'Dès que Koris valide ton invitation, ton accès gratuit s\'ouvre tout seul.':`Dès que les ${fc(pay.amount??FEE)} sont confirmés, ton accès s'ouvre tout seul${SUBSCRIPTION?' pour 30 jours':''}.`}</p>
+     <dl><dt>Montant</dt><dd>${pay.op==='invite'?'Gratuit · code '+esc(pay.ref):fc(pay.amount??FEE)} · ${pay.kind==='acces'?'accès à Koris':pay.kind==='inscription'?'inscription + 1er mois':'renouvellement'}</dd><dt>Moyen</dt><dd>${esc(o.name)}</dd><dt>Depuis</dt><dd>${esc(pay.from)}</dd><dt>Référence</dt><dd>${esc(pay.ref)}</dd><dt>Envoyé</dt><dd>${ago(pay.at)}</dd></dl></div>
+    <button class="btn btn-ghost" data-repay="1" style="flex:none;height:50px">${pay.op==='invite'?'Payer plutôt avec Mobile Money':'Corriger les infos du paiement'}</button>
     <p class="alt">Ça prend trop de temps ? <button type="button" data-act="help">Contacter l'aide</button></p>
     ${S.owner?`<button class="btn btn-ghost" data-ownok="1" style="flex:none;height:50px">Activer mon compte (propriétaire)</button>`:''}</section>`}
   return `<form class="form pay" id="fPay" novalidate>${head}
   <h1>${!SUBSCRIPTION?'Accès à Koris':p.paid?(isActive(p)?'Payer le mois suivant':'Renouvelle ton abonnement'):'Abonnement'}</h1><p class="lead">${!SUBSCRIPTION?`Étape 2 sur 2 · ${fc(due)}, une seule fois, pour accéder à Koris.`:p.paid?(isActive(p)?'5 000 FC ajoutent 30 jours à ton abonnement en cours.':'Ton mois est terminé. Renouvelle pour continuer à discuter.'):'Étape 2 sur 2 · Inscription 5 000 FC, puis 5 000 FC par mois.'}</p>
+  ${invCard()}
   ${pay.status==='rejected'?`<div class="warn">Ton dernier paiement n'a pas pu être confirmé. Vérifie la référence du SMS et renvoie-la.</div>`:''}
   ${amount}
   ${refDisc(p)?`<div class="ref-ok">🎁 <span>Réduction parrainage : <b>−500 FC</b> · ${refsOf(p.id||S.be.uid).length} ami(s) inscrit(s) grâce à toi</span></div>`:`<button type="button" class="ref-inv" data-act="shareapp"><span class="g">🎁</span><span><b>Paie 4 500 FC au lieu de 5 000 FC</b><small>Invite un ami : dès qu'il s'inscrit avec ton lien, ta réduction s'applique ici.</small></span><span class="go">${I.share}</span></button>`}
@@ -1644,6 +1653,8 @@ function vAdmin(){
   <div class="top" style="padding-inline:0"><button class="icon-btn" data-go="me" aria-label="Retour">${I.back}</button><h1 style="font-size:22px;flex:1;text-align:center">Paiements</h1><span style="width:42px"></span></div>
   <p class="lead" style="color:var(--muted)">Visible seulement par toi. Les membres paient ${SUBSCRIPTION?'5 000 FC d\'inscription + 5 000 FC par mois':'5 000 FC une seule fois'} à tes numéros, puis tu confirmes ici quand l'argent est bien arrivé.</p>
   <button class="btn btn-ghost" data-go="pay" data-param="preview" style="width:100%;flex:none;height:48px;margin-top:14px">${I.wallet}Voir la page de paiement</button>
+  <h2>Invitations gratuites</h2><p class="hint" style="padding:0 2px 8px">Crée un lien pour tes membres privés : ils s'inscrivent sans payer. Choisis le nombre de places, puis envoie le lien.</p>
+  <div class="opbox"><div class="inv-new"><label class="pill" style="flex:1">${I.user}<input id="invMax" type="number" min="1" max="500" value="10" aria-label="Nombre de places"></label><button class="btn btn-primary" data-invnew="1" style="flex:none;height:50px;padding:0 18px">Créer un lien</button></div><div id="admInv">${admInvHtml()}</div></div>
   <h2>À vérifier</h2><div id="admList">${admListHtml()}</div>
   <h2>Certifications à vérifier (5 $)</h2><div id="admCert">${admCertHtml()}</div>
   <h2>Tes numéros de réception</h2>
@@ -1664,7 +1675,7 @@ function vAdmin(){
 function admListHtml(){const l=Object.entries(S.profiles).filter(([,x])=>x.pay?.status==='pending').sort((a,b)=>(b[1].pay.at||0)-(a[1].pay.at||0));
   if(!l.length)return `<p class="hint" style="padding:6px 2px 4px">Aucun paiement en attente.</p>`;
   return l.map(([id,x])=>{const pay=x.pay,o=opById(pay.op);return `<div class="prow"><div class="hd">${av(x,44)}<div><b>${esc(fullName(x))}</b><small>${esc([x.city,x.phone].filter(Boolean).join(' · '))}</small></div><small>${ago(pay.at)}</small></div>
-   <dl><dt>Montant</dt><dd>${fc(pay.amount||FEE)} · ${pay.kind==='acces'?'accès à Koris':pay.kind==='inscription'?'inscription + 1er mois':'renouvellement'}</dd>${refsOf(id).length?`<dt>Parrainage</dt><dd>−500 FC · ${refsOf(id).map(([,f])=>esc(f.firstName)).join(', ')}</dd>`:''}<dt>Moyen</dt><dd>${esc(o.name)}</dd><dt>Depuis</dt><dd>${esc(pay.from)}</dd><dt>Référence</dt><dd>${esc(pay.ref)}</dd></dl>
+   <dl><dt>Montant</dt><dd>${pay.op==='invite'?'Gratuit · code '+esc(pay.ref):fc(pay.amount??FEE)} · ${pay.kind==='acces'?'accès à Koris':pay.kind==='inscription'?'inscription + 1er mois':'renouvellement'}</dd>${refsOf(id).length?`<dt>Parrainage</dt><dd>−500 FC · ${refsOf(id).map(([,f])=>esc(f.firstName)).join(', ')}</dd>`:''}<dt>Moyen</dt><dd>${esc(o.name)}</dd><dt>Depuis</dt><dd>${esc(pay.from)}</dd><dt>Référence</dt><dd>${esc(pay.ref)}</dd></dl>
    <div class="acts"><button class="btn btn-ghost" data-payno="${esc(id)}">Refuser</button><button class="btn btn-primary" data-payok="${esc(id)}">${I.check}Valider</button></div></div>`}).join('')}
 function admCertHtml(){const l=Object.entries(S.profiles).filter(([,x])=>x.cert?.status==='pending').sort((a,b)=>(b[1].cert.at||0)-(a[1].cert.at||0));
   if(!l.length)return `<p class="hint" style="padding:6px 2px 4px">Aucune demande de certification.</p>`;
@@ -2279,6 +2290,9 @@ document.addEventListener('click',async e=>{const t=e.target.closest('button,[da
   if(d.del){if(t.dataset.armed){try{const x=S.posts.find(p=>p.id===d.del);await S.be.deletePost(d.del);toast('Publication supprimée');if(x&&isVid(x))S.be.dropVideo(x.vid);S.comments.filter(c=>c.postId===d.del&&c.uid===S.be.uid).forEach(c=>S.be.deleteComment(c.id).catch(()=>{}))}catch(_){toast('Suppression impossible')}}else{t.dataset.armed='1';t.style.background='var(--danger)';toast('Appuie encore pour supprimer');setTimeout(()=>{delete t.dataset.armed;t.style.background=''},3000)}return}
   if(d.mm){S.payOp=d.mm;document.querySelectorAll('.mm button').forEach(b=>{const on=b===t;b.classList.toggle('on',on);b.setAttribute('aria-checked',on)});$('#payDest').innerHTML=destHtml(d.mm);return}
   if(d.repay){S.route.repay=true;return render()}
+  if(d.invuse){return invUse(d.invuse==='?'?(($('#invCode')||{}).value||''):d.invuse,t)}
+  if(d.invnew){if(!S.owner)return;t.disabled=true;await invCreate();t.disabled=false;return}
+  if(d.invoff){if(!S.owner)return;return invOff(d.invoff)}
   if(d.ownok){if(!S.owner)return;try{const p=me();await S.be.saveProfile({...p,paid:true,owner:true,paidAt:Date.now(),pay:{op:'owner',status:'ok',at:Date.now(),ref:'propriétaire',from:''}});toast('Compte propriétaire activé');go('feed')}catch(_){toast("L'activation a échoué")}return}
   if(d.certok||d.certno){const id=d.certok||d.certno,x=S.profiles[id];if(!x?.cert||!S.owner)return;const h=String(x.cert.handle).toLowerCase();
     if(d.certok&&Object.entries(S.profiles).some(([k,y])=>k!==id&&y.certified&&String(y.handle||'').toLowerCase()===h)){toast('Ce nom est déjà pris : refuse la demande');return}
@@ -2471,6 +2485,35 @@ function pushInvite(){try{if(!PUSH.ok()||!S.be?.sb||!S.be.uid||!me()||!isActive(
   if(Notification.permission==='denied'||sessionStorage.getItem('koris:pushAsk'))return;sessionStorage.setItem('koris:pushAsk','1');
   setTimeout(()=>{if(document.querySelector('.ntb'))return setTimeout(pushInvite2,6000);pushInvite2()},4000)}catch(_){}}
 function pushInvite2(){ntBanner(`<span class="ntb-ic">${I.bell}</span><span class="ntb-tx"><small>Ne rate aucun message</small><span>Touche ici pour activer les <b>notifications</b> sur ton téléphone</span></span>`,pushEnable)}
+
+/* =================== Invitations gratuites (membres privés) =================== */
+try{const ic=new URLSearchParams(location.search).get('invite');if(ic&&/^[A-Za-z0-9]{4,12}$/.test(ic))ls.set('invite',ic.toUpperCase())}catch(_){}
+const invLink=c=>APP_URL+'?invite='+c;
+S.invites=null;S.invErr='';
+async function invLoad(){if(!S.be?.sb||!S.owner)return;try{const {data,error}=await S.be.sb.from('invites').select('*').order('created_at',{ascending:false});if(error)throw error;S.invites=data||[];S.invErr=''}catch(e){S.invites=[];S.invErr='setup'}
+  const el=$('#admInv');if(el)el.innerHTML=admInvHtml()}
+function admInvHtml(){if(!S.be?.sb)return `<p class="hint" style="padding:8px 2px 0">Disponible sur le vrai site.</p>`;
+  if(S.invites===null){setTimeout(invLoad,0);return `<p class="hint" style="padding:8px 2px 0">Chargement…</p>`}
+  if(S.invErr)return `<div class="warn" style="margin-top:10px">Pour activer les liens automatiques, exécute une seule fois le fichier « koris-invitations.sql » dans Supabase (SQL Editor). En attendant, tes invités peuvent entrer le code <b>KORIS</b> sur la page de paiement : tu les valides ici dans « À vérifier ».</div>`;
+  if(!S.invites.length)return `<p class="hint" style="padding:8px 2px 0">Aucun lien pour l'instant.</p>`;
+  return S.invites.map(v=>`<div class="inv-row${v.active?'':' off'}"><div class="mid"><b>${esc(invLink(v.code).replace('https://',''))}</b><small>${v.uses}/${v.max_uses} place${v.max_uses>1?'s':''} utilisée${v.uses>1?'s':''}${v.active?'':' · arrêté'}</small></div>
+   ${v.active?`<button type="button" class="mini" data-copy="${esc(invLink(v.code))}">Copier</button><a class="mini solid" href="https://wa.me/?text=${encodeURIComponent('Je t\'invite à tester Koris, l\'application de rencontre de la RDC 💚 Inscription gratuite avec ce lien : '+invLink(v.code))}" target="_blank" rel="noopener" aria-label="Envoyer sur WhatsApp">${I.wa}</a><button type="button" class="mini" data-invoff="${esc(v.code)}">Arrêter</button>`:''}</div>`).join('')}
+async function invCreate(){const max=Math.max(1,Math.min(500,parseInt(($('#invMax')||{}).value,10)||10));const A='ABCDEFGHJKMNPQRSTUVWXYZ23456789';let c='';crypto.getRandomValues(new Uint8Array(6)).forEach(x=>c+=A[x%A.length]);
+  try{const {error}=await S.be.sb.from('invites').insert({code:c,max_uses:max});if(error)throw error;await invLoad();try{await navigator.clipboard.writeText(invLink(c));toast('Lien créé ('+max+' places) et copié ✓')}catch(_){toast('Lien créé : '+max+' places')}}
+  catch(_){S.invErr='setup';const el=$('#admInv');if(el)el.innerHTML=admInvHtml();toast("Exécute d'abord le fichier SQL des invitations")}}
+async function invOff(code){try{const {error}=await S.be.sb.from('invites').update({active:false}).eq('code',code);if(error)throw error;toast('Lien arrêté');invLoad()}catch(_){toast('Impossible pour le moment')}}
+function invCard(){const p=me()||{};if(isActive(p))return '';const c=ls.get('invite','');
+  return c?`<div class="inv-box"><span class="g">🎁</span><div class="mid"><b>Tu as une invitation</b><small>Inscription gratuite offerte par Koris · code <b>${esc(c)}</b></small></div></div>
+   <button type="button" class="btn btn-primary" data-invuse="${esc(c)}" style="flex:none;height:52px">Entrer gratuitement</button>`
+   :`<details class="inv-det"><summary>🎁 J'ai un code d'invitation</summary><div class="inv-new"><label class="pill" style="flex:1">${I.hash}<input id="invCode" maxlength="12" placeholder="Ton code" autocapitalize="characters" aria-label="Code d'invitation"></label><button type="button" class="btn btn-primary" data-invuse="?" style="flex:none;height:50px;padding:0 18px">Valider</button></div></details>`}
+async function invUse(code,btn){code=String(code||'').trim().toUpperCase();if(!/^[A-Z0-9]{4,12}$/.test(code))return toast("Ce code n'est pas valide");
+  if(btn)btn.disabled=true;ls.set('invite',code);
+  try{if(S.be?.sb){const {data,error}=await S.be.sb.rpc('koris_redeem_invite',{p_code:code});
+      if(!error){if(data===true){ls.set('invite','');toast('Bienvenue sur Koris 💚');setTimeout(()=>{if(isActive(me()))go('feed')},1200);return}
+        ls.set('invite','');toast("Ce code n'est plus valable (places épuisées ou lien arrêté)");if(btn)btn.disabled=false;render();return}}
+    /* fonction pas encore installée : la demande part chez le propriétaire, qui valide en un geste */
+    await S.be.saveProfile({...me(),pay:{op:'invite',from:'',ref:code,to:'',amount:0,kind:'acces',at:Date.now(),status:'pending'}});ls.set('invite','');S.route.repay=false;render()}
+  catch(_){toast("L'invitation n'a pas pu être envoyée. Réessaie.");if(btn)btn.disabled=false}}
 /* =================== Démarrage =================== */
 let UNSUBS=[];
 function restoreRoute(){const p=me();if(!p||!p.firstName)return {v:'onboard'};if(!isActive(p))return {v:'pay'};
