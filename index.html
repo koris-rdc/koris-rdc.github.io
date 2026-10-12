@@ -467,6 +467,13 @@ header.top{margin-inline:-16px;padding-inline:16px;top:0;padding-top:calc(18px +
 
 /* ---- Messages ---- */
 .conv-list{display:flex;flex-direction:column;gap:6px}
+.mod-list{display:flex;flex-direction:column;gap:6px;margin-top:12px}
+.mod-row{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:18px;background:var(--panel-2);border:1px solid var(--line);text-align:left;width:100%}
+.mod-row.rep{border-color:var(--danger);background:rgba(255,90,78,.08)} .mod-row .pair{display:flex;flex:none} .mod-row .pair>*:last-child{margin-left:-12px;box-shadow:0 0 0 2px var(--ink);border-radius:50%}
+.mod-row .mid{flex:1;min-width:0} .mod-row b{display:block;font-size:14px} .mod-row small{display:block;font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis} .mod-row time{font-size:11px;color:var(--muted);flex:none}
+.mod-people{display:flex;gap:8px;margin:10px 0} .mod-people button{flex:1;display:flex;align-items:center;gap:8px;padding:8px;border-radius:14px;background:var(--panel-2);border:1px solid var(--line);font-size:13px;font-weight:600;text-align:left;min-width:0} .mod-people span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mod-msgs{padding:8px 0 20px} .mod-msgs .bub .who{display:block;font-size:10.5px;font-weight:700;opacity:.75;margin-bottom:2px}
+.chat-note{font-size:11px;color:var(--muted);text-align:center;margin:8px 16px 0;line-height:1.4}
 .conv-w{display:flex;align-items:center;gap:4px} .conv-w .conv{flex:1;min-width:0}
 .conv-del{width:38px;height:38px;flex:none;border-radius:50%;display:grid;place-items:center;color:var(--muted);opacity:.7} .conv-del svg{width:17px;height:17px}
 .conv-del.armed,.icon-btn.armed{background:var(--danger)!important;color:#fff!important;opacity:1}
@@ -1554,6 +1561,7 @@ function vAbout(){
     <li><b>Être toi-même</b>Un seul compte par personne, avec ton vrai prénom et des photos récentes de toi.</li>
     <li><b>Respecter les autres</b>Reste poli, même quand tu n'es pas intéressé. Un « non » ou une absence de réponse se respecte.</li>
     <li><b>Publier des contenus corrects</b>Photos et messages visibles par tous : pas de nudité, de violence ni de contenu choquant.</li>
+    <li><b>Accepter la modération</b>Pour lutter contre les arnaques et le harcèlement, l'équipe Koris peut consulter les conversations, en particulier celles qui sont signalées.</li>
     <li><b>Protéger ta vie privée</b>Ne partage ton adresse, ton lieu de travail ou des infos sensibles qu'avec une personne en qui tu as confiance.</li>
    </ul></div>
 
@@ -1695,6 +1703,7 @@ document.addEventListener('input',e=>{if(e.target.id==='certHandle')checkHandle(
 function vAdmin(){
   return `<section class="adm">
   <div class="top" style="padding-inline:0"><button class="icon-btn" data-go="me" aria-label="Retour">${I.back}</button><h1 style="font-size:22px;flex:1;text-align:center">Paiements</h1><span style="width:42px"></span></div>
+  <button class="btn btn-primary" data-go="modconv" style="width:100%;flex:none;height:50px;margin-top:12px">${I.chat}Voir les conversations des membres</button>
   ${mcCard()}<div class="mc-stats">${(()=>{const c={};Object.values(S.profiles).forEach(x=>{if(x&&x.firstName){const v=x.city||'Autre';c[v]=(c[v]||0)+1}});return Object.entries(c).sort((a,b)=>b[1]-a[1]).slice(0,6).map(([v,n])=>`<span>${esc(v)} <b>${n}</b></span>`).join('')})()}</div>
   <p class="lead" style="color:var(--muted)">Visible seulement par toi. Les membres paient ${SUBSCRIPTION?'5 000 FC d\'inscription + 5 000 FC par mois':'5 000 FC une seule fois'} à tes numéros, puis tu confirmes ici quand l'argent est bien arrivé.</p>
   <button class="btn btn-ghost" data-go="pay" data-param="preview" style="width:100%;flex:none;height:48px;margin-top:14px">${I.wallet}Voir la page de paiement</button>
@@ -1863,7 +1872,7 @@ function vMessages(){const list=[...S.chats].filter(c=>(c.lastAt||0)>chatHid(c.i
   const calls=ids.length?`<p class="hint">L'appel passe par ton téléphone, au numéro indiqué sur le profil.</p>${ids.map(id=>{const x=S.profiles[id];const vis=phoneOk(x,id);const tel=vis?String(x.phone||'').replace(/[^\d+]/g,''):'';
     return `<div class="call"><button data-profile="${esc(id)}" aria-label="Profil de ${esc(x.firstName)}"><span class="ar" style="padding:2px;border-radius:50%;background:var(--grad);display:block">${av(x,48)}</span></button><div class="mid"><b>${esc(fullName(x))}</b><small>${esc([x.city,vis?x.phone:'Numéro masqué'].filter(Boolean).join(' · '))}</small></div><button class="ca" data-chat="${esc(id)}" aria-label="Écrire à ${esc(x.firstName)}">${I.chat}</button>${tel?`<a class="ca go" href="tel:${esc(tel)}" target="_top" aria-label="Appeler ${esc(x.firstName)}">${I.phone}</a>`:''}</div>`}).join('')}`
     :`<div class="empty">${I.phone}<b>Personne à appeler pour l'instant</b><p>Les membres apparaîtront ici avec leur numéro.</p></div>`;
-  return `<header class="mx-head"><span class="logo">${I.chat}</span><h1>Messages</h1><button class="kori-btn" data-act="guide" aria-label="Gucko, ton assistant" title="Gucko">${I.spark}<span>Gucko</span></button><button class="icon-btn" data-go="discover" aria-label="Trouver quelqu'un">${I.search}</button></header>
+  return `<header class="mx-head"><span class="logo">${I.chat}</span><h1>Messages</h1>${S.owner?`<button class="icon-btn" data-go="modconv" aria-label="Toutes les conversations (admin)" title="Toutes les conversations">${I.badge}</button>`:''}<button class="kori-btn" data-act="guide" aria-label="Gucko, ton assistant" title="Gucko">${I.spark}<span>Gucko</span></button><button class="icon-btn" data-go="discover" aria-label="Trouver quelqu'un">${I.search}</button></header>
   <div class="stories"><button class="story add" data-act="compose" data-withpic="1"><span class="card"><span class="plus">${I.plus}</span>Ta story</span></button>${st.map(story).join('')}</div>
   <div class="seg" role="tablist"><i id="segI" style="transform:translateX(${pane*100}%)"></i><button role="tab" data-pane="0" class="${pane?'':'on'}">Discussions</button><button role="tab" data-pane="1" class="${pane?'on':''}">Appels</button></div>
   <div class="pager" id="pager"><section class="pane">${convs}</section><section class="pane">${calls}</section></div>
@@ -1880,8 +1889,8 @@ function chatFx(x){const st=availOf(x);if(st==='off')return '';
   const item=([l,w,b,o,sw,r,d,dl],i)=>`<i class="cfx-i" style="left:${l}%;width:${w}px;--b:${b}px;--o:${o};--sw:${sw}px;--r:${r}deg;animation-duration:${d}s;animation-delay:-${dl}s;${st==='rencontre'?'color:'+cols[i%4]:'font-size:'+Math.round(w*.85)+'px'}">${st==='rencontre'?HEART:st==='diner'?['🍽️','🍷','🍲','🥂'][i%4]:'🔥'}</i>`;
   return `<div class="chat-fx ${st}" aria-hidden="true">${CFX_ITEMS.map(item).join('')}</div>`}
 function vChat(other){const x=S.profiles[other]||{};
-  return `<section class="chat">${chatFx(x)}<header class="chat-head"><button class="icon-btn" data-go="messages" aria-label="Retour">${I.back}</button><button class="who" data-profile="${esc(other)}" style="display:flex;gap:10px;align-items:center"><span class="ar-on">${av(x,42)}<i class="on-dot" data-on="${esc(other)}"></i></span><span><b>${esc(fullName(x))}</b><small id="chatSt" class="chat-st">${esc([x.job,x.city].filter(Boolean).join(' · '))}</small></span></button><button class="icon-btn" data-chatdel="${esc(chatId(S.be.uid,other))}" aria-label="Supprimer la conversation" title="Supprimer la conversation" style="margin-left:auto">${I.trash}</button><button class="icon-btn" data-go="feed" aria-label="Retour à l'accueil" title="Accueil">${I.home}</button></header>
-  <div class="msgs" id="msgs"><div class="empty" style="padding:30px 0"><p>Dis bonjour à ${esc(x.firstName||'ce membre')} 👋</p></div></div>
+  return `<section class="chat">${chatFx(x)}<header class="chat-head"><button class="icon-btn" data-go="messages" aria-label="Retour">${I.back}</button><button class="who" data-profile="${esc(other)}" style="display:flex;gap:10px;align-items:center"><span class="ar-on">${av(x,42)}<i class="on-dot" data-on="${esc(other)}"></i></span><span><b>${esc(fullName(x))}</b><small id="chatSt" class="chat-st">${esc([x.job,x.city].filter(Boolean).join(' · '))}</small></span></button><button class="icon-btn" data-chatrep="${esc(other)}" aria-label="Signaler cette conversation" title="Signaler" style="margin-left:auto">⚑</button><button class="icon-btn" data-chatdel="${esc(chatId(S.be.uid,other))}" aria-label="Supprimer la conversation" title="Supprimer la conversation">${I.trash}</button><button class="icon-btn" data-go="feed" aria-label="Retour à l'accueil" title="Accueil">${I.home}</button></header>
+  <p class="chat-note">🔒 Discussion privée · pour la sécurité, la modération Koris peut la consulter, notamment en cas de signalement.</p><div class="msgs" id="msgs"><div class="empty" style="padding:30px 0"><p>Dis bonjour à ${esc(x.firstName||'ce membre')} 👋</p></div></div>
   <form class="composer" id="chatForm"><div class="typing" id="typing" hidden>${av(x,24)}<span class="tdots"><i></i><i></i><i></i></span></div><input id="chatIn" placeholder="Écris un message…" autocomplete="off" aria-label="Message" maxlength="1000"><button class="send" aria-label="Envoyer">${I.send}</button></form></section>`}
 
 function renderMsgs(list,cid){const box=$('#msgs');if(!box)return;
@@ -1899,9 +1908,9 @@ function render(){const app=$('#app');const r=S.route;
   // garde-fous : pas de profil → onboarding ; profil non payé → paiement
   const open=['onboard','signup','pay','about','auth'];
   if(r.v==='auth'&&S.be.uid&&!S.pendingProf){S.route=p?(isActive(p)?{v:'feed'}:{v:'pay'}):{v:'signup'};return render()}
-  if(r.v==='admin'&&!S.owner){S.route={v:'feed'};return render()}
+  if((r.v==='admin'||r.v==='modconv'||r.v==='modchat')&&!S.owner){S.route={v:'feed'};return render()}
   if(!p&&!open.includes(r.v)){S.route={v:'onboard'};return render()}
-  if(p&&!isActive(p)&&!['signup','pay','about','onboard','admin'].includes(r.v)){S.route={v:'pay'};return render()}
+  if(p&&!isActive(p)&&!['signup','pay','about','onboard','admin','modconv','modchat'].includes(r.v)){S.route={v:'pay'};return render()}
   if(render.last!==r.v){render.last=r.v;app.classList.remove('enter');void app.offsetWidth;app.classList.add('enter');clearTimeout(render.t);render.t=setTimeout(()=>app.classList.remove('enter'),400)}
   if(['feed','discover','messages','me','chat','profile','about','admin','certif'].includes(r.v)&&me())ls.set('lastRoute',{v:r.v,param:r.param||null});
   app.classList.toggle('no-nav',['auth','onboard','signup','pay','chat','profile','about','admin','certif'].includes(r.v));
@@ -1918,6 +1927,8 @@ function render(){const app=$('#app');const r=S.route;
   else if(r.v==='profile')app.innerHTML=vProfile(r.param,r.param===S.be.uid);
   else if(r.v==='me')app.innerHTML=vProfile(S.be.uid,true);
   else if(r.v==='messages'){app.innerHTML=vMessages();initPager()}
+  else if(r.v==='modconv'){app.innerHTML=vModConv()}
+  else if(r.v==='modchat'){app.innerHTML=vModChat(r.param)}
   else if(r.v==='chat'){app.innerHTML=vChat(r.param);const cid=chatId(S.be.uid,r.param);S.sub.msgs=S.be.onMsgs(cid,l=>renderMsgs(l,cid))}
 }
 // Les mises à jour de données ne doivent pas effacer un formulaire en cours
@@ -2336,6 +2347,10 @@ document.addEventListener('click',async e=>{const t=e.target.closest('button,[da
   if(d.del){if(t.dataset.armed){try{const x=S.posts.find(p=>p.id===d.del);await S.be.deletePost(d.del);toast('Publication supprimée');if(x&&isVid(x))S.be.dropVideo(x.vid);S.comments.filter(c=>c.postId===d.del&&c.uid===S.be.uid).forEach(c=>S.be.deleteComment(c.id).catch(()=>{}))}catch(_){toast('Suppression impossible')}}else{t.dataset.armed='1';t.style.background='var(--danger)';toast('Appuie encore pour supprimer');setTimeout(()=>{delete t.dataset.armed;t.style.background=''},3000)}return}
   if(d.mm){S.payOp=d.mm;document.querySelectorAll('.mm button').forEach(b=>{const on=b===t;b.classList.toggle('on',on);b.setAttribute('aria-checked',on)});$('#payDest').innerHTML=destHtml(d.mm);return}
   if(d.chatdel){if(!t.dataset.armed){t.dataset.armed='1';t.classList.add('armed');toast('Touche encore pour supprimer la conversation');setTimeout(()=>{delete t.dataset.armed;t.classList.remove('armed')},3500);return}return chatDelete(d.chatdel)}
+  if(d.modchat){if(!S.owner)return;return go('modchat',d.modchat)}
+  if(d.modreload!==undefined&&S.owner){S.mod.chats=null;render();return modLoad()}
+  if(d.repdone){if(!S.owner)return;try{await S.be.sb.from('reports').update({done:true}).eq('id',d.repdone);const r=S.mod.reports.find(z=>z.id===d.repdone);if(r)r.done=true;toast('Signalement traité');render()}catch(_){toast('Impossible pour le moment')}return}
+  if(d.chatrep){return chatReport(d.chatrep)}
   if(d.repay){S.route.repay=true;return render()}
   if(d.invuse){return invUse(d.invuse==='?'?(($('#invCode')||{}).value||''):d.invuse,t)}
   if(d.freetog){if(!S.owner)return;t.disabled=true;const c={...(S.payCfg||{}),free:!FREE()};try{await S.be.savePayCfg(c);S.payCfg=c;toast(c.free?'Accès gratuit activé 🎁':'Accès payant réactivé');render()}catch(_){toast("L'enregistrement a échoué");t.disabled=false}return}
@@ -2631,6 +2646,42 @@ function mcAnimate(){const els=document.querySelectorAll('.mcount[data-n]');if(!
 {const SR=softRender;softRender=function(){const out=SR.apply(this,arguments);try{mcAnimate()}catch(_){}return out}}
 function mcCard(){const n=memberCount(),w=memberSince(7*864e5),d=memberSince(864e5);
   return `<div class="glow mc-card"><span class="mc-ic">${I.user}</span><div><b class="mcount" data-n="${n}">${n.toLocaleString('fr-FR')}</b><small>membres inscrits sur Koris</small></div><span class="mc-new">${d?`+${d} aujourd'hui`:w?`+${w} cette semaine`:'En direct'}</span></div>`}
+
+/* =================== Modération : signalements + conversations (administrateur) =================== */
+S.mod={chats:null,reports:[],err:''};
+async function modLoad(){const sb=S.be?.sb;if(!sb||!S.owner)return;
+  try{const {data,error}=await sb.from('chats').select('id,members,last_at,data').order('last_at',{ascending:false}).limit(300);if(error)throw error;S.mod.chats=data||[];S.mod.err=''}catch(_){S.mod.chats=[];S.mod.err='setup'}
+  try{const {data}=await sb.from('reports').select('*').order('at',{ascending:false}).limit(200);S.mod.reports=data||[]}catch(_){S.mod.reports=[]}
+  if(S.route.v==='modconv'){const el=$('#modList');if(el)el.innerHTML=modListHtml()}}
+function modListHtml(){if(!S.be?.sb)return `<p class="hint">Disponible sur le vrai site.</p>`;if(S.mod.chats===null)return `<div class="spin" style="margin:30px auto"></div>`;
+  const rep=new Set(S.mod.reports.filter(r=>!r.done).map(r=>r.chat_id));
+  const own=S.mod.chats.filter(c=>Array.isArray(c.members)&&c.members.length);
+  const mine=own.filter(c=>c.members.includes(S.be.uid)).length;
+  if(S.mod.err||(own.length&&own.length===mine&&!S.mod.reports.length&&S.mod.warned!==false))return `${S.mod.err?'':''}<div class="warn">Pour voir les conversations de tous les membres, exécute une seule fois le fichier « koris-moderation.sql » dans Supabase (SQL Editor). Pour l'instant, seules tes propres discussions sont visibles.</div>${own.length?modRows(own,rep):''}`;
+  if(!own.length)return `<p class="hint" style="text-align:center;padding:24px 0">Aucune conversation pour l'instant.</p>`;
+  return modRows(own,rep)}
+function modRows(list,rep){const sorted=[...list].sort((a,b)=>(rep.has(b.id)-rep.has(a.id))||((b.last_at||0)-(a.last_at||0)));
+  return sorted.map(c=>{const [a,b]=c.members,xa=S.profiles[a]||{},xb=S.profiles[b]||{},d=c.data||{};
+  return `<button class="mod-row${rep.has(c.id)?' rep':''}" data-modchat="${esc(c.id)}"><span class="pair">${av(xa,36)}${av(xb,36)}</span><span class="mid"><b>${esc(xa.firstName||'Membre')} ↔ ${esc(xb.firstName||'Membre')}</b><small>${rep.has(c.id)?'⚑ Signalée · ':''}${esc(String(d.lastText||'').slice(0,60))}</small></span><time>${ago(d.lastAt||c.last_at||0)}</time></button>`}).join('')}
+function vModConv(){if(S.mod.chats===null)setTimeout(modLoad,0);const open=S.mod.reports.filter(r=>!r.done).length;
+  return `<section class="adm"><div class="top" style="padding-inline:0"><button class="icon-btn" data-go="admin" aria-label="Retour">${I.back}</button><h1 style="font-size:22px;flex:1;text-align:center">Conversations</h1><button class="icon-btn" data-modreload="1" aria-label="Actualiser">${I.search}</button></div>
+  <p class="lead" style="color:var(--muted)">Visible seulement par toi. Les conversations <b>signalées</b> par les membres sont en haut${open?` (<b style="color:var(--danger)">${open}</b> à vérifier)`:''}. Utilise cet accès pour la sécurité : arnaques, harcèlement, faux profils.</p>
+  <div id="modList" class="mod-list">${modListHtml()}</div></section>`}
+async function vModChatLoad(cid){const box=$('#modMsgs');if(!box||!S.be?.sb)return;
+  try{const {data,error}=await S.be.sb.from('msgs').select('id,at,from_id,data').eq('chat_id',cid).order('at',{ascending:true}).limit(500);if(error)throw error;
+    const c=(S.mod.chats||[]).find(z=>z.id===cid)||{members:[]};const a=c.members[0];
+    box.innerHTML=(data||[]).length?(data||[]).map(m=>{const x=S.profiles[m.from_id]||{};return `<div class="bub ${m.from_id===a?'them':'me'}"><small class="who">${esc(x.firstName||'Membre')}</small>${esc(m.data?.text||'')}<time>${hhmm(m.at)}</time></div>`}).join(''):`<p class="hint" style="text-align:center">Aucun message lisible. As-tu exécuté « koris-moderation.sql » ?</p>`}
+  catch(_){box.innerHTML=`<p class="hint" style="text-align:center">Impossible de charger les messages. Exécute « koris-moderation.sql » dans Supabase.</p>`}}
+function vModChat(cid){const c=(S.mod.chats||[]).find(z=>z.id===cid)||{members:[]};const [a,b]=c.members,xa=S.profiles[a]||{},xb=S.profiles[b]||{};
+  const reps=S.mod.reports.filter(r=>r.chat_id===cid);setTimeout(()=>vModChatLoad(cid),0);
+  return `<section class="adm"><div class="top" style="padding-inline:0"><button class="icon-btn" data-go="modconv" aria-label="Retour">${I.back}</button><h1 style="font-size:19px;flex:1;text-align:center">${esc(xa.firstName||'Membre')} ↔ ${esc(xb.firstName||'Membre')}</h1><span style="width:42px"></span></div>
+  <div class="mod-people"><button data-profile="${esc(a||'')}">${av(xa,34)}<span>${esc(fullName(xa))}</span></button><button data-profile="${esc(b||'')}">${av(xb,34)}<span>${esc(fullName(xb))}</span></button></div>
+  ${reps.map(r=>`<div class="warn"><b>⚑ Signalement de ${esc((S.profiles[r.by_uid]||{}).firstName||'un membre')}</b> · ${ago(r.at)}<br>${esc(r.reason||'')}${r.done?' · <i>traité</i>':` <button type="button" class="mini" data-repdone="${esc(r.id)}">Marquer traité</button>`}</div>`).join('')}
+  <div class="msgs mod-msgs" id="modMsgs"><div class="spin" style="margin:30px auto"></div></div>
+  <p class="hint" style="text-align:center">Lecture seule : tu ne peux pas écrire dans cette conversation.</p></section>`}
+async function chatReport(other){const reason=prompt('Pourquoi signales-tu cette conversation ?\n(arnaque, demande d\'argent, insultes, faux profil…)');if(reason===null)return;
+  try{const {error}=await S.be.sb.from('reports').insert({chat_id:chatId(S.be.uid,other),by_uid:S.be.uid,other_uid:other,reason:String(reason).trim().slice(0,400)});if(error)throw error;toast('Merci, ton signalement a été envoyé à l\'équipe Koris')}
+  catch(_){toast("Le signalement n'a pas pu être envoyé. Utilise le bouton Aide.")}}
 /* =================== Démarrage =================== */
 let UNSUBS=[];
 function restoreRoute(){const p=me();if(!p||!p.firstName)return {v:'onboard'};if(!isActive(p))return {v:'pay'};
