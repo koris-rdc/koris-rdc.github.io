@@ -536,6 +536,11 @@ header.top{margin-inline:-16px;padding-inline:16px;top:0;padding-top:calc(18px +
 .auth{max-width:360px;margin:0 auto;min-height:100svh;display:flex;flex-direction:column;justify-content:center;gap:10px;padding:8px 0 24px;text-align:center}
 .auth h1{font-size:26px}
 .auth .lead{text-align:center;font-size:13.5px}
+.via{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:4px 0 2px}
+.via button{display:flex;align-items:center;gap:8px;padding:10px;border-radius:16px;background:var(--panel);border:1.5px solid var(--line);text-align:left;color:var(--text)}
+.via button svg{width:20px;height:20px;flex:none;color:var(--muted)} .via button b{display:block;font-size:12.5px;line-height:1.2} .via button small{display:block;font-size:10.5px;color:var(--muted)}
+.via button.on{border-color:var(--orange);background:rgba(200,240,74,.1)} .via button.on svg{color:var(--orange)}
+.cc-pre{font-weight:700;color:var(--orange);margin-right:-2px}
 .auth-tabs{display:flex;gap:6px;padding:4px;border-radius:999px;background:var(--panel);border:1px solid var(--line);margin:6px 0}
 .auth-tabs button{flex:1;height:38px;border-radius:999px;font-weight:600;font-size:13px;color:var(--muted)}
 .auth-tabs button.on{background:var(--orange);color:#fff}
@@ -1301,22 +1306,31 @@ function makeSupabaseBackend(sb,uid){
   }}
 
 /* ---- Écran de connexion / création de compte ---- */
-function vAuth(){const mode=S.authMode||'up';
+/* Deux façons de s'inscrire : numéro de téléphone (sans e-mail) ou e-mail */
+const TEL_DOMAIN='telephone.koris.app';
+function telNorm(v){let d=String(v||'').replace(/\D/g,'');if(d.startsWith('00'))d=d.slice(2);if(d.startsWith('0'))d='243'+d.slice(1);if(d.length===9)d='243'+d;return d}
+const telMail=d=>d+'@'+TEL_DOMAIN;
+const telShow=d=>'+'+d.slice(0,3)+' '+d.slice(3).replace(/(\d{2})(\d{3})(\d+)/,'$1 $2 $3');
+function vAuth(){const mode=S.authMode||'up';const via=S.authVia||ls.get('authVia','tel');
   return `<section class="auth">
   <div class="top" style="padding-inline:0"><button type="button" class="icon-btn" data-go="onboard" aria-label="Retour">${I.back}</button><span></span></div>
   <div class="wordmark" style="justify-content:center;margin:6px 0 4px"><i></i>KORIS</div>
   <h1>${mode==='up'?'Crée ton compte':mode==='in'?'Content de te revoir':'Mot de passe oublié'}</h1>
-  <p class="lead">${mode==='up'?'Ton e-mail et un mot de passe : c\'est avec eux que tu te reconnecteras.':mode==='in'?'Entre ton e-mail et ton mot de passe.':'Entre ton e-mail : tu recevras un lien pour choisir un nouveau mot de passe.'}</p>
+  <p class="lead">${mode==='reset'?(via==='tel'?'Compte créé avec ton numéro : contacte l\'aide Koris pour récupérer ton accès.':'Entre ton e-mail : tu recevras un lien pour choisir un nouveau mot de passe.'):via==='tel'?(mode==='up'?'Ton numéro de téléphone et un mot de passe, sans e-mail.':'Entre ton numéro et ton mot de passe.'):(mode==='up'?'Ton e-mail et un mot de passe : c\'est avec eux que tu te reconnecteras.':'Entre ton e-mail et ton mot de passe.')}</p>
   <div class="auth-tabs" role="tablist"><button type="button" data-auth="up" class="${mode==='up'?'on':''}">Nouveau compte</button><button type="button" data-auth="in" class="${mode==='in'?'on':''}">J'ai un compte</button></div>
-  <form id="fAuth" class="form" novalidate>
-   <label class="pill">${I.user}<input id="aMail" type="email" inputmode="email" autocomplete="email" placeholder="Ton e-mail" aria-label="E-mail" required></label>
+  ${mode!=='reset'?`<div class="via" role="radiogroup" aria-label="Façon de s'inscrire"><button type="button" data-via="tel" class="${via==='tel'?'on':''}" role="radio" aria-checked="${via==='tel'}">${I.phone}<span><b>Numéro de téléphone</b><small>Sans e-mail</small></span></button><button type="button" data-via="mail" class="${via==='mail'?'on':''}" role="radio" aria-checked="${via==='mail'}">${I.mail}<span><b>Adresse e-mail</b><small>Gmail ou autre</small></span></button></div>`:''}
+  ${mode==='reset'&&via==='tel'?`<button type="button" class="btn btn-primary" data-act="help" style="flex:none;height:52px">${I.wa}Contacter l'aide Koris</button><button type="button" class="lnk-in" data-via="mail">Mon compte est avec un e-mail</button>`:`<form id="fAuth" class="form" novalidate>
+   ${via==='tel'&&mode!=='reset'?`<label class="pill">${I.phone}<span class="cc-pre">+243</span><input id="aTel" type="tel" inputmode="tel" autocomplete="tel" placeholder="81 234 5678" aria-label="Numéro de téléphone" value="${esc(ls.get('authPhoneRaw',''))}" required></label>`:`<label class="pill">${I.user}<input id="aMail" type="email" inputmode="email" autocomplete="email" placeholder="Ton e-mail" aria-label="E-mail" required></label>`}
    ${mode!=='reset'?`<label class="pill">${I.lock||I.user}<input id="aPass" type="password" autocomplete="${mode==='up'?'new-password':'current-password'}" placeholder="${mode==='up'?'Mot de passe (8 caractères min.)':'Ton mot de passe'}" aria-label="Mot de passe" minlength="8" required></label>`:''}
    <p class="err" id="aErr"></p><p class="ok-msg" id="aOk"></p>
    <button class="btn btn-primary" id="aGo" type="submit">${mode==='up'?'Créer mon compte':mode==='in'?'Me connecter':'Recevoir le lien'}</button>
-  </form>
+  </form>`}
   ${mode==='in'?`<button type="button" class="lnk-in" data-auth="reset">Mot de passe oublié ?</button>`:mode==='reset'?`<button type="button" class="lnk-in" data-auth="in">Retour à la connexion</button>`:''}
   <p class="fine">18 ans et plus · ${PRICE_LINE} · <a href="/confidentialite.html" style="color:inherit;text-decoration:underline">Confidentialité</a></p></section>`}
 function authErr(e){const m=String(e?.message||e||'');
+  if(m==='tel-exists')return 'Ce numéro a déjà un compte : touche « J\'ai un compte ».';
+  if(m==='tel-bad')return 'Numéro ou mot de passe incorrect.';
+  if(/email.*(invalid|not allowed)|invalid.*email/i.test(m))return 'Inscription par numéro indisponible pour le moment. Utilise ton e-mail.';
   if(/invalid login|invalid credentials/i.test(m))return 'E-mail ou mot de passe incorrect.';
   if(/already registered|already exists/i.test(m))return 'Cet e-mail a déjà un compte : touche « J\'ai un compte ».';
   if(/email not confirmed/i.test(m))return 'Confirme d\'abord ton e-mail avec le lien reçu dans ta boîte.';
@@ -1324,9 +1338,12 @@ function authErr(e){const m=String(e?.message||e||'');
   if(/rate|too many/i.test(m))return 'Trop d\'essais. Attends une minute et réessaie.';
   if(/fetch|network/i.test(m))return 'Pas de connexion internet. Vérifie ta connexion.';
   return 'Ça n\'a pas marché. Réessaie dans un instant.'}
-document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-auth]');if(!b)return;e.preventDefault();e.stopPropagation();S.authMode=b.dataset.auth;render()},true);
+document.addEventListener('click',e=>{const v=e.target.closest&&e.target.closest('[data-via]');if(v){e.preventDefault();e.stopPropagation();S.authVia=v.dataset.via;ls.set('authVia',S.authVia);if(S.authMode==='reset'&&S.authVia==='mail'){}render();return}const b=e.target.closest&&e.target.closest('[data-auth]');if(!b)return;e.preventDefault();e.stopPropagation();S.authMode=b.dataset.auth;render()},true);
 document.addEventListener('submit',async e=>{if(e.target.id!=='fAuth')return;e.preventDefault();e.stopPropagation();
-  const sb=sbClient(),err=$('#aErr'),ok=$('#aOk'),b=$('#aGo'),mail=$('#aMail').value.trim(),pass=$('#aPass')?.value||'',mode=S.authMode||'up';err.textContent='';ok.textContent='';
+  const sb=sbClient(),err=$('#aErr'),ok=$('#aOk'),b=$('#aGo'),pass=$('#aPass')?.value||'',mode=S.authMode||'up';err.textContent='';ok.textContent='';
+  const telIn=$('#aTel'),tel=telIn?telNorm(telIn.value):'';let mail=telIn?telMail(tel):$('#aMail').value.trim();
+  if(telIn&&!/^\d{11,15}$/.test(tel)){err.textContent='Entre un numéro de téléphone valide (ex. 81 234 5678).';telIn.focus();return}
+  if(telIn){ls.set('authPhoneRaw',telIn.value.trim());ls.set('authPhone',telShow(tel))}
   if(!sb){err.textContent='Connexion au serveur impossible. Recharge la page.';return}
   if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(mail)){err.textContent='Entre une adresse e-mail valide.';$('#aMail').focus();return}
   if(mode!=='reset'&&pass.length<8){err.textContent='Le mot de passe doit faire au moins 8 caractères.';$('#aPass').focus();return}
@@ -1334,7 +1351,7 @@ document.addEventListener('submit',async e=>{if(e.target.id!=='fAuth')return;e.p
   try{
     if(mode==='reset'){const {error}=await sb.auth.resetPasswordForEmail(mail,{redirectTo:location.origin+location.pathname});if(error)throw error;ok.textContent='Lien envoyé ! Regarde ta boîte mail (et les spams).';b.disabled=false;b.textContent=txt;return}
     const r=mode==='up'?await sb.auth.signUp({email:mail,password:pass,options:{emailRedirectTo:location.origin+location.pathname}}):await sb.auth.signInWithPassword({email:mail,password:pass});
-    if(r.error)throw r.error;
+    if(r.error){if(telIn&&/already registered|already exists/i.test(r.error.message||''))throw new Error('tel-exists');if(telIn&&/invalid login|invalid credentials/i.test(r.error.message||''))throw new Error('tel-bad');throw r.error}
     if(!r.data.session){ok.textContent='Compte créé ! Ouvre le lien de confirmation reçu par e-mail, puis reviens te connecter.';S.authMode='in';b.disabled=false;b.textContent=txt;return}
     await startLive(r.data.session.user.id,true);
   }catch(x){err.textContent=authErr(x);b.disabled=false;b.textContent=txt}},true);
@@ -1550,7 +1567,7 @@ const cities=[...DRC_CITIES,'Brazzaville','Pointe-Noire'];
   ${pill('user','fLast','Ton nom',p.lastName,'autocomplete="family-name" required')}
   <div class="sex" role="radiogroup" aria-label="Sexe"><span>${I.sex}Sexe</span><label><input type="radio" name="fSex" value="F" ${p.sex==='F'?'checked':''}><span>Femme</span></label><label><input type="radio" name="fSex" value="H" ${p.sex==='H'?'checked':''}><span>Homme</span></label></div>
   <div class="row2">${pill('cake','fAge','Ton âge',p.age,'type="number" min="18" max="99" inputmode="numeric"')}${pill('work','fJob','Ton métier',p.job)}</div>
-  ${pill('phone','fPhone','Ton numéro de téléphone',p.phone,'type="tel" inputmode="tel" autocomplete="tel"')}
+  ${pill('phone','fPhone','Ton numéro de téléphone',p.phone||ls.get('authPhone',''),'type="tel" inputmode="tel" autocomplete="tel"')}
   <div class="row2">${pill('city','fCity','Ta ville',p.city,'list="cityList"')}${pill('globe','fCountry','Ton pays',p.country)}</div>
   ${pill('pin','fCommune','Ta commune (ex. Lemba, Ngaliema…)',p.commune,'list="communeList" autocomplete="address-level3"')}
   <datalist id="cityList">${cities.map(c=>`<option value="${c}">`).join('')}</datalist>
