@@ -277,6 +277,8 @@ header.top{margin-inline:-16px;padding-inline:16px;top:0;padding-top:calc(18px +
 .pf-sub{color:var(--text);font-size:15px;font-weight:500;margin-top:4px}
 .pf-av{padding:2px;border-radius:50%;background:var(--grad);box-shadow:0 8px 24px -12px rgba(46,224,176,.5)}
 .pf-av .avatar{border:2px solid var(--ink);width:112px!important;height:112px!important;font-size:40px!important}
+.fol-row{display:flex;justify-content:center;gap:28px;margin:12px 0 4px} .fol-row .pf-stat{min-width:64px;padding:4px 6px;border-radius:12px} .fol-row button.pf-stat:active{background:var(--panel-2)}
+.fol-btn{width:100%;max-width:360px;flex:none;height:46px!important;min-height:46px;margin-top:16px;display:flex;align-items:center;justify-content:center;gap:8px} .fol-btn svg{width:18px;height:18px} .fol-on{border-color:var(--orange)!important;color:var(--orange)!important}
 .pf-stat{padding-bottom:6px;display:flex;flex-direction:column;align-items:center}
 .pf-stat b{font-family:var(--display);font-weight:600;font-size:22px;font-variant-numeric:tabular-nums;line-height:1.1}
 .pf-stat small{color:var(--muted);font-size:12px}
@@ -1851,6 +1853,7 @@ function vProfile(id,self){const x=S.profiles[id];if(!x)return `<div class="empt
     <div class="pd-name">${esc(x.firstName||fullName(x))}${x.certified?I.badge:''}</div>${x.test?'<span class="demo-tag">PROFIL FICTIF · TEST</span>':''}
     ${x.certified&&x.handle?`<div class="pf-handle">@${esc(x.handle)}</div>`:''}
     ${(x.lastName||x.age||x.sex)?`<div class="pf-sub">${esc([x.lastName,x.sex==='F'?'Femme':x.sex==='H'?'Homme':'',x.age?x.age+' ans':''].filter(Boolean).join(' · '))}</div>`:''}
+    ${folStats(id,x)}
     <div class="pf-chips">${availChip(x)}${!self&&zoneOf(x)&&zoneOf(me())?`<span>${I.pin}${esc(zoneOf(x).name)} · ${kmTxt(km(zoneOf(me()),zoneOf(x)))}</span>`:''}${x.city||x.country||x.commune?`<span>${I.pin}${esc([x.commune,x.city,x.country].filter(Boolean).join(', '))}</span>`:''}${x.job?`<span>${I.work}${esc(x.job)}</span>`:''}</div>
     ${x.bio?`<p class="pf-bio">${esc(x.bio)}</p>`:''}
    </div>
@@ -1858,7 +1861,7 @@ function vProfile(id,self){const x=S.profiles[id];if(!x)return `<div class="empt
    ${self?`<div class="quick3"><label for="qPhoto" class="${safeImg(x.photo)?'':'hot'}">${I.camera}<span>Photo</span></label><label for="cvPhoto" class="${safeImg(x.cover)?'':'hot'}">${I.image}<span>Couverture</span></label><button data-act="compose" data-withpic="1">${I.plus}<span>Statut</span></button></div>
      ${x.certified?'':x.cert?.status==='pending'?`<div class="cert-cta wait2">${I.badge}<div><b>Certification en vérification</b><small>@${esc(x.cert.handle)} · tu seras prévenu dès la validation</small></div></div>`
        :`<button class="cert-cta" data-go="certif">${I.badge}<div><b>Obtenir le badge certifié · 5 $</b><small>Badge à côté de ton nom + nom d'utilisateur réservé</small></div><span class="go-ar">${I.back}</span></button>`}`
-     :`<div class="pf-cta"><button class="btn btn-primary" data-msg="${esc(id)}">${I.chat}Écrire</button><button class="btn btn-ghost ${fav?'on':''}" data-fav="${esc(id)}">${I.heart}${fav?'Coup de cœur':'J\'aime'}</button></div>`}
+     :`<button class="btn ${isFollowing(id)?'btn-ghost fol-on':'btn-primary'} fol-btn" data-follow="${esc(id)}">${isFollowing(id)?I.check+'Abonné':I.plus+'S\'abonner'}</button><div class="pf-cta"><button class="btn btn-primary" data-msg="${esc(id)}">${I.chat}Écrire</button><button class="btn btn-ghost ${fav?'on':''}" data-fav="${esc(id)}">${I.heart}${fav?'Coup de cœur':'J\'aime'}</button></div>`}
    <h3 class="pf-h">Informations</h3>
    <div class="info pf-info">${row('work','Poste',x.job)}
     ${self?`<div class="info-row"><span class="ic">${I.phone}</span><div><small>Téléphone · ${x.phoneHidden?'masqué pour les membres':'visible par les membres'}</small><b>${esc(x.phone||'—')}</b></div><label class="tg" title="Afficher mon numéro aux membres"><input type="checkbox" id="phoneVis" ${x.phoneHidden?'':'checked'} aria-label="Afficher mon numéro aux autres membres"></label></div>`
@@ -2359,6 +2362,8 @@ document.addEventListener('click',async e=>{const t=e.target.closest('button,[da
   if(d.chatdel){if(!t.dataset.armed){t.dataset.armed='1';t.classList.add('armed');toast('Touche encore pour supprimer la conversation');setTimeout(()=>{delete t.dataset.armed;t.classList.remove('armed')},3500);return}return chatDelete(d.chatdel)}
   if(d.memadd){return memAdd(d.memadd,d.n,t)}
   if(d.memoff){return memOff(d.memoff,t)}
+  if(d.follow){return toggleFollow(d.follow,t)}
+  if(d.follist){return openFollowList(d.uid,d.follist)}
   if(d.repay){S.route.repay=true;return render()}
   if(d.invuse){return invUse(d.invuse==='?'?(($('#invCode')||{}).value||''):d.invuse,t)}
   if(d.freetog){if(!S.owner)return;t.disabled=true;const c={...(S.payCfg||{}),free:!FREE()};try{await S.be.savePayCfg(c);S.payCfg=c;toast(c.free?'Accès gratuit activé 🎁':'Accès payant réactivé');render()}catch(_){toast("L'enregistrement a échoué");t.disabled=false}return}
@@ -2614,17 +2619,18 @@ function actSound(k){if(!FX.snd)return;try{const c=actCtx();if(!c||c.state!=='ru
     g.gain.setValueAtTime(0,t0+d);g.gain.linearRampToValueAtTime(v,t0+d+.008);g.gain.exponentialRampToValueAtTime(.0001,t0+d+(m>1?.25:.7));o.connect(g);g.connect(c.destination);o.start(t0+d);o.stop(t0+d+.8)})})}catch(_){}}
 function actText(a){const x=S.profiles[a.uid]||{},n=`<b>${esc(x.firstName||'Quelqu’un')}</b>`;
   if(a.t==='cm')return a.mine?`${n} a commenté ta publication : « ${esc(String(a.text||'').slice(0,60))} »`:`${n} a commenté une publication : « ${esc(String(a.text||'').slice(0,50))} »`;
+  if(a.t==='fo')return `${n} s'est abonné${(S.profiles[a.uid]||{}).sex==='F'?'e':''} à toi 💚`;
   if(a.t==='av')return `${n} est dispo ${a.st==='diner'?'pour un dîner 🍽️':a.st==='chill'?'pour un flirt 😘':'pour une rencontre 💗'}`;
   return `${n} a publié ${a.img?'une photo':a.vid?'une vidéo':'quelque chose'}${a.text?' : « '+esc(String(a.text).slice(0,50))+' »':''}`}
-function actLabel(a){return a.t==='cm'?(a.mine?'💬 Nouveau commentaire':'💬 Commentaire'):a.t==='av'?'✨ Disponibilité':'📸 Nouvelle publication'}
-function actOpen(a){if(a.t==='av'){hist.push({...S.route});S.route={v:'profile',param:a.uid,i:0};window.scrollTo(0,0);return render()}
+function actLabel(a){return a.t==='fo'?'➕ Nouvel abonné':a.t==='cm'?(a.mine?'💬 Nouveau commentaire':'💬 Commentaire'):a.t==='av'?'✨ Disponibilité':'📸 Nouvelle publication'}
+function actOpen(a){if(a.t==='av'||a.t==='fo'){hist.push({...S.route});S.route={v:'profile',param:a.uid,i:0};window.scrollTo(0,0);return render()}
   if(a.t==='cm'&&a.postId&&typeof openComments==='function'){if(S.route.v!=='feed')go('feed');return setTimeout(()=>openComments(a.postId),150)}
   go('feed')}
 function actPush(a){if(ACT.list.some(z=>z.key===a.key))return;ACT.list.unshift(a);actSave();ntRefresh();ACT.q.push(a);actNext()}
 function actNext(){if(ACT.busy||!ACT.q.length)return;if(document.getElementById('ksplash'))return setTimeout(actNext,800);
   const a=ACT.q.shift();ACT.busy=true;const x=S.profiles[a.uid]||{};
   ntBanner(`${av(x,40)}<span class="ntb-tx"><small>${actLabel(a)}</small><span>${actText(a)}</span></span>`,()=>actOpen(a));
-  actSound(a.t);buzz(a.t==='av'?[30,50,30,50,60]:a.t==='cm'?[40,60,40]:[50]);
+  actSound(a.t==='fo'?'av':a.t);buzz(a.t==='av'||a.t==='fo'?[30,50,30,50,60]:a.t==='cm'?[40,60,40]:[50]);
   ntSystem('Koris',actText(a).replace(/<[^>]+>/g,''));
   setTimeout(()=>{ACT.busy=false;actNext()},4200)}
 const ACT_FRESH=10*60e3;
@@ -2677,6 +2683,27 @@ async function memOff(id,btn){const x=S.profiles[id];if(!x||!S.owner)return;if(!
   btn.disabled=true;try{await S.be.updateProfileOf(id,{paid:false,noFree:true,paidUntil:null,pay:{...(x.pay||{}),status:'rejected',checkedAt:Date.now()}});toast(`Accès de ${x.firstName} retiré`);memRefresh()}catch(_){toast("L'action n'a pas abouti.");btn.disabled=false}}
 function memRefresh(){setTimeout(()=>{const el=$('#memList');if(el)el.innerHTML=memListHtml(($('#memQ')||{}).value||'')},700)}
 document.addEventListener('input',e=>{if(e.target.id==='memQ'){const el=$('#memList');if(el)el.innerHTML=memListHtml(e.target.value)}});
+
+/* =================== Abonnements entre membres =================== */
+/* Formule : abonnés de X = nombre de membres dont la liste « following » contient X ; abonnements de X = taille de sa propre liste. */
+const followingOf=x=>Array.isArray(x?.following)?x.following:[];
+const followersOf=id=>Object.entries(S.profiles||{}).filter(([uid,x])=>uid!==id&&x&&x.firstName&&followingOf(x).includes(id)).map(([uid])=>uid);
+const fmtN=n=>n>=1e6?(n/1e6).toFixed(1).replace('.0','').replace('.',',')+' M':n>=1e4?Math.floor(n/1e3)+' k':n>=1e3?(n/1e3).toFixed(1).replace('.0','').replace('.',',')+' k':String(n);
+const isFollowing=id=>followingOf(me()).includes(id);
+async function toggleFollow(id,btn){const p=me();if(!p||id===S.be.uid)return;const f=followingOf(p);const on=f.includes(id);
+  const next=on?f.filter(z=>z!==id):[...f,id].slice(-2000);if(btn)btn.disabled=true;
+  try{await S.be.saveProfile({...p,following:next});buzz(on?[10]:[20,40,20]);if(!on){fx.like&&fx.like();toast('Tu es abonné à '+((S.profiles[id]||{}).firstName||'ce membre')+' ✓')}softRender()}
+  catch(_){toast("Ça n'a pas marché. Réessaie.")}if(btn)btn.disabled=false}
+function openFollowList(id,kind){const L=$('#layer');const x=S.profiles[id]||{};const ids=kind==='followers'?followersOf(id):followingOf(x).filter(u=>S.profiles[u]);
+  L.innerHTML=`<div class="sheet-bg" id="sbg"><div class="sheet" role="dialog" aria-label="${kind==='followers'?'Abonnés':'Abonnements'}"><span class="grab"></span>
+  <h2 style="font-size:20px">${kind==='followers'?'Abonnés':'Abonnements'} · ${ids.length}</h2>
+  <div class="nt-list">${ids.length?ids.map(u=>{const y=S.profiles[u]||{};return `<button class="nt-it" data-profile="${esc(u)}">${av(y,44)}<span class="nt-body"><span><b>${esc(fullName(y))}</b></span><small>${esc([y.job,y.city].filter(Boolean).join(' · '))}</small></span></button>`}).join('')
+   :`<p class="hint" style="text-align:center;padding:22px 0">${kind==='followers'?'Personne pour l\'instant.':'Aucun abonnement pour l\'instant.'}</p>`}</div></div></div>`;
+  $('#sbg').onclick=e=>{if(e.target.id==='sbg'||e.target.closest('[data-profile]'))setTimeout(()=>{L.innerHTML=''},0)}}
+function folStats(id,x){const fo=followersOf(id).length,fi=followingOf(x).filter(u=>S.profiles[u]).length,po=S.posts.filter(p=>p.uid===id).length;
+  return `<div class="fol-row"><button class="pf-stat" data-follist="followers" data-uid="${esc(id)}"><b>${fmtN(fo)}</b><small>Abonné${fo>1?'s':''}</small></button><button class="pf-stat" data-follist="following" data-uid="${esc(id)}"><b>${fmtN(fi)}</b><small>Abonnement${fi>1?'s':''}</small></button><div class="pf-stat"><b>${fmtN(po)}</b><small>Publication${po>1?'s':''}</small></div></div>`}
+function actFollow(prev,m){const uid=S.be?.uid;if(!prev||!uid||!me())return;
+  Object.entries(m).forEach(([id,x])=>{if(id===uid||!x||!prev[id])return;if(followingOf(x).includes(uid)&&!followingOf(prev[id]).includes(uid))actPush({key:'fo'+id+'-'+Date.now(),t:'fo',uid:id,at:Date.now()})})}
 /* =================== Démarrage =================== */
 let UNSUBS=[];
 function restoreRoute(){const p=me();if(!p||!p.firstName)return {v:'onboard'};if(!isActive(p))return {v:'pay'};
@@ -2685,7 +2712,7 @@ function attachBe(firstRoute){UNSUBS.forEach(f=>{try{f()}catch(_){}});UNSUBS=[];
   add(S.be.onHelpCfg(c=>{S.helpCfg=c}));
   add(S.be.onPayCfg(c=>{S.payCfg=c;if(S.route.v==='pay'){const el=$('#payDest');if(el)el.innerHTML=destHtml(S.payOp||me()?.pay?.op||'orange')}}));
   let first=true;
-  add(S.be.onProfiles(m=>{const prev=S.profiles;S.profiles=m;S.gotProfiles=true;if(first){first=false;S.route=firstRoute?firstRoute():restoreRoute();render();ntWelcome();openFromUrl();pushInvite()}else{try{ntCheck(prev,m)}catch(_){}try{actAvail(prev,m)}catch(_){}softRender()}}));
+  add(S.be.onProfiles(m=>{const prev=S.profiles;S.profiles=m;S.gotProfiles=true;if(first){first=false;S.route=firstRoute?firstRoute():restoreRoute();render();ntWelcome();openFromUrl();pushInvite()}else{try{ntCheck(prev,m)}catch(_){}try{actAvail(prev,m)}catch(_){}try{actFollow(prev,m)}catch(_){}softRender()}}));
   add(S.be.onPosts(a=>{S.posts=a;try{actPosts(a)}catch(_){}if(!first)softRender()}));
   add(S.be.onChats(a=>{S.chats=a;chatWatch(a);if(!first)softRender()}));
   add(S.be.onComments(a=>{S.comments=a;try{actComments(a)}catch(_){}refreshComments();if(!first)softRender()}));
