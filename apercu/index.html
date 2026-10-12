@@ -181,6 +181,7 @@ p{margin:0}
 
 /* ---- Top bar ---- */
 .top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:18px 10px;position:sticky;top:env(safe-area-inset-top,0px);background:linear-gradient(var(--ink) 70%,transparent);z-index:5}
+header.top{margin-inline:-16px;padding-inline:16px;top:0;padding-top:calc(18px + env(safe-area-inset-top,0px));background:linear-gradient(var(--ink) 78%,rgba(3,16,14,0))}
 .wordmark{cursor:pointer;font-family:var(--display);font-weight:800;letter-spacing:.06em;font-size:20px;display:flex;align-items:center;gap:8px}
 .wordmark i{width:9px;height:9px;border-radius:50%;background:var(--orange);box-shadow:0 0 12px var(--orange)}
 .icon-btn{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:var(--panel-2);border:1px solid var(--line)}
@@ -859,12 +860,17 @@ p{margin:0}
 .sw input::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;transition:transform .2s}
 .sw input:checked{background:var(--orange)}
 .sw input:checked::after{transform:translateX(18px)}
-.inv-card{display:flex;align-items:center;gap:12px;width:100%;margin-top:14px;padding:12px 12px 12px 14px;border-radius:20px;text-align:left;background:linear-gradient(120deg,rgba(200,240,74,.14),rgba(46,224,176,.08));border:1px solid rgba(200,240,74,.22)}
+.inv-card{display:flex;align-items:center;gap:12px;width:100%;margin-top:14px;padding:12px 12px 12px 14px;border-radius:20px;text-align:left;background:linear-gradient(120deg,rgba(200,240,74,.22),rgba(46,224,176,.12));border:1.5px solid rgba(200,240,74,.5);box-shadow:0 10px 26px -14px rgba(200,240,74,.8)}
 .inv-ic{width:42px;height:42px;flex:none;border-radius:14px;display:grid;place-items:center;background:var(--orange);color:var(--on-acc)}.inv-ic svg{width:20px;height:20px}
 .inv-tx{flex:1;min-width:0}.inv-tx b{display:block;font:600 14.5px var(--display)}.inv-tx small{display:block;font-size:12px;color:var(--muted);margin-top:1px}
 .inv-go{flex:none;height:34px;padding:0 14px;border-radius:999px;display:grid;place-items:center;font:600 12.5px var(--display);background:var(--orange);color:var(--on-acc)}
 .shr-hero{text-align:center;display:flex;flex-direction:column;align-items:center;gap:6px}.shr-logo{width:58px;height:58px;border-radius:50%;display:grid;place-items:center;background:var(--grad);color:var(--on-acc);box-shadow:0 10px 26px -8px var(--orange)}.shr-logo svg{width:26px;height:26px}
 .shr-link{display:flex;align-items:center;gap:8px;height:50px;padding:0 6px 0 16px;border-radius:999px;background:var(--panel-2);border:1px dashed rgba(200,240,74,.35)}.shr-link span{flex:1;font-weight:600;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.shr-link button{height:38px;padding:0 16px;border-radius:999px;background:var(--orange);color:var(--on-acc);font-weight:700;font-size:13px}
+.shr-cta{display:flex;align-items:center;gap:12px;width:100%;max-width:400px;margin-top:14px;padding:14px;border-radius:22px;text-align:left;color:var(--on-acc);background:linear-gradient(110deg,#E9FF8A,#C8F04A 55%,#2EE0B0);box-shadow:0 14px 30px -12px rgba(200,240,74,.7);animation:shrPulse 2.4s ease-in-out infinite}
+.shr-cta .ic{width:44px;height:44px;flex:none;border-radius:14px;display:grid;place-items:center;background:rgba(3,16,14,.14)}.shr-cta .ic svg{width:22px;height:22px}
+.shr-cta div{flex:1;min-width:0}.shr-cta b{display:block;font:700 16px var(--display)}.shr-cta small{display:block;font-size:12px;opacity:.8;margin-top:1px}
+.shr-cta .go{flex:none;height:36px;padding:0 14px;border-radius:999px;display:grid;place-items:center;font:700 13px var(--display);background:#03100E;color:#C8F04A}
+@keyframes shrPulse{0%,100%{box-shadow:0 14px 30px -12px rgba(200,240,74,.7)}50%{box-shadow:0 14px 34px -8px rgba(200,240,74,.95)}}
 .help-row{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:18px;background:var(--panel-2);border:1px solid var(--line);text-decoration:none;color:var(--text)}
 .help-row .ic{width:40px;height:40px;border-radius:13px;display:grid;place-items:center;flex:none;color:#fff}
 .help-row .ic svg{width:19px;height:19px}
@@ -1652,7 +1658,7 @@ function admDoneHtml(){const l=Object.values(S.profiles).filter(x=>x.paid&&!x.ow
 
 function vFeed(){const p=me();const others=Object.entries(S.profiles).filter(([id,x])=>id!==S.be.uid&&x.paid).sort((a,b)=>(b[1].at||0)-(a[1].at||0)).slice(0,12);
   const today=S.posts.filter(x=>Date.now()-x.at<86400e3).length;
-  return `<header class="top"><div class="wordmark" data-go="about" role="button" tabindex="0" aria-label="À propos de Koris"><i></i>KORIS</div><div class="hd-r"><button class="kori-btn" data-act="guide" aria-label="Gucko, ton assistant" title="Gucko">${I.spark}<span>Gucko</span></button>${bellHtml()}<button class="icon-btn" data-go="me" aria-label="Mon profil" style="padding:0;overflow:hidden">${av(p,42)}</button></div></header>
+  return `<header class="top"><div class="wordmark" data-go="about" role="button" tabindex="0" aria-label="À propos de Koris"><i></i>KORIS</div><div class="hd-r"><button class="kori-btn" data-act="guide" aria-label="Gucko, ton assistant" title="Gucko">${I.spark}<span>Gucko</span></button>${bellHtml()}</div></header>
   <div class="hello"><h1>Salut ${esc(p.firstName)}</h1><p>${today} nouvelle${today>1?'s':''} publication${today>1?'s':''} aujourd'hui</p>${demoBanner()}</div>
   <div class="glow qc"><label class="me-av" for="qPhoto" aria-label="${p.photo?'Changer ma photo de profil':'Ajouter une photo de profil'}">${av(p,48)}<span class="cam">${I.plus}</span></label><input id="qPhoto" type="file" accept="image/*" class="fpick">
   <button class="ask" data-act="compose">Quoi de neuf, ${esc(p.firstName)} ?</button><button class="ph-btn" data-act="compose" data-withpic="1" aria-label="Publier une photo">${I.image}</button></div>
@@ -1689,7 +1695,7 @@ function vDiscover(){const q=(S.route.q||'').toLowerCase(),city=S.route.city||''
   const cols=[[],[]];list.forEach((e,i)=>cols[i%2].push([e,i]));
   const card=([[id,x],i])=>{const img=safeImg(x.photo);const fav=S.favs.has(id);return `<div class="pcard ${i%3===1?'tall':''}">${isNewM(x)?'<span class="new-flag">Nouveau</span>':''}<button data-profile="${esc(id)}" style="display:block;width:100%" aria-label="Voir le profil de ${esc(x.firstName)}"><div class="ph">${img?`<img src="${img}" alt="">`:`<div class="initials-ph">${esc(initials(x))}</div>`}</div>${availOf(x)!=='off'?`<span class="av-flag ${availOf(x)}">${INTENTS.find(t=>t[0]===availOf(x))[2]} ${INT_LBL[availOf(x)]}</span>`:''}</button>
     <div class="ov"><div><span class="loc">${I.pin.replace('<svg','<svg width="11" height="11"')}${esc([x.commune,x.city,x.country].filter(Boolean).join(', '))}</span><span class="nm"><span>${esc(x.firstName)}${x.age?', '+esc(x.age):''}</span>${x.certified?I.badge:''}</span><span class="job">${esc(x.job)}</span></div><button class="heart-mini ${fav?'on':''}" data-fav="${esc(id)}" aria-label="Coup de cœur">${I.heart}</button></div></div>`};
-  return `<header class="top"><h1 style="font-size:26px;font-weight:700">Découvrir</h1><div class="hd-r"><button class="kori-btn" data-act="guide" aria-label="Gucko, ton assistant" title="Gucko">${I.spark}<span>Gucko</span></button>${bellHtml()}<button class="icon-btn" data-go="me" style="padding:0;overflow:hidden" aria-label="Mon profil">${av(me(),42)}</button></div></header>
+  return `<header class="top"><h1 style="font-size:26px;font-weight:700">Découvrir</h1><div class="hd-r"><button class="kori-btn" data-act="guide" aria-label="Gucko, ton assistant" title="Gucko">${I.spark}<span>Gucko</span></button>${bellHtml()}</div></header>
   <div class="search"><label>${I.search.replace('<svg','<svg width="18" height="18"')}<input id="q" placeholder="Nom, métier, ville…" value="${esc(S.route.q||'')}" aria-label="Rechercher"></label></div>
   <div class="intents">${[['','Tous','✨'],...INTENTS].map(([k,l,e])=>`<button type="button" data-intent="${k}" class="${intent===k?'on '+k:''}"><span>${e}</span><b>${l}</b><small>${k?icount(k)+' dispo':all.length+' membres'}</small></button>`).join('')}</div>
   ${intent?`<div class="sec-head" style="margin:14px 0 10px"><h2>${intent==='diner'?'Disponibles pour un dîner':intent==='chill'?'Disponibles pour un flirt':'Disponibles pour une rencontre'}</h2><span class="count">${list.length}</span></div>`:''}
@@ -1751,6 +1757,7 @@ function vProfile(id,self){const x=S.profiles[id];if(!x)return `<div class="empt
     <div class="pf-chips">${availChip(x)}${!self&&zoneOf(x)&&zoneOf(me())?`<span>${I.pin}${esc(zoneOf(x).name)} · ${kmTxt(km(zoneOf(me()),zoneOf(x)))}</span>`:''}${x.city||x.country||x.commune?`<span>${I.pin}${esc([x.commune,x.city,x.country].filter(Boolean).join(', '))}</span>`:''}${x.job?`<span>${I.work}${esc(x.job)}</span>`:''}</div>
     ${x.bio?`<p class="pf-bio">${esc(x.bio)}</p>`:''}
    </div>
+   ${self?`<button class="shr-cta" data-act="shareapp"><span class="ic">${I.share}</span><div><b>Partager Koris</b><small>Invite tes amis sur WhatsApp, Facebook ou par SMS</small></div><span class="go">Partager</span></button>`:''}
    ${self?availPanel(x):''}
    ${self?`<div class="quick3"><label for="qPhoto" class="${safeImg(x.photo)?'':'hot'}">${I.camera}<span>Photo</span></label><label for="cvPhoto" class="${safeImg(x.cover)?'':'hot'}">${I.image}<span>Couverture</span></label><button data-act="compose" data-withpic="1">${I.plus}<span>Statut</span></button></div>
      ${x.certified?'':x.cert?.status==='pending'?`<div class="cert-cta wait2">${I.badge}<div><b>Certification en vérification</b><small>@${esc(x.cert.handle)} · tu seras prévenu dès la validation</small></div></div>`
