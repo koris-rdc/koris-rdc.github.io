@@ -887,6 +887,14 @@ header.top{margin-inline:-16px;padding-inline:16px;top:0;padding-top:calc(18px +
 .shr-cta .go{flex:none;height:36px;padding:0 14px;border-radius:999px;display:grid;place-items:center;font:700 13px var(--display);background:#03100E;color:#C8F04A}
 @keyframes shrPulse{0%,100%{box-shadow:0 14px 30px -12px rgba(200,240,74,.7)}50%{box-shadow:0 14px 34px -8px rgba(200,240,74,.95)}}
 .free-card{display:flex;align-items:center;gap:12px;margin-top:16px;padding:14px;border-radius:18px;background:var(--panel-2);border:1px solid var(--line)} .free-card.on{background:linear-gradient(120deg,rgba(200,240,74,.18),rgba(46,224,176,.1));border-color:rgba(200,240,74,.45)} .free-card div{flex:1} .free-card b{display:block;font:700 15px var(--display)} .free-card small{display:block;font-size:12.5px;color:var(--muted);margin-top:2px}
+.mem-list{display:flex;flex-direction:column;gap:6px;margin-top:10px}
+.mem-row{display:flex;align-items:center;gap:8px;padding:8px 8px 8px 10px;border-radius:18px;background:var(--panel-2);border:1px solid var(--line)}
+.mem-who{flex:1;min-width:0;display:flex;align-items:center;gap:10px;text-align:left} .mem-who .mid{min-width:0;display:flex;flex-direction:column;gap:1px}
+.mem-who b{font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis} .mem-who small{font-size:11.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mem-st{align-self:flex-start;font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:999px;background:var(--panel);color:var(--muted)}
+.mem-st.ok{color:#03100E;background:#C8F04A} .mem-st.free{color:var(--orange-2);background:rgba(46,224,176,.14)} .mem-st.no,.mem-st.exp{color:#fff;background:var(--danger)} .mem-st.wait{color:#03100E;background:#FFD27A}
+.mem-acts{display:flex;flex-direction:column;gap:4px;flex:none} .mem-acts .mini{height:32px;padding:0 12px;font-size:12px}
+.pay-alt{font-size:12.5px;text-align:center} .pay-alt button{color:var(--orange);font-weight:700;text-decoration:underline;font-size:12.5px}
 .inv-new{display:flex;gap:8px;align-items:center;margin-top:10px}
 .inv-row{display:flex;align-items:center;gap:6px;padding:10px 0 0;border-top:1px solid var(--line);margin-top:10px} .inv-row.off{opacity:.5}
 .inv-row .mid{flex:1;min-width:0} .inv-row b{display:block;font-size:12.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap} .inv-row small{font-size:11.5px;color:var(--muted)}
@@ -1619,12 +1627,15 @@ const dueFor=p=>(SUBSCRIPTION?(isNew(p)?REG+FEE:FEE):ACCESS_FEE)-refDisc(p);
 const fc=n=>n.toLocaleString('fr-FR').replace(/\u202f|\u00a0/g,' ')+' FC';
 /* ACCÈS GRATUIT (période d'essai) : tout membre inscrit entre directement, sans payer.
    Le propriétaire l'active ou l'arrête dans l'espace Paiements. */
-const FREE_DEFAULT=true;
+const FREE_DEFAULT=false;
+/* les membres inscrits pendant la période d'essai gratuite gardent leur accès */
+const FREE_UNTIL=Date.parse('2026-10-12T20:15:00Z');
 const FREE=()=>{const c=S.payCfg;return c&&typeof c.free==='boolean'?c.free:FREE_DEFAULT};
-const isActive=p=>!!p&&!!p.firstName&&FREE()||!!p&&!!p.paid&&(!SUBSCRIPTION||!!p.owner||!p.paidUntil||p.paidUntil>Date.now());
+const isActive=p=>!!p&&!!p.firstName&&(FREE()||(!p.paid&&!p.noFree&&(p.at||0)>0&&(p.at||0)<FREE_UNTIL))||!!p&&!!p.paid&&(!SUBSCRIPTION||!!p.owner||!p.paidUntil||p.paidUntil>Date.now());
 const untilTxt=t=>new Date(t).toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'});
 const INV_OP={id:'invite',name:'Invitation gratuite',short:'🎁',c:'#C8F04A',ussd:''};
-const opById=id=>id==='invite'?INV_OP:(OPS.find(o=>o.id===id)||OPS[0]);
+const MAN_OP={id:'manuel',name:'Payé directement',short:'✋',c:'#2EE0B0',ussd:''};
+const opById=id=>id==='manuel'?MAN_OP:id==='invite'?INV_OP:(OPS.find(o=>o.id===id)||OPS[0]);
 function payCfg(id){const c=(S.payCfg||{})[id]||{};const o=opById(id);return{num:String(c.num||'').trim(),holder:String(c.holder||'').trim(),ussd:String(c.ussd||o.ussd).trim()}}
 function destHtml(id){const o=opById(id),c=payCfg(id);
   if(!c.num)return `<div class="warn">Le numéro ${esc(o.name)} de Koris n'est pas encore configuré. Choisis un autre moyen ou réessaie plus tard.</div>`;
@@ -1645,6 +1656,7 @@ function vPay(){const p=me()||{};const pay=p.pay||{};const op=S.payOp||pay.op||'
   return `<form class="form pay" id="fPay" novalidate>${head}
   <h1>${!SUBSCRIPTION?'Accès à Koris':p.paid?(isActive(p)?'Payer le mois suivant':'Renouvelle ton abonnement'):'Abonnement'}</h1><p class="lead">${!SUBSCRIPTION?`Étape 2 sur 2 · ${fc(due)}, une seule fois, pour accéder à Koris.`:p.paid?(isActive(p)?'5 000 FC ajoutent 30 jours à ton abonnement en cours.':'Ton mois est terminé. Renouvelle pour continuer à discuter.'):'Étape 2 sur 2 · Inscription 5 000 FC, puis 5 000 FC par mois.'}</p>
   ${invCard()}
+  <p class="hint pay-alt">Tu préfères payer directement à l'équipe Koris ? <button type="button" data-act="help">Contacte l'aide</button> : ton compte sera activé dès réception.</p>
   ${pay.status==='rejected'?`<div class="warn">Ton dernier paiement n'a pas pu être confirmé. Vérifie la référence du SMS et renvoie-la.</div>`:''}
   ${amount}
   ${refDisc(p)?`<div class="ref-ok">🎁 <span>Réduction parrainage : <b>−500 FC</b> · ${refsOf(p.id||S.be.uid).length} ami(s) inscrit(s) grâce à toi</span></div>`:`<button type="button" class="ref-inv" data-act="shareapp"><span class="g">🎁</span><span><b>Paie 4 500 FC au lieu de 5 000 FC</b><small>Invite un ami : dès qu'il s'inscrit avec ton lien, ta réduction s'applique ici.</small></span><span class="go">${I.share}</span></button>`}
@@ -1702,6 +1714,9 @@ function vAdmin(){
   <h2>Invitations gratuites</h2><p class="hint" style="padding:0 2px 8px">Crée un lien pour tes membres privés : ils s'inscrivent sans payer. Choisis le nombre de places, puis envoie le lien.</p>
   <div class="opbox"><div class="inv-new"><label class="pill" style="flex:1">${I.user}<input id="invMax" type="number" min="1" max="500" value="10" aria-label="Nombre de places"></label><button class="btn btn-primary" data-invnew="1" style="flex:none;height:50px;padding:0 18px">Créer un lien</button></div><div id="admInv">${admInvHtml()}</div></div>
   <h2>À vérifier</h2><div id="admList">${admListHtml()}</div>
+  <h2>Membres</h2><p class="hint" style="padding:0 2px 8px">Un membre t'a payé directement (Mobile Money sur ton numéro, espèces…) ? Cherche-le et touche <b>${SUBSCRIPTION?'« +1 mois »':'« Activer »'}</b> : son accès s'ouvre tout de suite.</p>
+  <label class="pill">${I.search}<input id="memQ" placeholder="Nom, numéro, ville…" autocomplete="off" aria-label="Chercher un membre"></label>
+  <div id="memList" class="mem-list">${memListHtml('')}</div>
   <h2>Certifications à vérifier (5 $)</h2><div id="admCert">${admCertHtml()}</div>
   <h2>Tes numéros de réception</h2>
   <form id="fCfg" novalidate>${OPS.map(o=>{const c=payCfg(o.id);return `<div class="opbox"><h3><i style="background:${o.c}"></i>${o.name}</h3>
@@ -2336,6 +2351,8 @@ document.addEventListener('click',async e=>{const t=e.target.closest('button,[da
   if(d.del){if(t.dataset.armed){try{const x=S.posts.find(p=>p.id===d.del);await S.be.deletePost(d.del);toast('Publication supprimée');if(x&&isVid(x))S.be.dropVideo(x.vid);S.comments.filter(c=>c.postId===d.del&&c.uid===S.be.uid).forEach(c=>S.be.deleteComment(c.id).catch(()=>{}))}catch(_){toast('Suppression impossible')}}else{t.dataset.armed='1';t.style.background='var(--danger)';toast('Appuie encore pour supprimer');setTimeout(()=>{delete t.dataset.armed;t.style.background=''},3000)}return}
   if(d.mm){S.payOp=d.mm;document.querySelectorAll('.mm button').forEach(b=>{const on=b===t;b.classList.toggle('on',on);b.setAttribute('aria-checked',on)});$('#payDest').innerHTML=destHtml(d.mm);return}
   if(d.chatdel){if(!t.dataset.armed){t.dataset.armed='1';t.classList.add('armed');toast('Touche encore pour supprimer la conversation');setTimeout(()=>{delete t.dataset.armed;t.classList.remove('armed')},3500);return}return chatDelete(d.chatdel)}
+  if(d.memadd){return memAdd(d.memadd,d.n,t)}
+  if(d.memoff){return memOff(d.memoff,t)}
   if(d.repay){S.route.repay=true;return render()}
   if(d.invuse){return invUse(d.invuse==='?'?(($('#invCode')||{}).value||''):d.invuse,t)}
   if(d.freetog){if(!S.owner)return;t.disabled=true;const c={...(S.payCfg||{}),free:!FREE()};try{await S.be.savePayCfg(c);S.payCfg=c;toast(c.free?'Accès gratuit activé 🎁':'Accès payant réactivé');render()}catch(_){toast("L'enregistrement a échoué");t.disabled=false}return}
@@ -2631,6 +2648,29 @@ function mcAnimate(){const els=document.querySelectorAll('.mcount[data-n]');if(!
 {const SR=softRender;softRender=function(){const out=SR.apply(this,arguments);try{mcAnimate()}catch(_){}return out}}
 function mcCard(){const n=memberCount(),w=memberSince(7*864e5),d=memberSince(864e5);
   return `<div class="glow mc-card"><span class="mc-ic">${I.user}</span><div><b class="mcount" data-n="${n}">${n.toLocaleString('fr-FR')}</b><small>membres inscrits sur Koris</small></div><span class="mc-new">${d?`+${d} aujourd'hui`:w?`+${w} cette semaine`:'En direct'}</span></div>`}
+
+/* =================== Admin : activer un membre à la main (paiement reçu hors de l'app) =================== */
+function memStatus(x){if(x.owner)return ['own','Propriétaire'];if(x.paid&&(!SUBSCRIPTION||!x.paidUntil||x.paidUntil>Date.now()))return ['ok',SUBSCRIPTION&&x.paidUntil?'Actif jusqu\'au '+untilTxt(x.paidUntil):'Accès payé'];
+  if(SUBSCRIPTION&&x.paid&&x.paidUntil)return ['exp','Expiré le '+untilTxt(x.paidUntil)];if(isActive(x))return ['free','Gratuit (essai)'];if(x.pay?.status==='pending')return ['wait','Paiement à vérifier'];return ['no','Pas encore payé']}
+function memListHtml(q){q=norm(q||'');const all=Object.entries(S.profiles).filter(([id,x])=>x&&x.firstName&&id!==S.be.uid)
+   .filter(([,x])=>!q||norm([x.firstName,x.lastName,x.phone,x.city,x.commune].join(' ')).includes(q))
+   .sort((a,b)=>{const r=s=>({no:0,wait:0,exp:1,free:2,ok:3,own:4})[memStatus(s)[0]];return r(a[1])-r(b[1])||(b[1].at||0)-(a[1].at||0)}).slice(0,60);
+  if(!all.length)return `<p class="hint" style="padding:8px 2px">Aucun membre trouvé.</p>`;
+  return all.map(([id,x])=>{const [k,lbl]=memStatus(x);const on=k==='ok'||k==='own';
+    return `<div class="mem-row"><button class="mem-who" data-profile="${esc(id)}">${av(x,40)}<span class="mid"><b>${esc(fullName(x))}</b><small>${esc([x.phone,x.city].filter(Boolean).join(' · '))}</small><span class="mem-st ${k}">${lbl}</span></span></button>
+     <div class="mem-acts">${k==='own'?'':SUBSCRIPTION?`<button type="button" class="mini solid" data-memadd="${esc(id)}" data-n="1">+1 mois</button><button type="button" class="mini" data-memadd="${esc(id)}" data-n="3">+3 mois</button>`
+       :on?`<button type="button" class="mini" data-memoff="${esc(id)}">Retirer</button>`:`<button type="button" class="mini solid" data-memadd="${esc(id)}" data-n="0">Activer</button>${k==='free'?`<button type="button" class="mini" data-memoff="${esc(id)}">Retirer</button>`:''}`}</div></div>`}).join('')}
+async function memAdd(id,n,btn){const x=S.profiles[id];if(!x||!S.owner)return;const now=Date.now();
+  const months=+n||0;const until=SUBSCRIPTION?Math.max(now,x.paidUntil||0)+Math.max(1,months)*MONTH:null;
+  const amount=SUBSCRIPTION?(isNew(x)?REG:0)+Math.max(1,months)*FEE:ACCESS_FEE;
+  if(btn)btn.disabled=true;
+  try{await S.be.updateProfileOf(id,{paid:true,regPaid:true,paidAt:now,paidUntil:until,pay:{op:'manuel',status:'ok',ref:'Ajouté par l\'admin'+(SUBSCRIPTION?' · '+Math.max(1,months)+' mois':''),amount,kind:SUBSCRIPTION?'renouvellement':'acces',at:now,checkedAt:now,from:''}});
+    toast(SUBSCRIPTION?`${x.firstName} : +${Math.max(1,months)} mois ajouté${months>1?'s':''} ✓`:`Accès de ${x.firstName} activé ✓`);memRefresh()}
+  catch(_){toast("L'action n'a pas abouti. Réessaie.");if(btn)btn.disabled=false}}
+async function memOff(id,btn){const x=S.profiles[id];if(!x||!S.owner)return;if(!btn.dataset.armed){btn.dataset.armed='1';btn.textContent='Confirmer ?';setTimeout(()=>{delete btn.dataset.armed;btn.textContent='Retirer'},3500);return}
+  btn.disabled=true;try{await S.be.updateProfileOf(id,{paid:false,noFree:true,paidUntil:null,pay:{...(x.pay||{}),status:'rejected',checkedAt:Date.now()}});toast(`Accès de ${x.firstName} retiré`);memRefresh()}catch(_){toast("L'action n'a pas abouti.");btn.disabled=false}}
+function memRefresh(){setTimeout(()=>{const el=$('#memList');if(el)el.innerHTML=memListHtml(($('#memQ')||{}).value||'')},700)}
+document.addEventListener('input',e=>{if(e.target.id==='memQ'){const el=$('#memList');if(el)el.innerHTML=memListHtml(e.target.value)}});
 /* =================== Démarrage =================== */
 let UNSUBS=[];
 function restoreRoute(){const p=me();if(!p||!p.firstName)return {v:'onboard'};if(!isActive(p))return {v:'pay'};
