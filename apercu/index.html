@@ -1634,7 +1634,8 @@ const fc=n=>n.toLocaleString('fr-FR').replace(/\u202f|\u00a0/g,' ')+' FC';
 const FREE_DEFAULT=false;
 /* les membres inscrits pendant la période d'essai gratuite gardent leur accès */
 const FREE_UNTIL=Date.parse('2026-10-12T20:15:00Z');
-const FREE=()=>{const c=S.payCfg;return c&&typeof c.free==='boolean'?c.free:FREE_DEFAULT};
+/* réglage « freeTrial » : seulement le bouton Activer/Arrêter de l'espace Paiements le change (l'ancien réglage « free » est ignoré) */
+const FREE=()=>{const c=S.payCfg;return c&&typeof c.freeTrial==='boolean'?c.freeTrial:FREE_DEFAULT};
 const isActive=p=>!!p&&!!p.firstName&&(FREE()||(!p.paid&&!p.noFree&&(p.at||0)>0&&(p.at||0)<FREE_UNTIL))||!!p&&!!p.paid&&(!SUBSCRIPTION||!!p.owner||!p.paidUntil||p.paidUntil>Date.now());
 const untilTxt=t=>new Date(t).toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'});
 const INV_OP={id:'invite',name:'Invitation gratuite',short:'🎁',c:'#C8F04A',ussd:''};
@@ -2366,7 +2367,7 @@ document.addEventListener('click',async e=>{const t=e.target.closest('button,[da
   if(d.follist){return openFollowList(d.uid,d.follist)}
   if(d.repay){S.route.repay=true;return render()}
   if(d.invuse){return invUse(d.invuse==='?'?(($('#invCode')||{}).value||''):d.invuse,t)}
-  if(d.freetog){if(!S.owner)return;t.disabled=true;const c={...(S.payCfg||{}),free:!FREE()};try{await S.be.savePayCfg(c);S.payCfg=c;toast(c.free?'Accès gratuit activé 🎁':'Accès payant réactivé');render()}catch(_){toast("L'enregistrement a échoué");t.disabled=false}return}
+  if(d.freetog){if(!S.owner)return;t.disabled=true;const c={...(S.payCfg||{}),freeTrial:!FREE()};delete c.free;try{await S.be.savePayCfg(c);S.payCfg=c;toast(c.freeTrial?'Accès gratuit activé 🎁':'Accès payant réactivé');render()}catch(_){toast("L'enregistrement a échoué");t.disabled=false}return}
   if(d.invnew){if(!S.owner)return;t.disabled=true;await invCreate();t.disabled=false;return}
   if(d.invoff){if(!S.owner)return;return invOff(d.invoff)}
   if(d.ownok){if(!S.owner)return;try{const p=me();await S.be.saveProfile({...p,paid:true,owner:true,paidAt:Date.now(),pay:{op:'owner',status:'ok',at:Date.now(),ref:'propriétaire',from:''}});toast('Compte propriétaire activé');go('feed')}catch(_){toast("L'activation a échoué")}return}
@@ -2406,7 +2407,7 @@ document.addEventListener('change',async e=>{if(e.target.id==='zoneSel'){const n
   if(e.target.id==='fPhoto'){const f=e.target.files[0];if(!f)return;try{pendingPhoto=await compress(f,420,60000);$('#avPrev').innerHTML=av({photo:pendingPhoto},60)}catch(_){$('#fErr').textContent="Cette image n'a pas pu être lue."}}});
 document.addEventListener('submit',async e=>{e.preventDefault();
   if(e.target.id==='fHelp'){if(!S.owner)return;const c={};document.querySelectorAll('[data-hc]').forEach(i=>c[i.dataset.hc]=i.value.trim().slice(0,80));const b=$('#helpBtn');b.disabled=true;try{await S.be.saveHelpCfg(c);fx.ok();toast('Contacts enregistrés')}catch(_){toast("L'enregistrement a échoué")}b.disabled=false;return}
-  if(e.target.id==='fCfg'){if(!S.owner)return;const c={free:FREE()};document.querySelectorAll('[data-cf]').forEach(inp=>{const[o,k]=inp.dataset.cf.split('.');(c[o]=c[o]||{})[k]=inp.value.trim().slice(0,60)});
+  if(e.target.id==='fCfg'){if(!S.owner)return;const c={freeTrial:FREE()};document.querySelectorAll('[data-cf]').forEach(inp=>{const[o,k]=inp.dataset.cf.split('.');(c[o]=c[o]||{})[k]=inp.value.trim().slice(0,60)});
     const b=$('#cfgBtn');b.disabled=true;try{await S.be.savePayCfg(c);toast('Numéros enregistrés')}catch(_){$('#cfgErr').textContent="L'enregistrement a échoué. Réessaie."}b.disabled=false;return}
   if(e.target.id==='fPay'){$('#payBtn')?.click();return}
   if(e.target.id==='fCert'){$('#certBtn')?.click();return}
