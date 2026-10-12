@@ -1337,6 +1337,7 @@ function authErr(e){const m=String(e?.message||e||'');
   if(/already registered|already exists/i.test(m))return 'Cet e-mail a déjà un compte : touche « J\'ai un compte ».';
   if(/email not confirmed/i.test(m))return 'Confirme d\'abord ton e-mail avec le lien reçu dans ta boîte.';
   if(/password/i.test(m)&&/6|8|short|weak/i.test(m))return 'Mot de passe trop court : 8 caractères minimum.';
+  if(/email rate limit|sending.*email|error sending|not authorized/i.test(m))return 'L\'inscription est momentanément bloquée par le serveur (envoi d\'e-mail de confirmation). Préviens l\'aide Koris.';
   if(/rate|too many/i.test(m))return 'Trop d\'essais. Attends une minute et réessaie.';
   if(/fetch|network/i.test(m))return 'Pas de connexion internet. Vérifie ta connexion.';
   return 'Ça n\'a pas marché. Réessaie dans un instant.'}
