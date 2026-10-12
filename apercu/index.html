@@ -536,6 +536,7 @@ header.top{margin-inline:-16px;padding-inline:16px;top:0;padding-top:calc(18px +
 .auth{max-width:360px;margin:0 auto;min-height:100svh;display:flex;flex-direction:column;justify-content:center;gap:10px;padding:8px 0 24px;text-align:center}
 .auth h1{font-size:26px}
 .auth .lead{text-align:center;font-size:13.5px}
+.acc-hint{font-size:12px;padding:0 6px;line-height:1.5} .acc-hint button{color:var(--orange);font-weight:700;text-decoration:underline;font-size:12px}
 .via{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:4px 0 2px}
 .via button{display:flex;align-items:center;gap:8px;padding:10px;border-radius:16px;background:var(--panel);border:1.5px solid var(--line);text-align:left;color:var(--text)}
 .via button svg{width:20px;height:20px;flex:none;color:var(--muted)} .via button b{display:block;font-size:12.5px;line-height:1.2} .via button small{display:block;font-size:10.5px;color:var(--muted)}
@@ -876,6 +877,7 @@ header.top{margin-inline:-16px;padding-inline:16px;top:0;padding-top:calc(18px +
 .shr-cta div{flex:1;min-width:0}.shr-cta b{display:block;font:700 16px var(--display)}.shr-cta small{display:block;font-size:12px;opacity:.8;margin-top:1px}
 .shr-cta .go{flex:none;height:36px;padding:0 14px;border-radius:999px;display:grid;place-items:center;font:700 13px var(--display);background:#03100E;color:#C8F04A}
 @keyframes shrPulse{0%,100%{box-shadow:0 14px 30px -12px rgba(200,240,74,.7)}50%{box-shadow:0 14px 34px -8px rgba(200,240,74,.95)}}
+.free-card{display:flex;align-items:center;gap:12px;margin-top:16px;padding:14px;border-radius:18px;background:var(--panel-2);border:1px solid var(--line)} .free-card.on{background:linear-gradient(120deg,rgba(200,240,74,.18),rgba(46,224,176,.1));border-color:rgba(200,240,74,.45)} .free-card div{flex:1} .free-card b{display:block;font:700 15px var(--display)} .free-card small{display:block;font-size:12.5px;color:var(--muted);margin-top:2px}
 .inv-new{display:flex;gap:8px;align-items:center;margin-top:10px}
 .inv-row{display:flex;align-items:center;gap:6px;padding:10px 0 0;border-top:1px solid var(--line);margin-top:10px} .inv-row.off{opacity:.5}
 .inv-row .mid{flex:1;min-width:0} .inv-row b{display:block;font-size:12.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap} .inv-row small{font-size:11.5px;color:var(--muted)}
@@ -1326,7 +1328,7 @@ function vAuth(){const mode=S.authMode||'up';const via=S.authVia||ls.get('authVi
    <button class="btn btn-primary" id="aGo" type="submit">${mode==='up'?'Créer mon compte':mode==='in'?'Me connecter':'Recevoir le lien'}</button>
   </form>`}
   ${mode==='in'?`<button type="button" class="lnk-in" data-auth="reset">Mot de passe oublié ?</button>`:mode==='reset'?`<button type="button" class="lnk-in" data-auth="in">Retour à la connexion</button>`:''}
-  <p class="fine">18 ans et plus · ${PRICE_LINE} · <a href="/confidentialite.html" style="color:inherit;text-decoration:underline">Confidentialité</a></p></section>`}
+  <p class="fine">18 ans et plus · ${priceLine()} · <a href="/confidentialite.html" style="color:inherit;text-decoration:underline">Confidentialité</a></p></section>`}
 function authErr(e){const m=String(e?.message||e||'');
   if(m==='tel-exists')return 'Ce numéro a déjà un compte : touche « J\'ai un compte ».';
   if(m==='tel-bad')return 'Numéro ou mot de passe incorrect.';
@@ -1338,7 +1340,9 @@ function authErr(e){const m=String(e?.message||e||'');
   if(/rate|too many/i.test(m))return 'Trop d\'essais. Attends une minute et réessaie.';
   if(/fetch|network/i.test(m))return 'Pas de connexion internet. Vérifie ta connexion.';
   return 'Ça n\'a pas marché. Réessaie dans un instant.'}
-document.addEventListener('click',e=>{const v=e.target.closest&&e.target.closest('[data-via]');if(v){e.preventDefault();e.stopPropagation();S.authVia=v.dataset.via;ls.set('authVia',S.authVia);if(S.authMode==='reset'&&S.authVia==='mail'){}render();return}const b=e.target.closest&&e.target.closest('[data-auth]');if(!b)return;e.preventDefault();e.stopPropagation();S.authMode=b.dataset.auth;render()},true);
+document.addEventListener('click',e=>{const v=e.target.closest&&e.target.closest('[data-via]');if(v){e.preventDefault();e.stopPropagation();S.authVia=v.dataset.via;ls.set('authVia',S.authVia);
+  if(S.route.v==='signup'){const keep={};document.querySelectorAll('#fSign input,#fSign textarea').forEach(i=>{if(i.id)keep[i.id]=i.type==='checkbox'||i.type==='radio'?i.checked:i.value});render();Object.entries(keep).forEach(([id,v2])=>{const i=document.getElementById(id);if(!i)return;if(i.type==='checkbox'||i.type==='radio')i.checked=v2;else i.value=v2});return}
+  render();return}const b=e.target.closest&&e.target.closest('[data-auth]');if(!b)return;e.preventDefault();e.stopPropagation();S.authMode=b.dataset.auth;render()},true);
 document.addEventListener('submit',async e=>{if(e.target.id!=='fAuth')return;e.preventDefault();e.stopPropagation();
   const sb=sbClient(),err=$('#aErr'),ok=$('#aOk'),b=$('#aGo'),pass=$('#aPass')?.value||'',mode=S.authMode||'up';err.textContent='';ok.textContent='';
   const telIn=$('#aTel'),tel=telIn?telNorm(telIn.value):'';let mail=telIn?telMail(tel):$('#aMail').value.trim();
@@ -1501,7 +1505,7 @@ function vOnboard(){
   <div class="wl-dots" id="wlD">${slides.map((_,i)=>`<button data-slide="${i}" class="${i?'':'on'}" aria-label="Diapositive ${i+1}"></button>`).join('')}</div>
   <button class="wl-go" data-go="signup" ${signed?'data-param="fresh"':''}>Commencer</button>
   ${signed?`<button class="lnk-in" data-go="${isActive(me())?'feed':'pay'}">J'ai déjà un compte · <b>Entrer</b></button>`:S.be.mode==='live'?`<button class="lnk-in" data-go="auth" data-param="in">J'ai déjà un compte · <b>Me connecter</b></button>`:''}
-  <p class="fine">18 ans et plus · ${PRICE_LINE} · <a href="/confidentialite.html" style="color:inherit;text-decoration:underline">Confidentialité</a></p>
+  <p class="fine">18 ans et plus · ${priceLine()} · <a href="/confidentialite.html" style="color:inherit;text-decoration:underline">Confidentialité</a></p>
   ${demoBanner()}
   </section>`}
 function initWelcome(){const sc=$('#wlS'),dots=[...document.querySelectorAll('#wlD button')];if(!sc)return null;let idx=0,user=false;
@@ -1564,7 +1568,7 @@ const cities=[...DRC_CITIES,'Brazzaville','Pointe-Noire'];
   return `<form class="form su" id="fSign" novalidate>
   <div class="top" style="padding-inline:0"><button type="button" class="icon-btn" data-go="${edit||fresh?'me':'onboard'}" aria-label="Retour">${I.back}</button><button type="button" class="icon-btn mus${ls.get('music',true)?'':' off'}" id="musBtn" aria-label="${ls.get('music',true)?'Couper la musique':'Mettre la musique'}" title="Musique">${I.sound}</button></div>
   <h1>${edit?'Modifier mon profil':'Crée ton compte'}</h1>
-  <p class="lead">${edit?'Ces infos sont visibles sur ton profil.':fresh?'Recommence ton inscription. Ton accès membre reste actif.':(S.be.mode==='live'&&!S.be.uid?'Étape 1 sur 3 · Présente-toi, puis crée ton accès.':'Étape 1 sur 2 · Rejoins les cœurs de Koris.')}</p>
+  <p class="lead">${edit?'Ces infos sont visibles sur ton profil.':fresh?'Recommence ton inscription. Ton accès membre reste actif.':(S.be.mode==='live'&&!S.be.uid?'Étape 1 sur 2 · Rejoins les cœurs de Koris.':'Étape 1 sur 2 · Rejoins les cœurs de Koris.')}</p>
   <div class="su-photo"><label class="ph" for="fPhoto" aria-label="Ajouter une photo de profil"><span id="avPrev">${av(photo,60)}</span><span class="cam">${I.camera}</span></label>
    <label for="fPhoto"><b>${safeImg(photo.photo)?'Changer ma photo':'Ajouter ma photo'}</b><small>JPG ou PNG · visible par les membres</small></label><input id="fPhoto" type="file" accept="image/*" class="fpick"></div>
   ${pill('user','fFirst','Ton prénom',p.firstName,'autocomplete="given-name" required')}
@@ -1572,6 +1576,9 @@ const cities=[...DRC_CITIES,'Brazzaville','Pointe-Noire'];
   <div class="sex" role="radiogroup" aria-label="Sexe"><span>${I.sex}Sexe</span><label><input type="radio" name="fSex" value="F" ${p.sex==='F'?'checked':''}><span>Femme</span></label><label><input type="radio" name="fSex" value="H" ${p.sex==='H'?'checked':''}><span>Homme</span></label></div>
   <div class="row2">${pill('cake','fAge','Ton âge',p.age,'type="number" min="18" max="99" inputmode="numeric"')}${pill('work','fJob','Ton métier',p.job)}</div>
   ${pill('phone','fPhone','Ton numéro de téléphone',p.phone||ls.get('authPhone',''),'type="tel" inputmode="tel" autocomplete="tel"')}
+  ${S.be.mode==='live'&&!S.be.uid?`${S.authVia==='mail'?pill('mail','fMail','Ton e-mail','','type="email" inputmode="email" autocomplete="email"'):''}
+   <label class="pill">${I.lock||I.user}<input id="fPass" type="password" autocomplete="new-password" placeholder="Mot de passe (8 caractères min.)" aria-label="Mot de passe" minlength="8"></label>
+   <p class="hint acc-hint">${S.authVia==='mail'?'Tu te reconnecteras avec ton e-mail et ce mot de passe. <button type="button" data-via="tel">Utiliser plutôt mon numéro</button>':'Tu te reconnecteras avec ton numéro et ce mot de passe, sans e-mail. <button type="button" data-via="mail">Utiliser plutôt mon e-mail</button>'}</p>`:''}
   <div class="row2">${pill('city','fCity','Ta ville',p.city,'list="cityList"')}${pill('globe','fCountry','Ton pays',p.country)}</div>
   ${pill('pin','fCommune','Ta commune (ex. Lemba, Ngaliema…)',p.commune,'list="communeList" autocomplete="address-level3"')}
   <datalist id="cityList">${cities.map(c=>`<option value="${c}">`).join('')}</datalist>
@@ -1579,7 +1586,7 @@ const cities=[...DRC_CITIES,'Brazzaville','Pointe-Noire'];
   <label class="pill-ta">${I.comment}<textarea id="fBio" maxlength="400" placeholder="À propos de toi : ce que tu aimes, ce que tu cherches…" aria-label="À propos de toi">${esc(p.bio)}</textarea></label>
   ${edit?'':`<label class="terms"><input type="checkbox" id="fTerms"><span>J'accepte <button type="button" data-go="about">les règles de Koris</button></span></label>`}
   <p class="err" id="fErr"></p>
-  <button class="btn btn-primary" id="fSubmit">${edit||fresh?'Enregistrer':S.be.mode==='live'&&!S.be.uid?'Continuer':'S\'inscrire'}</button>
+  <button class="btn btn-primary" id="fSubmit">${edit||fresh?'Enregistrer':'S\'inscrire'}</button>
   ${!me()?'':edit||fresh?'':''}
   </form>`}
 
@@ -1589,6 +1596,7 @@ const OPS=[{id:'orange',name:'Orange Money',short:'OM',c:'#FF7900',ussd:'*144#'}
    passer SUBSCRIPTION à true : tous les écrans, textes et l'aide reprennent l'abonnement mensuel. */
 const SUBSCRIPTION=false,ACCESS_FEE=5000;
 const FEE=5000,REG=5000,MONTH=30*864e5;
+const priceLine=()=>FREE()?'Accès gratuit pendant la période d\'essai':PRICE_LINE;
 const PRICE_LINE=SUBSCRIPTION?'Inscription 5&nbsp;000&nbsp;FC, puis 5&nbsp;000&nbsp;FC/mois':'Accès 5&nbsp;000&nbsp;FC, une seule fois';
 const isNew=p=>!(p?.regPaid||p?.paid);
 /* PARRAINAGE : celui qui partage son lien et fait inscrire au moins un ami paie 4 500 FC au lieu de 5 000 FC */
@@ -1598,7 +1606,11 @@ const refsOf=uid=>{const c=refCode(uid);if(!c)return [];return Object.entries(S.
 const refDisc=p=>{const id=p?.id||S.be?.uid;return id&&refsOf(id).length?REF_DISCOUNT:0};
 const dueFor=p=>(SUBSCRIPTION?(isNew(p)?REG+FEE:FEE):ACCESS_FEE)-refDisc(p);
 const fc=n=>n.toLocaleString('fr-FR').replace(/\u202f|\u00a0/g,' ')+' FC';
-const isActive=p=>!!p&&!!p.paid&&(!SUBSCRIPTION||!!p.owner||!p.paidUntil||p.paidUntil>Date.now());
+/* ACCÈS GRATUIT (période d'essai) : tout membre inscrit entre directement, sans payer.
+   Le propriétaire l'active ou l'arrête dans l'espace Paiements. */
+const FREE_DEFAULT=true;
+const FREE=()=>{const c=S.payCfg;return c&&typeof c.free==='boolean'?c.free:FREE_DEFAULT};
+const isActive=p=>!!p&&!!p.firstName&&FREE()||!!p&&!!p.paid&&(!SUBSCRIPTION||!!p.owner||!p.paidUntil||p.paidUntil>Date.now());
 const untilTxt=t=>new Date(t).toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'});
 const INV_OP={id:'invite',name:'Invitation gratuite',short:'🎁',c:'#C8F04A',ussd:''};
 const opById=id=>id==='invite'?INV_OP:(OPS.find(o=>o.id===id)||OPS[0]);
@@ -1674,6 +1686,7 @@ function vAdmin(){
   <div class="top" style="padding-inline:0"><button class="icon-btn" data-go="me" aria-label="Retour">${I.back}</button><h1 style="font-size:22px;flex:1;text-align:center">Paiements</h1><span style="width:42px"></span></div>
   <p class="lead" style="color:var(--muted)">Visible seulement par toi. Les membres paient ${SUBSCRIPTION?'5 000 FC d\'inscription + 5 000 FC par mois':'5 000 FC une seule fois'} à tes numéros, puis tu confirmes ici quand l'argent est bien arrivé.</p>
   <button class="btn btn-ghost" data-go="pay" data-param="preview" style="width:100%;flex:none;height:48px;margin-top:14px">${I.wallet}Voir la page de paiement</button>
+  <div class="free-card ${FREE()?'on':''}"><div><b>${FREE()?'🎁 Accès gratuit activé':'Accès payant activé'}</b><small>${FREE()?'Période d\'essai : chaque nouveau membre entre directement après son inscription, sans payer.':'Les nouveaux membres paient '+fc(ACCESS_FEE)+' pour entrer.'}</small></div><button type="button" class="btn ${FREE()?'btn-ghost':'btn-primary'}" data-freetog="1" style="flex:none;height:44px;padding:0 14px">${FREE()?'Arrêter':'Activer'}</button></div>
   <h2>Invitations gratuites</h2><p class="hint" style="padding:0 2px 8px">Crée un lien pour tes membres privés : ils s'inscrivent sans payer. Choisis le nombre de places, puis envoie le lien.</p>
   <div class="opbox"><div class="inv-new"><label class="pill" style="flex:1">${I.user}<input id="invMax" type="number" min="1" max="500" value="10" aria-label="Nombre de places"></label><button class="btn btn-primary" data-invnew="1" style="flex:none;height:50px;padding:0 18px">Créer un lien</button></div><div id="admInv">${admInvHtml()}</div></div>
   <h2>À vérifier</h2><div id="admList">${admListHtml()}</div>
@@ -2311,6 +2324,7 @@ document.addEventListener('click',async e=>{const t=e.target.closest('button,[da
   if(d.mm){S.payOp=d.mm;document.querySelectorAll('.mm button').forEach(b=>{const on=b===t;b.classList.toggle('on',on);b.setAttribute('aria-checked',on)});$('#payDest').innerHTML=destHtml(d.mm);return}
   if(d.repay){S.route.repay=true;return render()}
   if(d.invuse){return invUse(d.invuse==='?'?(($('#invCode')||{}).value||''):d.invuse,t)}
+  if(d.freetog){if(!S.owner)return;t.disabled=true;const c={...(S.payCfg||{}),free:!FREE()};try{await S.be.savePayCfg(c);S.payCfg=c;toast(c.free?'Accès gratuit activé 🎁':'Accès payant réactivé');render()}catch(_){toast("L'enregistrement a échoué");t.disabled=false}return}
   if(d.invnew){if(!S.owner)return;t.disabled=true;await invCreate();t.disabled=false;return}
   if(d.invoff){if(!S.owner)return;return invOff(d.invoff)}
   if(d.ownok){if(!S.owner)return;try{const p=me();await S.be.saveProfile({...p,paid:true,owner:true,paidAt:Date.now(),pay:{op:'owner',status:'ok',at:Date.now(),ref:'propriétaire',from:''}});toast('Compte propriétaire activé');go('feed')}catch(_){toast("L'activation a échoué")}return}
@@ -2350,7 +2364,7 @@ document.addEventListener('change',async e=>{if(e.target.id==='zoneSel'){const n
   if(e.target.id==='fPhoto'){const f=e.target.files[0];if(!f)return;try{pendingPhoto=await compress(f,420,60000);$('#avPrev').innerHTML=av({photo:pendingPhoto},60)}catch(_){$('#fErr').textContent="Cette image n'a pas pu être lue."}}});
 document.addEventListener('submit',async e=>{e.preventDefault();
   if(e.target.id==='fHelp'){if(!S.owner)return;const c={};document.querySelectorAll('[data-hc]').forEach(i=>c[i.dataset.hc]=i.value.trim().slice(0,80));const b=$('#helpBtn');b.disabled=true;try{await S.be.saveHelpCfg(c);fx.ok();toast('Contacts enregistrés')}catch(_){toast("L'enregistrement a échoué")}b.disabled=false;return}
-  if(e.target.id==='fCfg'){if(!S.owner)return;const c={};document.querySelectorAll('[data-cf]').forEach(inp=>{const[o,k]=inp.dataset.cf.split('.');(c[o]=c[o]||{})[k]=inp.value.trim().slice(0,60)});
+  if(e.target.id==='fCfg'){if(!S.owner)return;const c={free:FREE()};document.querySelectorAll('[data-cf]').forEach(inp=>{const[o,k]=inp.dataset.cf.split('.');(c[o]=c[o]||{})[k]=inp.value.trim().slice(0,60)});
     const b=$('#cfgBtn');b.disabled=true;try{await S.be.savePayCfg(c);toast('Numéros enregistrés')}catch(_){$('#cfgErr').textContent="L'enregistrement a échoué. Réessaie."}b.disabled=false;return}
   if(e.target.id==='fPay'){$('#payBtn')?.click();return}
   if(e.target.id==='fCert'){$('#certBtn')?.click();return}
@@ -2362,7 +2376,22 @@ document.addEventListener('submit',async e=>{e.preventDefault();
     const sex=document.querySelector('input[name=fSex]:checked')?.value||'';if(!sex){err.textContent='Choisis ton sexe : Femme ou Homme.';return}
     const tc=$('#fTerms');if(tc&&!tc.checked){err.textContent='Coche la case pour accepter les règles de Koris.';return}
     const old=me()||{};const prof={...old,...(!old.referredBy&&ls.get('ref','')&&ls.get('ref','')!==refCode(S.be.uid)?{referredBy:ls.get('ref','')}:{}),firstName:g('fFirst'),lastName:g('fLast'),sex,age,job:g('fJob'),phone:g('fPhone'),city:g('fCity'),commune:g('fCommune'),country:g('fCountry'),bio:g('fBio'),photo:pendingPhoto||(S.route.param==='fresh'?'':old.photo)||'',cover:old.cover||'',paid:!!old.paid,paidAt:old.paidAt||null,at:old.at||Date.now()};
-    if(S.be.mode==='live'&&!S.be.uid){S.pendingProf=prof;const ph=g('fPhone');if(ph&&!ls.get('authPhoneRaw',''))ls.set('authPhoneRaw',ph);S.authMode='up';S.authVia=S.authVia||ls.get('authVia','tel');go('auth');return}
+    if(S.be.mode==='live'&&!S.be.uid){const pass=$('#fPass')?.value||'';const viaMail=S.authVia==='mail';
+      let mail='';if(viaMail){mail=($('#fMail')?.value||'').trim();if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(mail)){err.textContent='Entre une adresse e-mail valide.';$('#fMail')?.focus();return}}
+      else{const t=telNorm(g('fPhone'));if(!/^\d{11,15}$/.test(t)){err.textContent='Entre un numéro de téléphone valide (ex. 081 234 5678).';$('#fPhone').focus();return}mail=telMail(t)}
+      if(pass.length<8){err.textContent='Choisis un mot de passe d\'au moins 8 caractères.';$('#fPass').focus();return}
+      const b=$('#fSubmit');b.disabled=true;const tx=b.textContent;b.textContent='Création du compte…';
+      try{const sb=sbClient();if(!sb)throw new Error('fetch');
+        let r=await sb.auth.signUp({email:mail,password:pass,options:{emailRedirectTo:location.origin+location.pathname}});
+        if(r.error&&/already registered|already exists/i.test(r.error.message||'')){r=await sb.auth.signInWithPassword({email:mail,password:pass});if(r.error)throw new Error(viaMail?'mail-exists':'tel-exists')}
+        else if(r.error)throw r.error;
+        if(!r.data.session){err.textContent='Compte créé ! Ouvre le lien de confirmation reçu par e-mail, puis reviens te connecter.';b.disabled=false;b.textContent=tx;return}
+        S.pendingProf=prof;await startLive(r.data.session.user.id,true);
+        for(let i=0;i<25&&!S.gotProfiles;i++)await new Promise(z=>setTimeout(z,200));
+        if(!me()){const pf={...S.pendingProf,at:Date.now()};if(!pf.referredBy&&ls.get('ref','')&&ls.get('ref','')!==refCode(S.be.uid))pf.referredBy=ls.get('ref','');await S.be.saveProfile(pf);pendingPhoto=null}
+        S.pendingProf=null;for(let i=0;i<25&&!me();i++)await new Promise(z=>setTimeout(z,200));go(me()&&isActive(me())?'feed':'pay')}
+      catch(x){S.pendingProf=null;b.disabled=false;b.textContent=tx;const m=String(x?.message||'');err.textContent=m==='tel-exists'?'Ce numéro a déjà un compte. Touche « Retour » puis « J\'ai déjà un compte » pour te connecter.':m==='mail-exists'?'Cet e-mail a déjà un compte. Touche « Retour » puis « J\'ai déjà un compte ».':authErr(x)}
+      return}
     const b=$('#fSubmit');b.disabled=true;try{await S.be.saveProfile(prof);pendingPhoto=null;go(isActive(prof)?'me':'pay');if(isActive(prof))toast('Profil enregistré')}catch(x){b.disabled=false;err.textContent=x?.code==='invalid_argument'?"Tu n'as pas l'autorisation de créer un compte sur cette page.":"L'enregistrement a échoué. Réessaie."}}
 });
 
