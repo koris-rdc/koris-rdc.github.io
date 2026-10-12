@@ -2403,7 +2403,7 @@ const norm=v=>String(v||'').trim().toLowerCase().normalize('NFD').replace(/[̀-�
 function ntKind(x){const m=me();if(!m)return 'new';const sameCity=x.city&&m.city&&norm(x.city)===norm(m.city);
   if(x.commune&&m.commune&&norm(x.commune)===norm(m.commune)&&(sameCity||!x.city||!m.city))return 'commune';return sameCity?'city':'new'}
 function ntList(){const uid=S.be.uid,lim=Date.now()-30*864e5;return Object.entries(S.profiles||{}).filter(([id,x])=>id!==uid&&x&&x.firstName&&(x.at||0)>lim).map(([id,x])=>({id,x,k:ntKind(x),at:x.at||0})).sort((a,b)=>b.at-a.at).slice(0,40)}
-function ntUnread(){return ntList().filter(n=>n.at>NT.seen).length}
+function ntUnread(){return ntList().filter(n=>n.at>NT.seen).length+(typeof ACT!=='undefined'?ACT.list.filter(a=>a.at>NT.seen).length:0)}
 function bellHtml(){const n=ntUnread();return `<button class="icon-btn bell" data-act="notifs" aria-label="Notifications${n?' : '+n+' nouvelles':''}" title="Notifications" style="position:relative">${I.bell}${n?`<span class="cnt-b">${n>9?'9+':n}</span>`:''}</button>`}
 function ntRefresh(){document.querySelectorAll('.bell').forEach(b=>{b.outerHTML=bellHtml()})}
 function ntText(x,k){const n=esc(x.firstName||'Quelqu’un');return k==='commune'?`<b>${n}</b> de ta commune <b>${esc(x.commune)}</b> vient de s'inscrire`:k==='city'?`<b>${n}</b> de ta ville <b>${esc(x.city)}</b> vient de s'inscrire`:`<b>${n}</b> vient de rejoindre Koris${x.city?' · '+esc(x.city):''}`}
@@ -2422,9 +2422,10 @@ function openNotifs(){const L=$('#layer');const list=ntList();const seen=NT.seen
   L.innerHTML=`<div class="sheet-bg" id="sbg"><div class="sheet" role="dialog" aria-label="Notifications"><span class="grab"></span>
   <h2 style="font-size:20px">Notifications</h2>
   ${perm==='default'?`<button class="btn btn-ghost" id="ntPerm" style="height:44px;font-size:14px">${I.bell}Activer les notifications du téléphone</button>`:''}
+  ${ACT.list.length?`<p class="hint" style="margin:4px 0 -2px;font-weight:600">Activité</p><div class="nt-list">${ACT.list.slice(0,20).map((a,i)=>{const x=S.profiles[a.uid]||{};return `<button class="nt-it${a.at>seen?' unread':''}" data-actx="${i}">${av(x,44)}<span class="nt-body"><span>${actText(a)}</span><small>${actLabel(a)} · ${ago(a.at)}</small></span></button>`}).join('')}</div><p class="hint" style="margin:6px 0 -2px;font-weight:600">Nouveaux inscrits</p>`:''}
   <div class="nt-list">${list.length?list.map(n=>`<button class="nt-it${n.at>seen?' unread':''}" data-profile="${esc(n.id)}">${av(n.x,44)}<span class="nt-body"><span>${ntText(n.x,n.k)}</span><small>${ntTag(n.k,n.x)}${ago(n.at)}</small></span></button>`).join('')
     :`<p class="hint" style="text-align:center;padding:22px 0">Aucune nouvelle inscription pour l'instant. Tu seras prévenu dès qu'une personne de ta commune ou de ta ville rejoint Koris.</p>`}</div></div></div>`;
-  $('#sbg').onclick=e=>{if(e.target.id==='sbg'||e.target.closest('[data-profile]'))setTimeout(()=>{L.innerHTML=''},0)};
+  $('#sbg').onclick=e=>{const ax=e.target.closest('[data-actx]');if(ax){const a=ACT.list[+ax.dataset.actx];L.innerHTML='';if(a)setTimeout(()=>actOpen(a),0);return}if(e.target.id==='sbg'||e.target.closest('[data-profile]'))setTimeout(()=>{L.innerHTML=''},0)};
   const pb=$('#ntPerm');if(pb)pb.onclick=async e=>{e.stopPropagation();try{const r=await Notification.requestPermission();pb.remove();toast(r==='granted'?'Notifications activées':"Le téléphone n'a pas autorisé les notifications")}catch(_){pb.remove();toast("Les notifications ne sont pas disponibles ici")}};
   NT.seen=Date.now();ls.set('ntSeen',NT.seen);ntRefresh()}
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-act=notifs]');if(!b)return;e.preventDefault();e.stopPropagation();openNotifs()},true);
@@ -2565,6 +2566,40 @@ async function invUse(code,btn){code=String(code||'').trim().toUpperCase();if(!/
     /* fonction pas encore installée : la demande part chez le propriétaire, qui valide en un geste */
     await S.be.saveProfile({...me(),pay:{op:'invite',from:'',ref:code,to:'',amount:0,kind:'acces',at:Date.now(),status:'pending'}});ls.set('invite','');S.route.repay=false;render()}
   catch(_){toast("L'invitation n'a pas pu être envoyée. Réessaie.");if(btn)btn.disabled=false}}
+
+/* =================== Activité : commentaires, disponibilités, publications (bannière + son + vibreur) =================== */
+const ACT={list:ls.get('acts',[]),q:[],busy:false,snap:{po:null,cm:null}};
+function actSave(){ACT.list=ACT.list.slice(0,40);ls.set('acts',ACT.list)}
+function actCtx(){if(window.KA&&KA.ctx){const c=KA.ctx();if(c)return c}const A=window.AudioContext||window.webkitAudioContext;if(!A)return null;if(!window.__actCtx){try{window.__actCtx=new A()}catch(_){return null}}const c=window.__actCtx;if(c.state==='suspended'){try{c.resume()}catch(_){}}return c}
+['pointerdown','keydown'].forEach(ev=>document.addEventListener(ev,()=>{try{actCtx()}catch(_){}},{passive:true}));
+function actSound(k){if(!FX.snd)return;try{const c=actCtx();if(!c||c.state!=='running')return;const t0=c.currentTime+.02;
+  const notes=k==='cm'?[[1318.5,0],[1760,.13]]:k==='av'?[[1046.5,0],[1318.5,.09],[1568,.18],[2093,.27]]:[[1174.66,0],[1760,.1]];
+  notes.forEach(([f,d])=>{[[1,.16],[2.76,.04]].forEach(([m,v])=>{const o=c.createOscillator(),g=c.createGain();o.type='sine';o.frequency.value=f*m;
+    g.gain.setValueAtTime(0,t0+d);g.gain.linearRampToValueAtTime(v,t0+d+.008);g.gain.exponentialRampToValueAtTime(.0001,t0+d+(m>1?.25:.7));o.connect(g);g.connect(c.destination);o.start(t0+d);o.stop(t0+d+.8)})})}catch(_){}}
+function actText(a){const x=S.profiles[a.uid]||{},n=`<b>${esc(x.firstName||'Quelqu’un')}</b>`;
+  if(a.t==='cm')return a.mine?`${n} a commenté ta publication : « ${esc(String(a.text||'').slice(0,60))} »`:`${n} a commenté une publication : « ${esc(String(a.text||'').slice(0,50))} »`;
+  if(a.t==='av')return `${n} est dispo ${a.st==='diner'?'pour un dîner 🍽️':a.st==='chill'?'pour un flirt 😘':'pour une rencontre 💗'}`;
+  return `${n} a publié ${a.img?'une photo':a.vid?'une vidéo':'quelque chose'}${a.text?' : « '+esc(String(a.text).slice(0,50))+' »':''}`}
+function actLabel(a){return a.t==='cm'?(a.mine?'💬 Nouveau commentaire':'💬 Commentaire'):a.t==='av'?'✨ Disponibilité':'📸 Nouvelle publication'}
+function actOpen(a){if(a.t==='av'){hist.push({...S.route});S.route={v:'profile',param:a.uid,i:0};window.scrollTo(0,0);return render()}
+  if(a.t==='cm'&&a.postId&&typeof openComments==='function'){if(S.route.v!=='feed')go('feed');return setTimeout(()=>openComments(a.postId),150)}
+  go('feed')}
+function actPush(a){if(ACT.list.some(z=>z.key===a.key))return;ACT.list.unshift(a);actSave();ntRefresh();ACT.q.push(a);actNext()}
+function actNext(){if(ACT.busy||!ACT.q.length)return;if(document.getElementById('ksplash'))return setTimeout(actNext,800);
+  const a=ACT.q.shift();ACT.busy=true;const x=S.profiles[a.uid]||{};
+  ntBanner(`${av(x,40)}<span class="ntb-tx"><small>${actLabel(a)}</small><span>${actText(a)}</span></span>`,()=>actOpen(a));
+  actSound(a.t);buzz(a.t==='av'?[30,50,30,50,60]:a.t==='cm'?[40,60,40]:[50]);
+  ntSystem('Koris',actText(a).replace(/<[^>]+>/g,''));
+  setTimeout(()=>{ACT.busy=false;actNext()},4200)}
+const ACT_FRESH=10*60e3;
+function actPosts(a){const uid=S.be?.uid;const ids=new Set(a.map(p=>p.id));const prev=ACT.snap.po;ACT.snap.po=ids;if(!prev||!uid||!me())return;
+  a.filter(p=>!prev.has(p.id)&&p.uid!==uid&&(p.at||0)>Date.now()-ACT_FRESH).slice(0,3).forEach(p=>actPush({key:'po'+p.id,t:'po',uid:p.uid,at:p.at||Date.now(),text:p.caption||p.text||'',img:!!p.img,vid:!!p.vid,postId:p.id}))}
+function actComments(a){const uid=S.be?.uid;const ids=new Set(a.map(c=>c.id));const prev=ACT.snap.cm;ACT.snap.cm=ids;if(!prev||!uid||!me())return;
+  a.filter(c=>!prev.has(c.id)&&c.uid!==uid&&(c.at||0)>Date.now()-ACT_FRESH).slice(0,3).forEach(c=>{const post=S.posts.find(p=>p.id===c.postId);
+    actPush({key:'cm'+c.id,t:'cm',uid:c.uid,at:c.at||Date.now(),text:c.text||'',postId:c.postId,mine:!!post&&post.uid===uid})})}
+function actAvail(prev,m){const uid=S.be?.uid;if(!prev||!uid||!me())return;
+  Object.entries(m).forEach(([id,x])=>{if(id===uid||!x||!x.firstName)return;const a=x.avail||{},b=(prev[id]||{}).avail||{};
+    if(a.state&&a.state!=='off'&&(a.at||0)>(b.at||0)&&(a.at||0)>Date.now()-ACT_FRESH&&prev[id])actPush({key:'av'+id+(a.at||0),t:'av',uid:id,at:a.at,st:availOf(x)==='off'?a.state:availOf(x)})})}
 /* =================== Démarrage =================== */
 let UNSUBS=[];
 function restoreRoute(){const p=me();if(!p||!p.firstName)return {v:'onboard'};if(!isActive(p))return {v:'pay'};
@@ -2573,10 +2608,10 @@ function attachBe(firstRoute){UNSUBS.forEach(f=>{try{f()}catch(_){}});UNSUBS=[];
   add(S.be.onHelpCfg(c=>{S.helpCfg=c}));
   add(S.be.onPayCfg(c=>{S.payCfg=c;if(S.route.v==='pay'){const el=$('#payDest');if(el)el.innerHTML=destHtml(S.payOp||me()?.pay?.op||'orange')}}));
   let first=true;
-  add(S.be.onProfiles(m=>{const prev=S.profiles;S.profiles=m;S.gotProfiles=true;if(first){first=false;S.route=firstRoute?firstRoute():restoreRoute();render();ntWelcome();openFromUrl();pushInvite()}else{try{ntCheck(prev,m)}catch(_){}softRender()}}));
-  add(S.be.onPosts(a=>{S.posts=a;if(!first)softRender()}));
+  add(S.be.onProfiles(m=>{const prev=S.profiles;S.profiles=m;S.gotProfiles=true;if(first){first=false;S.route=firstRoute?firstRoute():restoreRoute();render();ntWelcome();openFromUrl();pushInvite()}else{try{ntCheck(prev,m)}catch(_){}try{actAvail(prev,m)}catch(_){}softRender()}}));
+  add(S.be.onPosts(a=>{S.posts=a;try{actPosts(a)}catch(_){}if(!first)softRender()}));
   add(S.be.onChats(a=>{S.chats=a;chatWatch(a);if(!first)softRender()}));
-  add(S.be.onComments(a=>{S.comments=a;refreshComments();if(!first)softRender()}));
+  add(S.be.onComments(a=>{S.comments=a;try{actComments(a)}catch(_){}refreshComments();if(!first)softRender()}));
   prInit()}
 async function startLive(uid,afterAuth){const sb=sbClient();S.be=makeSupabaseBackend(sb,uid);
   try{const {data}=await sb.from('admins').select('uid').eq('uid',uid).maybeSingle();S.owner=!!data}catch(_){S.owner=false}
