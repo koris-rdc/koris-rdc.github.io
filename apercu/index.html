@@ -2013,6 +2013,8 @@ function render(){const app=$('#app');const r=S.route;
   if(sphereStop){sphereStop();sphereStop=null}
   const p=me();
   if(r.v==='loading'){app.innerHTML=`<div class="loading"><div class="spin"></div></div>`;return}
+  const KNOWN=['auth','onboard','signup','pay','admin','certif','about','feed','discover','profile','me','messages','chat','shop'];
+  if(!KNOWN.includes(r.v)){S.route={v:p?(isActive(p)?'feed':'pay'):'onboard'};return render()}
   // garde-fous : pas de profil → onboarding ; profil non payé → paiement
   const open=['onboard','signup','pay','about','auth','shop'];
   shopTick();
@@ -2950,7 +2952,7 @@ function actFollow(prev,m){const uid=S.be?.uid;if(!prev||!uid||!me())return;
 /* =================== Démarrage =================== */
 let UNSUBS=[];
 function restoreRoute(){if(SHOP_LINK.on&&!SHOP_LINK.used){SHOP_LINK.used=true;return {v:'shop'}}const p=me();if(!p||!p.firstName)return {v:'onboard'};if(!isActive(p))return {v:'pay'};
-  const lr=ls.get('lastRoute',null);if(lr&&lr.v&&(!['chat','profile'].includes(lr.v)||S.profiles[lr.param]))return lr.param?{v:lr.v,param:lr.param}:{v:lr.v};return {v:'feed'}}
+  const lr=ls.get('lastRoute',null);if(lr&&lr.v&&['feed','discover','messages','me','chat','profile','about','admin','certif','shop'].includes(lr.v)&&(!['chat','profile'].includes(lr.v)||S.profiles[lr.param]))return lr.param?{v:lr.v,param:lr.param}:{v:lr.v};return {v:'feed'}}
 function attachBe(firstRoute){UNSUBS.forEach(f=>{try{f()}catch(_){}});UNSUBS=[];const add=f=>{if(typeof f==='function')UNSUBS.push(f)};
   add(S.be.onHelpCfg(c=>{S.helpCfg=c}));
   add(S.be.onPayCfg(c=>{S.payCfg=c;if(S.route.v==='pay'){const el=$('#payDest');if(el)el.innerHTML=destHtml(S.payOp||me()?.pay?.op||'orange')}}));
