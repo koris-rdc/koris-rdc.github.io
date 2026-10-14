@@ -1187,7 +1187,38 @@ bell:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1
 const $=s=>document.querySelector(s);
 function b64(blob){return new Promise((res,rej)=>{const fr=new FileReader();fr.onerror=()=>rej(new Error('lecture'));fr.onload=()=>res(String(fr.result).split(',')[1]||'');fr.readAsDataURL(blob)})}
 function unb64(s){const bin=atob(s);const u=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);return u}
-const VMAX=8*1024*1024;
+const VMAX=8*1024*1024,VDUR=90;
+function vidDur(file){return new Promise(res=>{const u=URL.createObjectURL(file);const v=document.createElement('video');v.preload='metadata';v.muted=true;
+  const fin=d=>{try{URL.revokeObjectURL(u)}catch(_){}res(d)};v.onloadedmetadata=()=>fin(isFinite(v.duration)?v.duration:0);v.onerror=()=>fin(0);setTimeout(()=>fin(0),8000);v.src=u})}
+/* Compression vidéo dans le téléphone (canvas + MediaRecorder), en temps réel, pour passer sous VMAX */
+async function shrinkVideo(file,onp){
+  if(!window.MediaRecorder||!HTMLCanvasElement.prototype.captureStream)throw Object.assign(new Error('norec'),{code:'norec'});
+  const types=['video/mp4;codecs=avc1.42E01E,mp4a.40.2','video/mp4;codecs=avc1','video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm','video/mp4'];
+  const mime=types.find(t=>{try{return MediaRecorder.isTypeSupported(t)}catch(_){return false}});if(!mime)throw Object.assign(new Error('norec'),{code:'norec'});
+  const url=URL.createObjectURL(file);const v=document.createElement('video');v.playsInline=true;v.preload='auto';v.src=url;
+  let ac=null,raf=0;const clean=()=>{try{cancelAnimationFrame(raf)}catch(_){}try{v.pause();v.removeAttribute('src');v.load()}catch(_){}try{URL.revokeObjectURL(url)}catch(_){}try{ac&&ac.close()}catch(_){}};
+  try{
+    await new Promise((res,rej)=>{v.onloadedmetadata=res;v.onerror=()=>rej(new Error('lecture'))});
+    const dur=v.duration;if(!isFinite(dur)||dur<=0)throw new Error('lecture');
+    if(dur>VDUR+1)throw Object.assign(new Error('long'),{code:'long'});
+    const ab=96000,vb=Math.max(300000,Math.min(2500000,Math.floor(VMAX*.85*8/dur)-ab));
+    const side=vb>1300000?1280:vb>750000?960:720,sc=Math.min(1,side/Math.max(v.videoWidth||side,v.videoHeight||side));
+    const W=Math.max(2,Math.round((v.videoWidth||720)*sc/2)*2),H=Math.max(2,Math.round((v.videoHeight||1280)*sc/2)*2);
+    const cv=document.createElement('canvas');cv.width=W;cv.height=H;const cx=cv.getContext('2d');cx.fillStyle='#000';cx.fillRect(0,0,W,H);
+    const st=cv.captureStream(30);
+    try{ac=new(window.AudioContext||window.webkitAudioContext)();const src=ac.createMediaElementSource(v),dst=ac.createMediaStreamDestination();src.connect(dst);dst.stream.getAudioTracks().forEach(t=>st.addTrack(t));await ac.resume()}catch(_){ac=null}
+    const rec=new MediaRecorder(st,{mimeType:mime,videoBitsPerSecond:vb,audioBitsPerSecond:ab});const parts=[];
+    rec.ondataavailable=e=>{if(e.data&&e.data.size)parts.push(e.data)};const stopped=new Promise(r=>rec.onstop=r);
+    const step=()=>{try{cx.drawImage(v,0,0,W,H)}catch(_){}onp&&onp(Math.min(.99,(v.currentTime||0)/dur));if(!v.ended)raf=requestAnimationFrame(step)};
+    rec.start(1000);
+    try{await v.play()}catch(_){v.muted=true;await v.play()}
+    step();
+    await new Promise(r=>{v.onended=r;v.onpause=()=>{if(!v.ended)setTimeout(()=>{if(v.paused&&!v.ended)v.play().catch(()=>{})},300)}});
+    try{cx.drawImage(v,0,0,W,H)}catch(_){}
+    rec.stop();await stopped;onp&&onp(1);
+    const type=mime.split(';')[0],out=new File([new Blob(parts,{type})],'koris_video.'+(type==='video/mp4'?'mp4':'webm'),{type});
+    if(!out.size)throw new Error('vide');return out
+  }finally{clean()}}
 function videoPoster(file){return new Promise(res=>{let done=false;const fin=v=>{if(done)return;done=true;try{URL.revokeObjectURL(u)}catch(_){}res(v)};const u=URL.createObjectURL(file);const v=document.createElement('video');v.muted=true;v.playsInline=true;v.preload='auto';
   v.onloadeddata=()=>{try{v.currentTime=Math.min(.5,(v.duration||1)/3)}catch(_){fin('')}};
   v.onseeked=()=>{try{const k=Math.min(1,720/Math.max(v.videoWidth,v.videoHeight));const c=document.createElement('canvas');c.width=Math.round(v.videoWidth*k)||1;c.height=Math.round(v.videoHeight*k)||1;c.getContext('2d').drawImage(v,0,0,c.width,c.height);fin(c.toDataURL('image/jpeg',.7))}catch(_){fin('')}};
@@ -1968,7 +1999,7 @@ function sphere(cv){if(!cv)return null;const x=cv.getContext('2d'),W=cv.width,H=
 
 /* =================== Publication =================== */
 function openCompose(withPic){let data='';const L=$('#layer');
-  let vfile=null,vurl='',orig='',nat=1,fmt='orig';
+  let vfile=null,vurl='',orig='',nat=1,fmt='orig',big=false;
   const curAr=()=>fmt==='orig'?nat:fmtNum(fmt);
   const box=()=>{const r=curAr();return `aspect-ratio:${r};width:min(100%,calc(46vh * ${r}))`};
   const fmtRow=()=>`<div class="chips fmt" role="group" aria-label="Format">${FMTS.map(([k,l])=>`<button type="button" data-fmt="${k}" class="${fmt===k?'on':''}">${l}</button>`).join('')}</div>`;
@@ -1979,26 +2010,29 @@ function openCompose(withPic){let data='';const L=$('#layer');
   <h2 style="font-size:20px">Nouvelle publication</h2>
   <label class="field"><span>Ton message</span><textarea id="cCap" maxlength="500" placeholder="Dis quelque chose aux membres…"></textarea></label>
   <div id="cArea">${area()}</div><input id="cFile" type="file" accept="image/*,video/*" class="fpick">
-  <p class="hint">Visible dans le fil de tous les membres. Choisis le format après avoir ajouté ta photo ou ta vidéo : Original, 9:16, 4:5, 1:1, 3:4, 2:3, 4:3, 3:2 ou 16:9. Vidéos : 8 Mo maximum (environ 30 secondes).</p>
+  <p class="hint">Visible dans le fil de tous les membres. Choisis le format après avoir ajouté ta photo ou ta vidéo : Original, 9:16, 4:5, 1:1, 3:4, 2:3, 4:3, 3:2 ou 16:9. Vidéos : jusqu'à 90 secondes, compressées automatiquement si elles sont lourdes.</p>
   <div class="progress" id="cProg" hidden><i></i></div>
   <p class="err" id="cErr"></p>
   <div class="cta-row" style="margin:0"><button class="btn btn-ghost" id="cCancel">Annuler</button><button class="btn btn-primary" id="cPub" disabled>Publier</button></div></div></div>`;
   const cap=$('#cCap');const sync=()=>{$('#cPub').disabled=!(data||vfile||cap.value.trim())};
   const draw=()=>{$('#cArea').innerHTML=area();const rm=$('#cRm');$('#cArea').querySelectorAll('[data-fmt]').forEach(b=>b.onclick=async e=>{e.preventDefault();e.stopPropagation();fmt=b.dataset.fmt;
     if(orig){try{data=fmt==='orig'?orig:await cropTo(orig,fmtNum(fmt),200000)}catch(_){data=orig}}draw()});
-  if(rm)rm.onclick=e=>{e.preventDefault();data='';orig='';fmt='orig';if(vurl)URL.revokeObjectURL(vurl);vfile=null;vurl='';$('#cFile').value='';draw();sync()}};
+  if(rm)rm.onclick=e=>{e.preventDefault();data='';orig='';fmt='orig';if(vurl)URL.revokeObjectURL(vurl);vfile=null;vurl='';big=false;$('#cErr').textContent='';$('#cFile').value='';draw();sync()}};
   cap.oninput=sync;
   $('#sbg').onclick=e=>{if(e.target.id==='sbg')L.innerHTML=''};$('#cCancel').onclick=()=>L.innerHTML='';
   $('#cFile').onchange=async e=>{const f=e.target.files[0];if(!f)return;$('#cErr').textContent='';
-    if(/^video\//.test(f.type)){if(f.size>VMAX){$('#cErr').textContent=`Cette vidéo fait ${(f.size/1048576).toFixed(1)} Mo : choisis une vidéo de 8 Mo maximum (environ 30 secondes).`;e.target.value='';return}
+    if(/^video\//.test(f.type)){big=false;if(f.size>VMAX){const d=await vidDur(f);if(d>VDUR+1){$('#cErr').textContent=`Cette vidéo dure ${Math.round(d)} secondes : choisis une vidéo de ${VDUR} secondes maximum.`;e.target.value='';return}big=true}
       data='';orig='';fmt='orig';nat=9/16;if(vurl)URL.revokeObjectURL(vurl);vfile=f;vurl=URL.createObjectURL(f);
-      const mv=document.createElement('video');mv.preload='metadata';mv.muted=true;mv.onloadedmetadata=()=>{if(mv.videoWidth&&mv.videoHeight){nat=mv.videoWidth/mv.videoHeight;draw()}};mv.src=vurl;draw();sync();return}
+      const mv=document.createElement('video');mv.preload='metadata';mv.muted=true;mv.onloadedmetadata=()=>{if(mv.videoWidth&&mv.videoHeight){nat=mv.videoWidth/mv.videoHeight;draw()}};mv.src=vurl;draw();sync();if(big)$('#cErr').innerHTML=`<span style="color:var(--lime,#C8F04A)">Vidéo de ${(f.size/1048576).toFixed(1)} Mo : elle sera compressée automatiquement quand tu publies (garde l'application ouverte pendant la compression).</span>`;return}
     try{vfile=null;fmt='orig';orig=await compress(f,1280,260000);nat=await imgDims(orig);data=orig;draw();sync()}catch(_){$('#cErr').textContent="Ce fichier n'a pas pu être lu. Essaie une photo JPG/PNG ou une vidéo MP4."}};
   if(withPic)$('#cFile').click();else cap.focus();
   $('#cPub').onclick=async()=>{const b=$('#cPub');const text=cap.value.trim();if(!data&&!vfile&&!text)return;b.disabled=true;b.textContent='Publication…';
-    try{let vid=null;if(vfile){const pr=$('#cProg');pr.hidden=false;const poster=await videoPoster(vfile);vid=await S.be.putVideo(vfile,f=>{pr.firstElementChild.style.width=Math.round(f*100)+'%';b.textContent='Envoi '+Math.round(f*100)+' %'});vid.poster=poster||''}
+    try{let vid=null;if(vfile){const pr=$('#cProg');pr.hidden=false;
+      if(big||vfile.size>VMAX){$('#cErr').textContent='';b.textContent='Compression 0 %';const sm=await shrinkVideo(vfile,f=>{pr.firstElementChild.style.width=Math.round(f*100)+'%';b.textContent='Compression '+Math.round(f*100)+' %'});
+        if(sm.size>VMAX)throw Object.assign(new Error('big'),{code:'toobig'});vfile=sm;big=false;pr.firstElementChild.style.width='0%'}
+      const poster=await videoPoster(vfile);vid=await S.be.putVideo(vfile,f=>{pr.firstElementChild.style.width=Math.round(f*100)+'%';b.textContent='Envoi '+Math.round(f*100)+' %'});vid.poster=poster||''}
       await S.be.addPost({uid:S.be.uid,img:data,vid,caption:text,at:Date.now(),likes:[],shares:0,...(data||vfile?{ar:Math.round(curAr()*10000)/10000}:{})});L.innerHTML='';toast('Publié');go('feed')}
-    catch(e){b.disabled=false;b.textContent='Publier';$('#cErr').textContent=e?.code==='quota_exceeded'?"L'espace de stockage est plein. Supprime d'anciennes photos.":"La publication a échoué. Vérifie ta connexion et réessaie."}}}
+    catch(e){b.disabled=false;b.textContent='Publier';$('#cErr').textContent=e?.code==='norec'?"Ton téléphone ne peut pas compresser cette vidéo. Choisis une vidéo plus courte (8 Mo maximum).":e?.code==='toobig'?"Même compressée, la vidéo reste trop lourde. Choisis une vidéo plus courte.":e?.code==='long'?`Vidéo trop longue : ${VDUR} secondes maximum.`:e?.code==='quota_exceeded'?"L'espace de stockage est plein. Supprime d'anciennes photos.":"La publication a échoué. Vérifie ta connexion et réessaie."}}}
 
 /* =================== Commentaires =================== */
 let cmOpen=null;
@@ -2106,7 +2140,7 @@ Ce que fait l'application :
 - Installation : dans Chrome, ⋮ puis « Installer l'application » pour avoir l'icône Koris ; version Play Store bientôt.
 - Confidentialité : données jamais vendues, messages privés visibles seulement par les deux membres, page « Confidentialité » en bas de l'accueil. Signaler un faux profil ou une arnaque : Réglages → « Aide et contact ».
 - Prix : ${SUBSCRIPTION?"inscription 5 000 FC (une seule fois) + abonnement 5 000 FC par mois, soit 10 000 FC au premier paiement puis 5 000 FC à chaque renouvellement":"accès 5 000 FC, payé une seule fois (pas d'abonnement mensuel pour le moment)"}, par Orange Money, Airtel Money ou M-Pesa. On envoie l'argent au numéro affiché (bouton « Copier » et bouton qui ouvre le menu Mobile Money), puis on entre le numéro qui a payé et la référence du SMS. Le service vérifie puis l'accès s'ouvre${SUBSCRIPTION?" pour 30 jours. On renouvelle depuis son profil (carte « Abonnement »).":"."}
-- Fil (icône maison) : publications des membres, J'aime, commentaires, partage. Le bouton « + » au centre en bas sert à publier une photo, une vidéo (8 Mo max, environ 30 s) ou un texte.
+- Fil (icône maison) : publications des membres, J'aime, commentaires, partage. Le bouton « + » au centre en bas sert à publier une photo, une vidéo (jusqu'à 90 secondes, compressée automatiquement si besoin) ou un texte.
 - Découvrir (boussole) : chercher des membres par nom ou par ville.
 - Messages (bulle) : stories en haut (« Ta story » pour publier), onglets Discussions et Appels qu'on fait glisser. Appels : l'appel passe par le téléphone, si le membre affiche son numéro.
 - Profil (bonhomme) : photo de profil, couverture et statut via les boutons sous le nom ; Informations ; Publications. L'interrupteur sur la ligne Téléphone masque ou affiche son numéro aux autres. Le crayon en haut recommence l'inscription. La roue dentée ouvre les Réglages : mode sombre ou normal, sons, vibreur, aide.
@@ -2175,7 +2209,7 @@ const GKB=[
  /* ---- Fil et publications ---- */
  {k:['publier','poster','publication','partager une photo','mettre une photo','post'],a:()=>'Pour publier : touche le gros bouton « + » en bas au centre. Écris un message, ajoute une photo ou une vidéo si tu veux, choisis le format, puis « Publier ». Ta publication apparaît dans le fil de tous les membres.'},
  {k:['format','9 16','1 1','16 9','carre','portrait','paysage','recadrer'],a:()=>'Après avoir ajouté une photo ou une vidéo, choisis son format : Original, 9:16, 4:5, 1:1, 3:4, 2:3, 4:3, 3:2 ou 16:9. L\'aperçu change tout de suite, et la publication s\'affiche dans ce format dans le fil.'},
- {k:['video','filmer','clip'],a:()=>'Tu peux publier des vidéos de 8 Mo maximum (environ 30 secondes) avec le bouton « + ». Dans le fil, on touche la vidéo pour la lire.'},
+ {k:['video','filmer','clip'],a:()=>'Tu peux publier des vidéos jusqu\'à 90 secondes avec le bouton « + » : si elles sont lourdes, Koris les compresse automatiquement. Dans le fil, on touche la vidéo pour la lire.'},
  {k:['supprimer une publication','supprimer mon post','effacer une photo','retirer une publication'],a:()=>'Pour supprimer une de tes publications, touche l\'icône poubelle en haut à droite de la publication dans le fil.'},
  {k:['like','j aime','aimer','coeur','coup de coeur'],a:()=>'Touche « J\'aime » sous une publication pour réagir (avec un petit son 💗). Sur le profil d\'un membre, le bouton « J\'aime » lui envoie un coup de cœur.'},
  {k:['commenter','commentaire','repondre a une publication'],a:()=>'Touche l\'icône bulle sous une publication pour voir les commentaires et écrire le tien. Tu peux supprimer tes propres commentaires.'},
