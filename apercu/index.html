@@ -1855,7 +1855,7 @@ function vAdmin(){
   <div class="opbox"><div class="inv-new"><label class="pill" style="flex:1">${I.user}<input id="invMax" type="number" min="1" max="500" value="10" aria-label="Nombre de places"></label><button class="btn btn-primary" data-invnew="1" style="flex:none;height:50px;padding:0 18px">Créer un lien</button></div><div id="admInv">${admInvHtml()}</div></div>
   <h2>Boutique 🛍️</h2><p class="hint" style="padding:0 2px 8px">Ajoute tes habits (2 à 4 photos, nom, prix, tailles, lieux de livraison). Les commandes arrivent dans la boutique, onglet « Commandes ».</p>
   <div class="opbox"><div class="pl-url" style="font-weight:700;font-size:13px;word-break:break-all">${esc(shopLink('').replace('https://',''))}</div><small class="hint" style="padding:0">Lien du catalogue : à envoyer à tes clients, même sans compte Koris.</small>
-   <div style="display:flex;gap:6px;flex-wrap:wrap"><button type="button" class="mini solid" data-go="shop">🛍️ Ouvrir la boutique</button><button type="button" class="mini" data-shopshare="1">${I.share}Partager le catalogue</button><a class="mini" href="https://wa.me/?text=${encodeURIComponent('🛍️ Boutique Koris : vêtements livrés chez toi en RDC. Regarde le catalogue ici 👉 '+shopLink(''))}" target="_blank" rel="noopener">${I.wa}WhatsApp</a></div></div>
+   <div style="display:flex;gap:6px;flex-wrap:wrap"><button type="button" class="mini solid" data-go="shop">🛍️ Ouvrir la boutique</button><button type="button" class="mini" data-shopshare="1">${I.share}Partager le catalogue</button><button type="button" class="mini" data-copy="${esc(shopVisitLink())}">👁 Copier le lien de visite</button><a class="mini" href="https://wa.me/?text=${encodeURIComponent('🛍️ Boutique Koris : vêtements livrés chez toi en RDC. Regarde le catalogue ici 👉 '+shopLink(''))}" target="_blank" rel="noopener">${I.wa}WhatsApp</a></div></div>
   <h2>À vérifier</h2><div id="admList">${admListHtml()}</div>
   <h2>Membres</h2><p class="hint" style="padding:0 2px 8px">Un membre t'a payé directement (Mobile Money sur ton numéro, espèces…) ? Cherche-le et touche <b>${SUBSCRIPTION?'« +1 mois »':'« Activer »'}</b> : son accès s'ouvre tout de suite.</p>
   <label class="pill">${I.search}<input id="memQ" placeholder="Nom, numéro, ville…" autocomplete="off" aria-label="Chercher un membre"></label>
@@ -2775,7 +2775,9 @@ const SHOP_CATS=['Femme','Homme','Enfant','Chaussures','Accessoires'];
 const usd=n=>'$'+(+n||0).toLocaleString('en-US',{maximumFractionDigits:2});
 S.shop={items:null,orders:null,err:'',cat:'',q:'',tab:'items',newN:0,img:0};
 const SHOP_TRIAL=(()=>{try{if(new URLSearchParams(location.search).has('essai'))sessionStorage.setItem('koris:shoptrial','1');return !!sessionStorage.getItem('koris:shoptrial')}catch(_){return false}})();
-const shopDemo=()=>SHOP_TRIAL||!S.be?.sb;const shopOwn=()=>!!(S.owner||SHOP_TRIAL);
+const SHOP_VISIT=(()=>{try{if(new URLSearchParams(location.search).has('visite'))sessionStorage.setItem('koris:shopvisit','1');return !!sessionStorage.getItem('koris:shopvisit')}catch(_){return false}})();
+const shopDemo=()=>SHOP_TRIAL||!S.be?.sb;const shopOwn=()=>!SHOP_VISIT&&!!(S.owner||SHOP_TRIAL);
+const shopVisitLink=()=>APP_URL+'?boutique&visite';
 async function shopLoad(){const H=S.shop;
   if(shopDemo()){H.items=ls.get('shopItems',[]);H.orders=ls.get('shopOrders',[]);return}
   try{const {data,error}=await S.be.sb.from('shop_items').select('*').order('created_at',{ascending:false});if(error)throw error;H.items=data||[];H.err=''}catch(_){H.items=[];H.err='setup'}
@@ -2789,7 +2791,7 @@ async function shopPoll(){if(!S.owner||document.hidden)return;const before=(S.sh
   if(S.route.v==='shop'&&!$('#layer').innerHTML.trim())render()}
 const shopPh=it=>(Array.isArray(it.photos)?it.photos:[]).map(safeImg).filter(Boolean).slice(0,4);
 const isVip=it=>String(it.tier||'').toUpperCase()==='VIP';
-const priceHtml=(it,cls='')=>`<span class="spr ${cls}"><b>${usd(it.price_usd)}</b><small>${fc(+it.price||0)}</small></span>`;
+const priceHtml=(it,cls='')=>`<span class="spr ${cls}"><b>${usd(it.price_usd)}</b><small>★ Cote ${shopQ(it)}/10</small></span>`;
 function shopBanner(){const it=(S.shop.items||[]).filter(x=>x.active!==false);if(!it.length)return '';const ph=it.slice(0,3).map(x=>shopPh(x)[0]).filter(Boolean);
   return `<button type="button" class="shp-ban" data-go="shop"><span class="ims">${ph.map(u=>`<img src="${esc(u)}" alt="">`).join('')}</span><span class="tx"><b>🛍️ Boutique Koris</b><small>${it.length} article${it.length>1?'s':''} · livraison en RDC</small></span><span class="go">Voir</span></button>`}
 function shopCardHtml(it){const ph=shopPh(it);
@@ -2805,7 +2807,7 @@ function scoreCard(it,hero){const s=shopScore(it);const tag=hero?'button type="b
   return `<${tag} class="sx${hero?' hero':''}"${hero?` data-shopitem="${esc(it.id)}"`:''}>
   <span class="sx-h"><span><b>${hero?esc(it.name):'Indice du produit'}</b><small>${sub}</small></span><span class="sx-n">${s.pct}<small>%</small></span></span>
   <span class="sx-bar"><i style="width:${Math.max(3,s.pct)}%"></i></span>
-  <span class="sx-st"><span>${sxRing(s.v)}<span><small>Visites</small><b>${(+it.views||0).toLocaleString('fr-FR')}</b></span></span><span>${sxRing(s.r)}<span><small>Recommandé</small><b>${(+it.recs||0).toLocaleString('fr-FR')}</b></span></span><span>${sxRing(s.q)}<span><small>Qualité</small><b>${shopQ(it)}<em>/10</em></b></span></span></span></${endTag}>`}
+  <span class="sx-st"><span>${sxRing(s.v)}<span><small>Visites</small><b>${(+it.views||0).toLocaleString('fr-FR')}</b></span></span><span>${sxRing(s.r)}<span><small>Recommandé</small><b>${(+it.recs||0).toLocaleString('fr-FR')}</b></span></span><span>${sxRing(s.q)}<span><small>Cote</small><b>${shopQ(it)}<em>/10</em></b></span></span></span></${endTag}>`}
 async function shopBump(id,kind){const it=(S.shop.items||[]).find(x=>x.id===id);if(it){if(kind==='view')it.views=(+it.views||0)+1;else if(kind==='rec')it.recs=(+it.recs||0)+1;else it.recs=Math.max(0,(+it.recs||0)-1)}
   try{if(shopDemo()){const A=ls.get('shopItems',[]);const x=A.find(y=>y.id===id);if(x&&it){x.views=it.views;x.recs=it.recs;ls.set('shopItems',A)}}else await S.be.sb.rpc('shop_bump',{p_id:id,p_kind:kind})}catch(_){}}
 function shopView(id){try{const k='koris:sv:'+id;if(sessionStorage.getItem(k)||shopOwn())return;sessionStorage.setItem(k,'1')}catch(_){}shopBump(id,'view')}
@@ -2821,7 +2823,8 @@ function vShop(){const H=S.shop,p=me(),own=shopOwn();
   const _st=shopStats();const hero=all.filter(x=>x.active!==false).slice().sort((a,b)=>shopScore(b,_st).pct-shopScore(a,_st).pct)[0];
   const chips=[['','Tout'],...(all.some(isVip)?[['VIP','✦ VIP'],['Normal','Normal']]:[]),...cats.map(c=>[c,c])];
   return `<section class="shp">${top}
-  ${SHOP_TRIAL?`<div class="shp-trial">👀 <b>Mode essai</b> · tout ce que tu ajoutes reste seulement sur ce téléphone. Rien n'est publié.</div>`:''}
+  ${SHOP_VISIT?`<div class="shp-trial">👁 <b>Lien de visite</b> · tu vois la boutique exactement comme un client.</div>`:''}
+  ${SHOP_TRIAL&&!SHOP_VISIT?`<div class="shp-trial">👀 <b>Mode essai</b> · tout ce que tu ajoutes reste seulement sur ce téléphone. Rien n'est publié.</div>`:''}
   ${own&&H.err&&!SHOP_TRIAL?`<div class="warn" style="margin:8px 0">Pour activer la boutique, exécute dans Supabase (SQL Editor) les fichiers « koris-boutique.sql » puis « koris-boutique-2.sql ».</div>`:''}
   ${own?`<div class="shp-tabs"><button type="button" class="${H.tab==='items'?'on':''}" data-shoptab="items">Articles <b>${all.length}</b></button><button type="button" class="${H.tab==='orders'?'on':''}" data-shoptab="orders">Commandes ${nNew?`<i>${nNew}</i>`:`<b>${ord.length}</b>`}</button></div>`:''}
   ${own&&H.tab==='orders'?shopOrdersHtml():`
@@ -2847,7 +2850,7 @@ function vShopItem(id){const it=(S.shop.items||[]).find(x=>x.id===id);const own=
   ${sz.length?`<p class="sd-lbl">Taille</p><div class="shp-sz" id="sdSz">${sz.map((s,i)=>`<button type="button" class="${i?'':'on'}" data-sz="${esc(s)}">${esc(s)}</button>`).join('')}</div>`:''}
   <p class="sd-lbl">Description</p>
   ${it.descr?`<p class="sd-desc">${esc(it.descr)}</p>`:''}
-  <ul class="sd-facts">${sz.length?`<li><span>Tailles</span><b>${sz.map(esc).join(', ')}</b></li>`:''}<li><span>Prix</span><b>${usd(it.price_usd)} · ${fc(+it.price||0)}</b></li><li><span>Gamme</span><b>${isVip(it)?'VIP':'Normal'}</b></li>${(it.places||[]).length?`<li><span>Livraison</span><b>${it.places.map(esc).join(', ')}</b></li>`:''}</ul>
+  <ul class="sd-facts">${sz.length?`<li><span>Tailles</span><b>${sz.map(esc).join(', ')}</b></li>`:''}<li><span>Prix</span><b>${usd(it.price_usd)}</b></li><li><span>Cote</span><b>★ ${shopQ(it)}/10</b></li><li><span>Gamme</span><b>${isVip(it)?'VIP':'Normal'}</b></li>${(it.places||[]).length?`<li><span>Livraison</span><b>${it.places.map(esc).join(', ')}</b></li>`:''}</ul>
   <div class="sd-bar">${own?`<button class="btn sd-ghost" data-shopdel="${esc(it.id)}">${I.trash}Retirer</button><button class="btn sd-buy" data-shopedit="${esc(it.id)}">${I.edit}Modifier</button>`
      :`<button class="btn sd-buy" data-shopbuy="${esc(it.id)}">Commander</button><button class="sd-cart" data-shopbuy="${esc(it.id)}" aria-label="Commander">${I.wallet}</button>`}</div>
   </section>`}
@@ -2860,7 +2863,7 @@ const ORD_ST={new:['Nouvelle','new'],ok:['Confirmée','ok'],done:['Livrée','don
 function shopOrdersHtml(){const o=S.shop.orders||[];if(!o.length)return `<div class="shp-empty"><span>📦</span><b>Aucune commande pour l'instant</b><small>Partage le catalogue avec le bouton en haut à droite.</small></div>`;
   return o.map(x=>{const st=ORD_ST[x.status]||ORD_ST.new,tel=String(x.client_phone||'').replace(/[^\d+]/g,''),wa=tel.replace(/\D/g,'').replace(/^0/,'243');
     return `<div class="shp-ord ${st[1]}"><div class="h"><b>${esc(x.item_name)}</b>${x.tier==='VIP'?'<span class="vip sm">VIP</span>':''}<span class="st">${st[0]}</span></div>
-    <small>${[x.size&&'Taille '+x.size,'× '+x.qty,(+x.total_usd?usd(x.total_usd)+' · ':'')+fc(+x.total||0)].filter(Boolean).map(esc).join(' · ')}</small>
+    <small>${[x.size&&'Taille '+x.size,'× '+x.qty,+x.total_usd?usd(x.total_usd):fc(+x.total||0)].filter(Boolean).map(esc).join(' · ')}</small>
     <small>👤 ${esc(x.client_name)} · ${esc(x.client_phone)}${x.place?` · 📍 ${esc(x.place)}`:''}</small>${x.note?`<small>📝 ${esc(x.note)}</small>`:''}
     <small class="d">${new Date(x.created_at).toLocaleString('fr-FR',{dateStyle:'short',timeStyle:'short'})}</small>
     <div class="a"><a class="mini solid" href="https://wa.me/${esc(wa)}?text=${encodeURIComponent('Bonjour '+x.client_name+', merci pour votre commande « '+x.item_name+' » sur la Boutique Koris 🛍️')}" target="_blank" rel="noopener">${I.wa}WhatsApp</a><a class="mini" href="tel:${esc(tel)}">${I.phone}Appeler</a>
@@ -2875,11 +2878,11 @@ function openShopBuy(id){const it=(S.shop.items||[]).find(x=>x.id===id);if(!it)r
   <label class="field"><span>Ton numéro (WhatsApp)</span><input id="spTel" type="tel" inputmode="tel" maxlength="20" value="${esc(p.phone||'')}" placeholder="08x xxx xxxx"></label>
   ${(it.places||[]).length?`<label class="field"><span>Lieu de livraison</span><select id="spPlace">${it.places.map(v=>`<option>${esc(v)}</option>`).join('')}</select></label>`:`<label class="field"><span>Adresse de livraison</span><input id="spPlace" maxlength="80" placeholder="Ville, commune, quartier"></label>`}
   <label class="field"><span>Précision (facultatif)</span><input id="spNote" maxlength="140" placeholder="Adresse exacte, heure…"></label>
-  <div class="sb-tot"><span>Total</span><b id="spTot">${usd(it.price_usd)} · ${fc(+it.price||0)}</b></div>
+  <div class="sb-tot"><span>Total</span><b id="spTot">${usd(it.price_usd)}</b></div>
   <p class="err" id="spErr"></p>
   <button class="btn sd-buy" id="spBuy" style="width:100%">Envoyer ma commande</button></div></div>`;
   $('#sbg').onclick=e=>{if(e.target.id==='sbg')L.innerHTML=''};
-  const q=()=>Math.max(1,Math.min(20,parseInt($('#spQty').value,10)||1));$('#spQty').oninput=()=>{$('#spTot').textContent=`${usd(q()*(+it.price_usd||0))} · ${fc(q()*(+it.price||0))}`};
+  const q=()=>Math.max(1,Math.min(20,parseInt($('#spQty').value,10)||1));$('#spQty').oninput=()=>{$('#spTot').textContent=usd(q()*(+it.price_usd||0))};
   $('#spBuy').onclick=async()=>{const b=$('#spBuy'),er=$('#spErr');const name=$('#spName').value.trim(),tel=$('#spTel').value.trim(),place=($('#spPlace')||{}).value||'',note=$('#spNote').value.trim(),qty=q();
     if(!name)return er.textContent='Écris ton nom.';if(tel.replace(/\D/g,'').length<9)return er.textContent='Écris un numéro de téléphone valable.';if(!place.trim())return er.textContent='Indique le lieu de livraison.';
     const row={item_id:it.id,item_name:it.name,size,color:'',qty,total:qty*(+it.price||0),total_usd:Math.round(qty*(+it.price_usd||0)*100)/100,tier:isVip(it)?'VIP':'Normal',place:place.trim(),client_name:name,client_phone:tel,note,status:'new'};
@@ -2887,8 +2890,8 @@ function openShopBuy(id){const it=(S.shop.items||[]).find(x=>x.id===id);if(!it)r
     try{if(shopDemo()){const O=ls.get('shopOrders',[]);O.unshift({...row,id:'o'+Date.now(),created_at:new Date().toISOString()});ls.set('shopOrders',O)}
       else{let {error}=await S.be.sb.from('shop_orders').insert(row);if(error){const r2={...row};delete r2.total_usd;delete r2.tier;({error}=await S.be.sb.from('shop_orders').insert(r2))}if(error)throw error}
       const wa=String(S.helpCfg?.wa||'').replace(/\D/g,'');
-      L.querySelector('.sheet').innerHTML=`<span class="grab"></span><div class="shp-done"><span class="ok">${I.check}</span><h2>Commande envoyée !</h2><p>${esc(it.name)}${size?' · taille '+esc(size):''} · × ${qty}<br><b>${usd(row.total_usd)} · ${fc(row.total)}</b><br>La Boutique Koris te contacte au <b>${esc(tel)}</b> pour la livraison à ${esc(place)}.</p>
-       ${wa?`<a class="btn sd-buy" style="flex:none;height:50px" href="https://wa.me/${wa}?text=${encodeURIComponent(`Bonjour, je viens de commander « ${it.name} »${size?' taille '+size:''} × ${qty} (${usd(row.total_usd)} / ${fc(row.total)}) sur la Boutique Koris. Livraison : ${place}. Mon nom : ${name}.`)}" target="_blank" rel="noopener">${I.wa}Écrire aussi sur WhatsApp</a>`:''}
+      L.querySelector('.sheet').innerHTML=`<span class="grab"></span><div class="shp-done"><span class="ok">${I.check}</span><h2>Commande envoyée !</h2><p>${esc(it.name)}${size?' · taille '+esc(size):''} · × ${qty}<br><b>${usd(row.total_usd)}</b><br>La Boutique Koris te contacte au <b>${esc(tel)}</b> pour la livraison à ${esc(place)}.</p>
+       ${wa?`<a class="btn sd-buy" style="flex:none;height:50px" href="https://wa.me/${wa}?text=${encodeURIComponent(`Bonjour, je viens de commander « ${it.name} »${size?' taille '+size:''} × ${qty} (${usd(row.total_usd)}) sur la Boutique Koris. Livraison : ${place}. Mon nom : ${name}.`)}" target="_blank" rel="noopener">${I.wa}Écrire aussi sur WhatsApp</a>`:''}
        <button class="btn btn-ghost" id="spClose" style="flex:none;height:48px">Continuer mes achats</button></div>`;
       $('#spClose').onclick=()=>{L.innerHTML='';go('shop')};try{fx.ok&&fx.ok()}catch(_){}}
     catch(_){b.disabled=false;er.textContent="La commande n'a pas pu être envoyée. Vérifie ta connexion et réessaie."}}}
@@ -2899,11 +2902,11 @@ function openShopEdit(id){if(!shopOwn())return;const it=id&&id!=='new'?(S.shop.i
   <p class="hint" style="margin:6px 0 6px;font-weight:600">Photos du produit · 4 recommandées (2 minimum)</p><div class="clb-pick" id="peP"></div><input id="peFile" type="file" accept="image/*" multiple class="fpick">
   <label class="field"><span>Nom du produit</span><input id="peName" maxlength="80" value="${esc(it?.name||'')}" placeholder="Ex. Robe pagne wax"></label>
   <div style="display:flex;gap:10px"><label class="field" style="flex:1"><span>Prix en dollars ($)</span><input id="peUsd" type="number" min="0" step="0.01" inputmode="decimal" value="${esc(String(it?.price_usd??''))}" placeholder="25"></label>
-   <label class="field" style="flex:1"><span>Prix en francs (FC)</span><input id="pePrice" type="number" min="0" inputmode="numeric" value="${esc(String(it?.price??''))}" placeholder="70000"></label></div>
+</div>
   <p class="hint" style="margin:6px 0 6px;font-weight:600">Gamme</p><div class="pe-tier" role="radiogroup"><button type="button" data-tier="Normal" class="${tier==='Normal'?'on':''}">Normal</button><button type="button" data-tier="VIP" class="${tier==='VIP'?'on':''}">✦ VIP</button></div>
   <div style="display:flex;gap:10px"><label class="field" style="flex:1"><span>Catégorie</span><select id="peCat">${SHOP_CATS.map(c=>`<option${(it?.category||'Femme')===c?' selected':''}>${c}</option>`).join('')}</select></label>
    <label class="field" style="flex:1"><span>Tailles</span><input id="peSz" value="${esc(csv(it?.sizes)||'S, M, L, XL')}"></label></div>
-  <label class="field"><span>Qualité du produit : <b id="peQv">${shopQ(it||{})}</b>/10</span><input id="peQ" type="range" min="1" max="10" step="1" value="${shopQ(it||{})}" class="pe-q" oninput="document.getElementById('peQv').textContent=this.value"></label>
+  <label class="field"><span>Cote du produit : <b id="peQv">${shopQ(it||{})}</b>/10</span><input id="peQ" type="range" min="1" max="10" step="1" value="${shopQ(it||{})}" class="pe-q" oninput="document.getElementById('peQv').textContent=this.value"></label>
   <label class="field"><span>Lieux de livraison</span><input id="pePl" value="${esc(csv(it?.places)||'Kinshasa')}" placeholder="Kinshasa, Gombe, Limete, Lubumbashi"></label>
   <label class="field"><span>Description</span><textarea id="peDesc" maxlength="600" placeholder="Matière, coupe, conseils…">${esc(it?.descr||'')}</textarea></label>
   ${it?`<label class="clb-ok"><input type="checkbox" id="peAct" ${it.active!==false?'checked':''}><span>Visible dans la boutique</span></label>`:''}
@@ -2915,8 +2918,8 @@ function openShopEdit(id){if(!shopOwn())return;const it=id&&id!=='new'?(S.shop.i
   $('#sbg').onclick=e=>{if(e.target.id==='sbg')L.innerHTML=''};$('#peCancel').onclick=()=>L.innerHTML='';
   $('#peFile').onchange=async e=>{const fs=[...e.target.files].slice(0,4-photos.length);for(const f of fs){if(!/^image\//.test(f.type))continue;try{photos.push(await compress(f,1280,260000))}catch(_){$('#peErr').textContent="Une photo n'a pas pu être lue (JPG ou PNG)."}}e.target.value='';draw()};
   const list=v=>v.split(',').map(x=>x.trim()).filter(Boolean).slice(0,20);
-  $('#peSave').onclick=async()=>{const b=$('#peSave'),er=$('#peErr');const name=$('#peName').value.trim(),price=parseInt($('#pePrice').value,10),pu=parseFloat(String($('#peUsd').value).replace(',','.'));
-    if(photos.length<2)return er.textContent='Ajoute au moins 2 photos du produit (4 recommandées).';if(!name)return er.textContent='Écris le nom du produit.';if(!(pu>=0))return er.textContent='Indique le prix en dollars.';if(!(price>=0))return er.textContent='Indique le prix en francs congolais.';
+  $('#peSave').onclick=async()=>{const b=$('#peSave'),er=$('#peErr');const name=$('#peName').value.trim(),price=0,pu=parseFloat(String($('#peUsd').value).replace(',','.'));
+    if(photos.length<2)return er.textContent='Ajoute au moins 2 photos du produit (4 recommandées).';if(!name)return er.textContent='Écris le nom du produit.';if(!(pu>=0))return er.textContent='Indique le prix en dollars.';
     b.disabled=true;er.textContent='';
     try{const urls=[];for(let i=0;i<photos.length;i++){b.textContent=`Envoi ${i+1}/${photos.length}`;urls.push(await shopPutPhoto(photos[i]))}
       const row={name,price,price_usd:pu,quality:parseInt($('#peQ').value,10)||8,tier,category:$('#peCat').value,sizes:list($('#peSz').value),colors:[],places:list($('#pePl').value),descr:$('#peDesc').value.trim(),photos:urls,active:it?!!$('#peAct').checked:true};
