@@ -1,6 +1,7 @@
 <!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="description" content="Koris, l'application de rencontre de la RDC : rencontre des célibataires près de chez toi à Kinshasa, Lubumbashi, Goma, Bukavu et partout au Congo. Profils vérifiés, messages privés, photos et vidéos."><meta name="theme-color" content="#03100E"><link rel="manifest" href="/manifest.webmanifest"><link rel="icon" type="image/png" href="/icon-192-v2.png"><link rel="apple-touch-icon" href="/icon-180-v2.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Koris"><link rel="canonical" href="https://koris-rdc.github.io/"><meta property="og:type" content="website"><meta property="og:site_name" content="Koris"><meta property="og:title" content="Koris — Rencontres en RDC"><meta property="og:description" content="Rencontre des célibataires près de chez toi, à Kinshasa, Lubumbashi, Goma et partout au Congo."><meta property="og:url" content="https://koris-rdc.github.io/"><meta property="og:image" content="https://koris-rdc.github.io/icon-512-v2.png"><meta property="og:locale" content="fr_CD"><meta name="twitter:card" content="summary"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}/* Boutique Koris */
 .shp{--pk:#F7A1C0;--pk2:#EC5F8E;--pkg:linear-gradient(135deg,#FFC9DB,#F48FB1 48%,#EC5F8E);--pkbg:rgba(247,161,192,.13);padding-bottom:40px}
 .shp-top .shp-ttl{flex:1;text-align:center;line-height:1.15}.shp-ttl small{display:block;font-size:11px;color:var(--muted)}.shp-ttl b{font-size:17px}
+.shp-trial{font-size:12.5px;line-height:1.4;padding:10px 14px;border-radius:16px;background:rgba(247,161,192,.12);border:1px solid rgba(247,161,192,.35);color:var(--text);margin:4px 0 12px}
 .shp-tabs{display:flex;gap:8px;margin:0 0 14px}.shp-tabs button{flex:1;height:42px;border-radius:999px;background:var(--panel);border:1px solid var(--line);color:var(--text);font-weight:700;font-size:14px;display:inline-flex;align-items:center;justify-content:center;gap:6px}
 .shp-tabs button b{color:var(--muted)}.shp-tabs button i{font-style:normal;min-width:20px;height:20px;padding:0 6px;border-radius:999px;background:var(--pk2);color:#fff;font-size:11px;display:inline-grid;place-items:center}
 .shp-tabs button.on{background:var(--pkg);color:#3A0B1C;border-color:transparent}.shp-tabs button.on b{color:#3A0B1C}
@@ -2499,12 +2500,12 @@ document.addEventListener('click',async e=>{const t=e.target.closest('button,[da
   if(d.invnew){if(!S.owner)return;t.disabled=true;await invCreate();t.disabled=false;return}
   if(d.shopitem){return go('shopitem',d.shopitem)}
   if(d.shopbuy){return openShopBuy(d.shopbuy)}
-  if(d.shopedit){if(!S.owner)return;return openShopEdit(d.shopedit)}
-  if(d.shopdel){if(!S.owner)return;if(!t.dataset.armed){t.dataset.armed='1';t.textContent='Confirmer ?';setTimeout(()=>{delete t.dataset.armed;t.textContent='Retirer'},3000);return}return shopDel(d.shopdel)}
+  if(d.shopedit){if(!shopOwn())return;return openShopEdit(d.shopedit)}
+  if(d.shopdel){if(!shopOwn())return;if(!t.dataset.armed){t.dataset.armed='1';t.textContent='Confirmer ?';setTimeout(()=>{delete t.dataset.armed;t.textContent='Retirer'},3000);return}return shopDel(d.shopdel)}
   if(d.shopcat){S.shop.cat=d.shopcat==='*'?'':d.shopcat;return render()}
   if(d.shoptab){S.shop.tab=d.shoptab;if(d.shoptab==='orders'){ls.set('shopSeen',Date.now());S.shop.newN=0}return render()}
   if(d.shopshare){return shopShare()}
-  if(d.ordst){if(!S.owner)return;return shopSetSt(d.ordst,d.st)}
+  if(d.ordst){if(!shopOwn())return;return shopSetSt(d.ordst,d.st)}
   if(d.invoff){if(!S.owner)return;return invOff(d.invoff)}
   if(d.ownok){if(!S.owner)return;try{const p=me();await S.be.saveProfile({...p,paid:true,owner:true,paidAt:Date.now(),pay:{op:'owner',status:'ok',at:Date.now(),ref:'propriétaire',from:''}});toast('Compte propriétaire activé');go('feed')}catch(_){toast("L'activation a échoué")}return}
   if(d.certok||d.certno){const id=d.certok||d.certno,x=S.profiles[id];if(!x?.cert||!S.owner)return;const h=String(x.cert.handle).toLowerCase();
@@ -2751,7 +2752,8 @@ const shopLink=id=>APP_URL+'?boutique'+(id?'='+id:'');
 const SHOP_CATS=['Femme','Homme','Enfant','Chaussures','Accessoires'];
 const usd=n=>'$'+(+n||0).toLocaleString('en-US',{maximumFractionDigits:2});
 S.shop={items:null,orders:null,err:'',cat:'',q:'',tab:'items',newN:0,img:0};
-const shopDemo=()=>!S.be?.sb;
+const SHOP_TRIAL=(()=>{try{if(new URLSearchParams(location.search).has('essai'))sessionStorage.setItem('koris:shoptrial','1');return !!sessionStorage.getItem('koris:shoptrial')}catch(_){return false}})();
+const shopDemo=()=>SHOP_TRIAL||!S.be?.sb;const shopOwn=()=>!!(S.owner||SHOP_TRIAL);
 async function shopLoad(){const H=S.shop;
   if(shopDemo()){H.items=ls.get('shopItems',[]);H.orders=ls.get('shopOrders',[]);return}
   try{const {data,error}=await S.be.sb.from('shop_items').select('*').order('created_at',{ascending:false});if(error)throw error;H.items=data||[];H.err=''}catch(_){H.items=[];H.err='setup'}
@@ -2771,7 +2773,7 @@ function shopBanner(){const it=(S.shop.items||[]).filter(x=>x.active!==false);if
 function shopCardHtml(it){const ph=shopPh(it);
   return `<div class="sc${it.active===false?' off':''}"><button type="button" class="sc-img" data-shopitem="${esc(it.id)}" aria-label="${esc(it.name)}">${ph[0]?`<img src="${esc(ph[0])}" alt="${esc(it.name)}" loading="lazy">`:''}${isVip(it)?'<span class="vip">VIP</span>':''}${it.active===false?'<span class="hid">Masqué</span>':''}</button>
    <div class="sc-inf"><div><b>${esc(it.name)}</b><small>${esc(it.category||'')}${ph.length>1?` · ${ph.length} photos`:''}</small>${priceHtml(it)}</div><button type="button" class="sc-go" data-shopitem="${esc(it.id)}" aria-label="Voir ${esc(it.name)}">${I.plus}</button></div></div>`}
-function vShop(){const H=S.shop,p=me(),own=!!S.owner;
+function vShop(){const H=S.shop,p=me(),own=shopOwn();
   const top=`<div class="top shp-top" style="padding-inline:0"><button class="icon-btn" data-go="${p?(isActive(p)?'feed':'pay'):'onboard'}" aria-label="Retour">${I.back}</button>
    <div class="shp-ttl"><small>Livraison partout en RDC</small><b>Boutique Koris</b></div><button class="icon-btn" data-shopshare="1" aria-label="Partager le catalogue">${I.share}</button></div>`;
   if(H.items===null){setTimeout(shopRefresh,0);return `<section class="shp">${top}<div class="loading" style="min-height:50vh"><div class="spin"></div></div></section>`}
@@ -2783,7 +2785,8 @@ function vShop(){const H=S.shop,p=me(),own=!!S.owner;
   const hero=all.find(isVip)||all[0];const heroPh=hero&&shopPh(hero)[0];
   const chips=[['','Tout'],...(all.some(isVip)?[['VIP','✦ VIP'],['Normal','Normal']]:[]),...cats.map(c=>[c,c])];
   return `<section class="shp">${top}
-  ${own&&H.err?`<div class="warn" style="margin:8px 0">Pour activer la boutique, exécute dans Supabase (SQL Editor) les fichiers « koris-boutique.sql » puis « koris-boutique-2.sql ».</div>`:''}
+  ${SHOP_TRIAL?`<div class="shp-trial">👀 <b>Mode essai</b> · tout ce que tu ajoutes reste seulement sur ce téléphone. Rien n'est publié.</div>`:''}
+  ${own&&H.err&&!SHOP_TRIAL?`<div class="warn" style="margin:8px 0">Pour activer la boutique, exécute dans Supabase (SQL Editor) les fichiers « koris-boutique.sql » puis « koris-boutique-2.sql ».</div>`:''}
   ${own?`<div class="shp-tabs"><button type="button" class="${H.tab==='items'?'on':''}" data-shoptab="items">Articles <b>${all.length}</b></button><button type="button" class="${H.tab==='orders'?'on':''}" data-shoptab="orders">Commandes ${nNew?`<i>${nNew}</i>`:`<b>${ord.length}</b>`}</button></div>`:''}
   ${own&&H.tab==='orders'?shopOrdersHtml():`
   <div class="shp-search"><label>${I.search}<input id="shopQ" value="${esc(H.q)}" placeholder="Chercher un article" autocomplete="off" aria-label="Chercher un article"></label>${own?`<button type="button" class="sq" data-shopedit="new" aria-label="Ajouter un produit">${I.plus}</button>`:`<button type="button" class="sq" data-shopcat="${H.cat==='VIP'?'*':'VIP'}" aria-label="Articles VIP">✦</button>`}</div>
@@ -2793,7 +2796,7 @@ function vShop(){const H=S.shop,p=me(),own=!!S.owner;
   ${list.length?`<div class="shp-grid">${list.map(shopCardHtml).join('')}</div>`:`<div class="shp-empty"><span>🛍️</span><b>${all.length?'Aucun article ici':'La boutique ouvre bientôt'}</b><small>${own?'Ajoute ton premier produit avec le bouton ci-dessus.':'Reviens très vite pour découvrir la collection.'}</small></div>`}`}
   ${!p?`<button class="btn btn-ghost" data-go="onboard" style="width:100%;flex:none;height:48px;margin:22px 0 8px">${I.spark}Découvrir l'application Koris</button>`:''}
   </section>`}
-function vShopItem(id){const it=(S.shop.items||[]).find(x=>x.id===id);const own=!!S.owner;
+function vShopItem(id){const it=(S.shop.items||[]).find(x=>x.id===id);const own=shopOwn();
   if(S.shop.items===null){setTimeout(shopRefresh,0);return `<section class="shp"><div class="loading" style="min-height:70vh"><div class="spin"></div></div></section>`}
   if(!it)return `<section class="shp"><div class="top" style="padding-inline:0"><button class="icon-btn" data-go="shop" aria-label="Retour">${I.back}</button><span></span></div><div class="shp-empty"><span>🛍️</span><b>Cet article n'est plus disponible</b><small>Découvre les autres articles de la boutique.</small><button class="btn btn-primary" data-go="shop" style="flex:none;height:46px;margin-top:8px">Voir la boutique</button></div></section>`;
   const ph=shopPh(it),sz=(it.sizes||[]),i0=Math.min(S.shop.img||0,Math.max(0,ph.length-1));
@@ -2851,7 +2854,7 @@ function openShopBuy(id){const it=(S.shop.items||[]).find(x=>x.id===id);if(!it)r
        <button class="btn btn-ghost" id="spClose" style="flex:none;height:48px">Continuer mes achats</button></div>`;
       $('#spClose').onclick=()=>{L.innerHTML='';go('shop')};try{fx.ok&&fx.ok()}catch(_){}}
     catch(_){b.disabled=false;er.textContent="La commande n'a pas pu être envoyée. Vérifie ta connexion et réessaie."}}}
-function openShopEdit(id){if(!S.owner)return;const it=id&&id!=='new'?(S.shop.items||[]).find(x=>x.id===id):null;const L=$('#layer');let photos=it?shopPh(it):[];let tier=it&&isVip(it)?'VIP':'Normal';
+function openShopEdit(id){if(!shopOwn())return;const it=id&&id!=='new'?(S.shop.items||[]).find(x=>x.id===id):null;const L=$('#layer');let photos=it?shopPh(it):[];let tier=it&&isVip(it)?'VIP':'Normal';
   const csv=a=>(a||[]).join(', ');
   L.innerHTML=`<div class="sheet-bg" id="sbg"><div class="sheet" role="dialog" aria-label="Produit"><span class="grab"></span>
   <h2 style="font-size:20px">${it?'Modifier le produit':'Nouveau produit'}</h2>
