@@ -1,38 +1,4 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="description" content="Koris, l'application de rencontre de la RDC : rencontre des célibataires près de chez toi à Kinshasa, Lubumbashi, Goma, Bukavu et partout au Congo. Profils vérifiés, messages privés, photos et vidéos."><meta name="theme-color" content="#03100E"><link rel="manifest" href="/manifest.webmanifest"><link rel="icon" type="image/png" href="/icon-192-v2.png"><link rel="apple-touch-icon" href="/icon-180-v2.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Koris"><link rel="canonical" href="https://koris-rdc.github.io/"><meta property="og:type" content="website"><meta property="og:site_name" content="Koris"><meta property="og:title" content="Koris — Rencontres en RDC"><meta property="og:description" content="Rencontre des célibataires près de chez toi, à Kinshasa, Lubumbashi, Goma et partout au Congo."><meta property="og:url" content="https://koris-rdc.github.io/"><meta property="og:image" content="https://koris-rdc.github.io/icon-512-v2.png"><meta property="og:locale" content="fr_CD"><meta name="twitter:card" content="summary"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}/* Club Koris */
-.clb{padding-bottom:40px}
-.clb-lock{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#E9FF8A,#C8F04A 55%,#2EE0B0);color:#03100E}
-.clb-lock svg{width:16px;height:16px}
-.clb-lock.big{width:64px;height:64px}.clb-lock.big svg{width:30px;height:30px}
-.clb-lead{color:var(--muted);font-size:14px;margin:2px 0 14px}
-.clb-cta{width:100%;flex:none;height:52px;margin:4px 0 14px}
-.clb-me{display:flex;align-items:center;gap:8px;padding:12px 14px;border-radius:18px;background:var(--panel);border:1px solid rgba(200,240,74,.25);margin:4px 0 14px}
-.clb-me .mid{flex:1;min-width:0}.clb-me b{display:block;font-size:14px}.clb-me small{font-size:12px;color:var(--muted)}.clb-me .mini{padding:0 11px}.clb-me .mini svg{width:14px;height:14px}
-.clb-cities{display:flex;gap:8px;overflow-x:auto;padding:2px 0 6px;margin:0 -16px 4px;padding-inline:16px;scrollbar-width:none}.clb-cities::-webkit-scrollbar{display:none}
-.clb-cities button{flex:none;height:36px;padding:0 14px;border-radius:999px;background:var(--panel);border:1px solid var(--line);color:var(--text);font-size:13px;font-weight:600;white-space:nowrap}
-.clb-cities button b{color:var(--muted);font-weight:700;margin-left:4px}
-.clb-cities button.on{background:linear-gradient(110deg,#E9FF8A,#C8F04A 55%,#2EE0B0);color:#03100E;border-color:transparent}.clb-cities button.on b{color:#03100E}
-.clb-h{display:flex;align-items:center;gap:6px;font-size:16px;margin:18px 0 10px}.clb-h svg{width:16px;height:16px;color:#C8F04A}.clb-h small{color:var(--muted);font-weight:600;font-size:13px}
-.clb-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.clb-card{position:relative;border-radius:22px;overflow:hidden;background:var(--panel);border:1px solid var(--line);box-shadow:0 14px 34px rgba(0,0,0,.28)}
-.clb-card.off{opacity:.55}
-.clb-ph{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;aspect-ratio:3/4;scrollbar-width:none;background:#0a2420}.clb-ph::-webkit-scrollbar{display:none}
-.clb-ph img{flex:0 0 100%;width:100%;height:100%;object-fit:cover;scroll-snap-align:start}
-.clb-dots{position:absolute;top:10px;left:0;right:0;display:flex;justify-content:center;gap:4px;pointer-events:none}.clb-dots i{width:16px;height:3px;border-radius:3px;background:rgba(255,255,255,.75);box-shadow:0 0 4px rgba(0,0,0,.4)}
-.clb-inf{padding:10px 12px 4px}.clb-inf b{display:block;font-size:15px}.clb-inf small{display:flex;align-items:center;gap:4px;font-size:12px;color:var(--muted)}.clb-inf small svg{width:12px;height:12px}
-.clb-act{display:flex;gap:6px;padding:6px 10px 12px;flex-wrap:wrap}.clb-act .mini{height:32px;padding:0 12px;font-size:12px}.clb-act .mini svg{width:14px;height:14px}
-.clb-empty{display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px;padding:44px 20px;border-radius:24px;background:var(--panel);border:1px dashed rgba(200,240,74,.3);margin-top:8px}
-.clb-empty small{color:var(--muted);font-size:13px;max-width:300px}
-.clb-pick{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
-.clb-pick .it,.clb-pick .add{position:relative;aspect-ratio:3/4;border-radius:14px;overflow:hidden;background:var(--panel-2)}
-.clb-pick .it img{width:100%;height:100%;object-fit:cover}
-.clb-pick .it button{position:absolute;top:4px;right:4px;width:24px;height:24px;border-radius:50%;background:rgba(3,16,14,.75);color:#fff;display:grid;place-items:center}.clb-pick .it button svg{width:12px;height:12px}
-.clb-pick .add{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;border:1.5px dashed rgba(200,240,74,.45);color:#C8F04A;cursor:pointer}.clb-pick .add svg{width:22px;height:22px}.clb-pick .add small{font-size:11px;font-weight:600}
-.clb-ok{display:flex;gap:10px;align-items:flex-start;font-size:12.5px;color:var(--muted);line-height:1.4;margin:12px 0 2px}.clb-ok input{width:20px;height:20px;flex:none;margin-top:1px;accent-color:#C8F04A}
-.clb-back{display:inline-flex;align-items:center;gap:6px;margin:14px 0 0;height:38px;padding:0 14px;border-radius:999px;background:var(--panel);border:1px solid rgba(200,240,74,.3);color:var(--text);font-weight:700;font-size:13px}.clb-back svg{width:16px;height:16px}
-.club-fab{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(18px + env(safe-area-inset-bottom,0px));z-index:40;display:inline-flex;align-items:center;gap:8px;height:46px;padding:0 20px;border-radius:999px;background:linear-gradient(110deg,#E9FF8A,#C8F04A 55%,#2EE0B0);color:#03100E;font-weight:800;box-shadow:0 12px 30px rgba(0,0,0,.4)}.club-fab svg{width:18px;height:18px}
-.adm .clb-new{display:flex;gap:8px;flex-wrap:wrap}.adm .clb-new .pill{flex:1;min-width:120px}.adm .clb-new select{background:transparent;color:inherit;border:0;font:inherit;flex:1;min-width:0;outline:none}
-.adm .clb-new select option{color:#03100E}
-</style></head><body><div id="ksplash" class="wait" role="img" aria-label="Koris" title="Touchez pour passer">
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="description" content="Koris, l'application de rencontre de la RDC : rencontre des célibataires près de chez toi à Kinshasa, Lubumbashi, Goma, Bukavu et partout au Congo. Profils vérifiés, messages privés, photos et vidéos."><meta name="theme-color" content="#03100E"><link rel="manifest" href="/manifest.webmanifest"><link rel="icon" type="image/png" href="/icon-192-v2.png"><link rel="apple-touch-icon" href="/icon-180-v2.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Koris"><link rel="canonical" href="https://koris-rdc.github.io/"><meta property="og:type" content="website"><meta property="og:site_name" content="Koris"><meta property="og:title" content="Koris — Rencontres en RDC"><meta property="og:description" content="Rencontre des célibataires près de chez toi, à Kinshasa, Lubumbashi, Goma et partout au Congo."><meta property="og:url" content="https://koris-rdc.github.io/"><meta property="og:image" content="https://koris-rdc.github.io/icon-512-v2.png"><meta property="og:locale" content="fr_CD"><meta name="twitter:card" content="summary"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body><div id="ksplash" class="wait" role="img" aria-label="Koris" title="Touchez pour passer">
 <style>
 #ksplash{position:fixed;inset:0;z-index:99999;background:#03100E;display:grid;place-items:center;overflow:hidden;cursor:pointer;animation:ksOut .7s cubic-bezier(.7,0,.3,1) 10.4s forwards}
 #ksplash .ks-stage{position:relative;height:100svh;max-height:100%;aspect-ratio:9/16;max-width:100vw;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4.2svh;background:radial-gradient(70% 45% at 50% 44%,rgba(46,224,176,.26),transparent 70%),radial-gradient(60% 40% at 50% 110%,rgba(200,240,74,.14),transparent 70%),#03100E;animation:ksBg 1.6s ease-out both}
@@ -1174,7 +1140,6 @@ header.top{margin-inline:-16px;padding-inline:16px;top:0;padding-top:calc(18px +
 <script>
 /* =================== Icônes =================== */
 const I={
-  lock:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4.5" y="10.5" width="15" height="10" rx="2.5"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/><circle cx="12" cy="15.5" r="1.3" fill="currentColor"/></svg>',
 bell:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 8 3 8H3s3-1 3-8"/><path d="M10.3 20a1.9 1.9 0 0 0 3.4 0"/></svg>',
  home:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/></svg>',
  search:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>',
@@ -1798,9 +1763,6 @@ function vAdmin(){
    <div class="pl-acts"><button type="button" class="mini" data-copy="${esc(msg)}">Copier le message</button><a class="mini solid" href="https://wa.me/?text=${encodeURIComponent(msg)}" target="_blank" rel="noopener">${I.wa}WhatsApp</a><button type="button" class="mini" data-act="shareapp">${I.share}Autre</button></div></div>`})()}
   <h2>Invitations gratuites</h2><p class="hint" style="padding:0 2px 8px">Crée un lien pour tes membres privés : ils s'inscrivent sans payer. Choisis le nombre de places, puis envoie le lien.</p>
   <div class="opbox"><div class="inv-new"><label class="pill" style="flex:1">${I.user}<input id="invMax" type="number" min="1" max="500" value="10" aria-label="Nombre de places"></label><button class="btn btn-primary" data-invnew="1" style="flex:none;height:50px;padding:0 18px">Créer un lien</button></div><div id="admInv">${admInvHtml()}</div></div>
-  <h2>Club Koris 🔒</h2><p class="hint" style="padding:0 2px 8px">Espace privé sur invitation. Toi seul crées les liens : chacun expire tout seul et tu peux le bloquer à tout moment. Chaque invité crée lui-même sa présentation (2 à 4 photos, prénom, âge, ville).</p>
-  <div class="opbox"><div class="clb-new"><label class="pill">⏱<select id="clubDur" aria-label="Durée du lien"><option value="1">Valable 1 h</option><option value="24" selected>Valable 24 h</option><option value="72">Valable 3 jours</option><option value="168">Valable 7 jours</option></select></label><label class="pill" style="flex:0 0 110px;min-width:0">${I.user}<input id="clubMax" type="number" min="1" max="50" value="1" aria-label="Nombre d'utilisations"></label><button class="btn btn-primary" data-clubnew="1" style="flex:none;height:50px;padding:0 18px">Créer un lien</button></div><div id="admClub">${admClubHtml()}</div>
-  <button class="btn btn-ghost" data-go="club" style="width:100%;flex:none;height:46px;margin-top:6px">${I.lock}Ouvrir le Club</button></div>
   <h2>À vérifier</h2><div id="admList">${admListHtml()}</div>
   <h2>Membres</h2><p class="hint" style="padding:0 2px 8px">Un membre t'a payé directement (Mobile Money sur ton numéro, espèces…) ? Cherche-le et touche <b>${SUBSCRIPTION?'« +1 mois »':'« Activer »'}</b> : son accès s'ouvre tout de suite.</p>
   <label class="pill">${I.search}<input id="memQ" placeholder="Nom, numéro, ville…" autocomplete="off" aria-label="Chercher un membre"></label>
@@ -2005,18 +1967,15 @@ function render(){const app=$('#app');const r=S.route;
   if(r.v==='auth'&&S.be.uid&&!S.pendingProf){S.route=p?(isActive(p)?{v:'feed'}:{v:'pay'}):{v:'signup'};return render()}
   if(r.v==='admin'&&!S.owner){S.route={v:'feed'};return render()}
   if(!p&&!open.includes(r.v)){S.route={v:'onboard'};return render()}
-  clubTick(p);
-  if(r.v==='club'&&S.club.member!==null&&!clubOk()){S.route={v:p&&isActive(p)?'feed':'pay'};return render()}
-  if(p&&!isActive(p)&&!['signup','pay','about','onboard','admin',...(S.club.member?['club','chat','messages']:[])].includes(r.v)){S.route=S.club.member?{v:'club'}:{v:'pay'};return render()}
+  if(p&&!isActive(p)&&!['signup','pay','about','onboard','admin'].includes(r.v)){S.route={v:'pay'};return render()}
   if(render.last!==r.v){render.last=r.v;app.classList.remove('enter');void app.offsetWidth;app.classList.add('enter');clearTimeout(render.t);render.t=setTimeout(()=>app.classList.remove('enter'),400)}
-  if(['feed','discover','messages','me','chat','profile','about','admin','certif','club'].includes(r.v)&&me())ls.set('lastRoute',{v:r.v,param:r.param||null});
-  app.classList.toggle('no-nav',['auth','onboard','signup','pay','chat','profile','about','admin','certif','club'].includes(r.v)||clubOnly(p));
+  if(['feed','discover','messages','me','chat','profile','about','admin','certif'].includes(r.v)&&me())ls.set('lastRoute',{v:r.v,param:r.param||null});
+  app.classList.toggle('no-nav',['auth','onboard','signup','pay','chat','profile','about','admin','certif'].includes(r.v));
   loveMusic(r.v==='signup');
   if(r.v==='auth'){if(r.param)S.authMode=r.param;app.innerHTML=vAuth()}
   else if(r.v==='onboard'){app.innerHTML=vOnboard();sphereStop=initWelcome()}
   else if(r.v==='signup')app.innerHTML=vSignup();
-  else if(r.v==='pay'){app.innerHTML=vPay();if(clubOnly(p))app.insertAdjacentHTML('afterbegin',`<button class="clb-back" data-go="club">${I.back}Retour au Club</button>`)}
-  else if(r.v==='club')app.innerHTML=vClub();
+  else if(r.v==='pay')app.innerHTML=vPay();
   else if(r.v==='admin')app.innerHTML=vAdmin();
   else if(r.v==='certif'){app.innerHTML=vCertif();checkHandle()}
   else if(r.v==='about')app.innerHTML=vAbout();
@@ -2024,7 +1983,7 @@ function render(){const app=$('#app');const r=S.route;
   else if(r.v==='discover'){app.innerHTML=vDiscover();const q=$('#q');if(r.focus){q.focus();q.setSelectionRange(q.value.length,q.value.length)}}
   else if(r.v==='profile')app.innerHTML=vProfile(r.param,r.param===S.be.uid);
   else if(r.v==='me')app.innerHTML=vProfile(S.be.uid,true);
-  else if(r.v==='messages'){app.innerHTML=vMessages();initPager();if(clubOnly(p))app.insertAdjacentHTML('beforeend',`<button class="club-fab" data-go="club">${I.lock}Club Koris</button>`)}
+  else if(r.v==='messages'){app.innerHTML=vMessages();initPager()}
   else if(r.v==='chat'){app.innerHTML=vChat(r.param);const cid=chatId(S.be.uid,r.param);S.sub.msgs=S.be.onMsgs(cid,l=>renderMsgs(l,cid))}
 }
 // Les mises à jour de données ne doivent pas effacer un formulaire en cours
@@ -2156,7 +2115,6 @@ function openSettings(){const L=$('#layer');
   L.innerHTML=`<div class="sheet-bg" id="sbg"><div class="sheet" role="dialog" aria-label="Réglages"><span class="grab"></span><h2 style="font-size:20px">Réglages</h2>
   <div><p class="hint" style="margin:0 0 8px;font-weight:600">Apparence</p><div class="thm" role="radiogroup" aria-label="Apparence"><button type="button" data-theme="dark" class="${THEME.t==='dark'?'on':''}" role="radio" aria-checked="${THEME.t==='dark'}">${I.moon}Mode sombre</button><button type="button" data-theme="light" class="${THEME.t==='light'?'on':''}" role="radio" aria-checked="${THEME.t==='light'}">${I.sun}Mode normal</button></div></div>
   <div><p class="hint" style="margin:0 0 8px;font-weight:600">Police d'écriture</p><div class="fnt" role="radiogroup" aria-label="Police d'écriture">${FONTS.map(f=>`<button type="button" data-font="${f[0]}" class="${FONT.k===f[0]?'on':''}" role="radio" aria-checked="${FONT.k===f[0]}"><b style="font-family:'${f[3]}','${f[2]}',sans-serif">Aa</b><small style="font-family:'${f[2]}',sans-serif">${f[1]}</small></button>`).join('')}</div></div>
-  ${clubOk()?`<button class="help-row" data-go="club" style="width:100%;text-align:left"><span class="ic" style="background:linear-gradient(135deg,#C8F04A,#2EE0B0);color:#03100E">${I.lock}</span><div><b>Club Koris</b><small>Espace privé sur invitation</small></div></button>`:''}
   <button class="shr-row" data-act="shareapp"><span class="ic">${I.share}</span><div><b>Partager Koris</b><small>🎁 Invite un ami et paie 4 500 FC au lieu de 5 000 FC</small></div><span class="go">Partager</span></button>
   ${PUSH.ok()&&S.be?.sb?`<label class="sw"><span class="ic">${I.bell}</span><div><b>Notifications sur le téléphone</b><small>Nouveaux messages dans la barre du haut, même Koris fermé</small></div><input type="checkbox" id="swPush" ${PUSH.on()?'checked':''}></label>`:''}
   <label class="sw"><span class="ic">${I.sound}</span><div><b>Sons</b><small>Le son des « J'aime », l'intro et la musique d'inscription</small></div><input type="checkbox" id="swSnd" ${FX.snd?'checked':''}></label>
@@ -2461,13 +2419,6 @@ document.addEventListener('click',async e=>{const t=e.target.closest('button,[da
   if(d.invuse){return invUse(d.invuse==='?'?(($('#invCode')||{}).value||''):d.invuse,t)}
   if(d.freetog){if(!S.owner)return;t.disabled=true;const c={...(S.payCfg||{}),freeTrial:!FREE()};delete c.free;try{await S.be.savePayCfg(c);S.payCfg=c;toast(c.freeTrial?'Accès gratuit activé 🎁':'Accès payant réactivé');render()}catch(_){toast("L'enregistrement a échoué");t.disabled=false}return}
   if(d.invnew){if(!S.owner)return;t.disabled=true;await invCreate();t.disabled=false;return}
-  if(d.clubnew){if(!S.owner)return;t.disabled=true;await clubNew();t.disabled=false;return}
-  if(d.clubblock){if(!S.owner)return;return clubBlock(d.clubblock)}
-  if(d.clubkick){if(!S.owner)return;if(!t.dataset.armed){t.dataset.armed='1';t.textContent='Confirmer ?';setTimeout(()=>{delete t.dataset.armed;t.textContent="Retirer l'accès"},3000);return}return clubKick(d.clubkick)}
-  if(d.clubrm){if(!S.owner)return;if(!t.dataset.armed){t.dataset.armed='1';t.textContent='Confirmer ?';setTimeout(()=>{delete t.dataset.armed;t.textContent='Retirer'},3000);return}try{await clubDelCard(d.clubrm);toast('Présentation retirée du Club');clubRefresh()}catch(_){toast('Impossible pour le moment')}return}
-  if(d.clubedit){return openClubEdit()}
-  if(d.clubleave){if(!t.dataset.armed){t.dataset.armed='1';t.textContent='Confirmer ?';setTimeout(()=>{delete t.dataset.armed;t.textContent='Me retirer'},3000);return}try{await clubDelCard(S.be.uid);toast('Ta présentation est retirée du Club');clubRefresh()}catch(_){toast('Impossible pour le moment')}return}
-  if(d.clubcity){S.club.city=d.clubcity==='*'?'':d.clubcity;return render()}
   if(d.invoff){if(!S.owner)return;return invOff(d.invoff)}
   if(d.ownok){if(!S.owner)return;try{const p=me();await S.be.saveProfile({...p,paid:true,owner:true,paidAt:Date.now(),pay:{op:'owner',status:'ok',at:Date.now(),ref:'propriétaire',from:''}});toast('Compte propriétaire activé');go('feed')}catch(_){toast("L'activation a échoué")}return}
   if(d.certok||d.certno){const id=d.certok||d.certno,x=S.profiles[id];if(!x?.cert||!S.owner)return;const h=String(x.cert.handle).toLowerCase();
@@ -2707,123 +2658,6 @@ async function invUse(code,btn){code=String(code||'').trim().toUpperCase();if(!/
     /* fonction pas encore installée : la demande part chez le propriétaire, qui valide en un geste */
     await S.be.saveProfile({...me(),pay:{op:'invite',from:'',ref:code,to:'',amount:0,kind:'acces',at:Date.now(),status:'pending'}});ls.set('invite','');S.route.repay=false;render()}
   catch(_){toast("L'invitation n'a pas pu être envoyée. Réessaie.");if(btn)btn.disabled=false}}
-
-/* =================== Club Koris : espace privé sur invitation =================== */
-try{const cc=new URLSearchParams(location.search).get('club');if(cc&&/^[A-Za-z0-9]{4,12}$/.test(cc))ls.set('club',cc.toUpperCase())}catch(_){}
-const clubLink=c=>APP_URL+'?club='+c;
-S.club={member:null,cards:null,links:null,mem:null,err:'',city:'',uid:null};
-const clubDemo=()=>!S.be?.sb;
-const clubOk=()=>!!(S.owner||S.club.member);
-const clubOnly=p=>!!(p&&!isActive(p)&&S.club.member);
-async function clubLoad(){if(!S.be?.uid)return;const C=S.club;C.uid=S.be.uid;
-  if(clubDemo()){C.member=!!ls.get('clubMem',false);C.cards=ls.get('clubCards',[]);C.links=ls.get('clubLinks',[]);C.mem=ls.get('clubMembers',[]);return}
-  const sb=S.be.sb;C.err='';
-  try{const {data,error}=await sb.from('club_members').select('uid,active').eq('uid',S.be.uid).maybeSingle();if(error)throw error;C.member=!!(data&&data.active)}catch(_){C.member=false;C.err='setup'}
-  if(clubOk()){try{const {data,error}=await sb.from('club_cards').select('*').order('updated_at',{ascending:false});if(error)throw error;C.cards=data||[]}catch(_){C.cards=[];C.err='setup'}}
-  if(S.owner){try{const [a,b]=await Promise.all([sb.from('club_links').select('*').order('created_at',{ascending:false}).limit(60),sb.from('club_members').select('*').order('joined_at',{ascending:false})]);
-      if(a.error||b.error)throw a.error||b.error;C.links=a.data||[];C.mem=b.data||[]}catch(_){C.links=[];C.mem=[];C.err='setup'}}}
-function clubRefresh(){clubLoad().then(()=>{if(S.route.v==='club')render();const el=$('#admClub');if(el)el.innerHTML=admClubHtml()})}
-let clubBoot=false;
-function clubTick(p){if(!S.be?.uid||!p)return;
-  if(S.club.uid!==S.be.uid){S.club={member:null,cards:null,links:null,mem:null,err:'',city:'',uid:S.be.uid};clubBoot=false}
-  if(ls.get('club','')&&!clubRedeem.busy){setTimeout(clubRedeem,0);return}
-  if(!clubBoot){clubBoot=true;clubLoad().then(()=>{const q=me();if(clubOnly(q)&&S.route.v==='pay'&&S.route.param!=='full')return go('club');if(S.route.v==='club')render()})}}
-async function clubRedeem(){const c=ls.get('club','');if(!c||!S.be?.uid||!me()||clubRedeem.busy)return;clubRedeem.busy=true;
-  try{let ok=false;
-    if(clubDemo()){const L=ls.get('clubLinks',[]);const l=L.find(x=>x.code===c);ok=!!(l&&l.active&&l.uses<l.max_uses&&(!l.expires_at||Date.parse(l.expires_at)>Date.now()));
-      if(ok){l.uses++;ls.set('clubLinks',L);ls.set('clubMem',true);const M=ls.get('clubMembers',[]);M.unshift({uid:S.be.uid,code:c,active:true,joined_at:new Date().toISOString()});ls.set('clubMembers',M)}}
-    else{const {data,error}=await S.be.sb.rpc('koris_club_join',{p_code:c});if(error)throw error;ok=data===true}
-    ls.set('club','');
-    if(ok){S.club.member=true;clubBoot=true;await clubLoad();toast('Bienvenue dans le Club Koris 🔒');go('club')}
-    else{toast("Ce lien du Club n'est plus valable : déjà utilisé, expiré ou bloqué");clubBoot=false;render()}}
-  catch(_){ls.set('club','');toast("Le lien du Club n'a pas pu être vérifié. Demande un nouveau lien.");clubBoot=false}
-  finally{clubRedeem.busy=false}}
-function clubPhotos(c){return (Array.isArray(c.photos)?c.photos:[]).map(safeImg).filter(Boolean).slice(0,4)}
-function clubCardHtml(c){const ph=clubPhotos(c),mine=c.uid===S.be.uid;
-  return `<article class="clb-card${c.visible===false?' off':''}"><div class="clb-ph" data-n="${ph.length}">${ph.map((u,i)=>`<img src="${esc(u)}" alt="${esc(c.name)} · photo ${i+1}" loading="lazy">`).join('')}</div>
-   ${ph.length>1?`<div class="clb-dots">${ph.map(()=>'<i></i>').join('')}</div>`:''}
-   <div class="clb-inf"><b>${esc(c.name)}, ${+c.age||''}</b><small>${I.pin}${esc(c.city)}</small></div>
-   <div class="clb-act">${mine?`<button type="button" class="mini solid" data-clubedit="1">${I.edit}Modifier</button>`:`<button type="button" class="mini solid" data-go="chat" data-param="${esc(c.uid)}">${I.chat}Écrire</button>`}
-   ${S.owner&&!mine?`<button type="button" class="mini" data-clubrm="${esc(c.uid)}">Retirer</button>`:''}</div></article>`}
-function vClub(){const p=me()||{},C=S.club,only=clubOnly(p);
-  const top=`<div class="top" style="padding-inline:0">${only?`<span style="width:42px"></span>`:`<button class="icon-btn" data-go="${S.owner?'admin':'me'}" aria-label="Retour">${I.back}</button>`}
-   <h1 style="font-size:22px;flex:1;text-align:center;display:flex;align-items:center;justify-content:center;gap:8px"><span class="clb-lock">${I.lock}</span>Club Koris</h1>
-   <button class="icon-btn" data-go="messages" aria-label="Messages">${I.chat}</button></div>`;
-  if(C.member===null||(clubOk()&&C.cards===null))return `<section class="clb">${top}<div class="loading" style="min-height:50vh"><div class="spin"></div></div></section>`;
-  const all=(C.cards||[]).filter(c=>c.visible!==false||S.owner||c.uid===S.be.uid),mine=all.find(c=>c.uid===S.be.uid);
-  const cnt={};all.forEach(c=>{cnt[c.city]=(cnt[c.city]||0)+1});const cities=Object.keys(cnt).sort((a,b)=>cnt[b]-cnt[a]||a.localeCompare(b));
-  if(C.city&&!cnt[C.city])C.city='';
-  const list=all.filter(c=>!C.city||c.city===C.city);
-  const groups=C.city?[[C.city,list]]:cities.map(v=>[v,list.filter(c=>c.city===v)]);
-  return `<section class="clb">${top}
-  <p class="lead clb-lead">Espace privé, accessible seulement sur invitation. Chaque membre s'y présente lui-même et peut se retirer à tout moment.</p>
-  ${S.owner&&C.err?`<div class="warn" style="margin:10px 0">Pour activer le Club, exécute une seule fois le fichier « koris-club.sql » dans Supabase (SQL Editor).</div>`:''}
-  ${mine?`<div class="clb-me"><div class="mid"><b>Ta présentation est ${mine.visible===false?'masquée':'visible'}</b><small>${clubPhotos(mine).length} photos · ${esc(mine.city)}</small></div><button type="button" class="mini" data-clubedit="1">${I.edit}Modifier</button><button type="button" class="mini" data-clubleave="1">Me retirer</button></div>`
-     :`<button type="button" class="btn btn-primary clb-cta" data-clubedit="1">${I.camera}Me présenter dans le Club</button>`}
-  ${cities.length>1?`<div class="clb-cities" role="tablist"><button type="button" class="${C.city?'':'on'}" data-clubcity="*">Toutes <b>${all.length}</b></button>${cities.map(v=>`<button type="button" class="${C.city===v?'on':''}" data-clubcity="${esc(v)}">${esc(v)} <b>${cnt[v]}</b></button>`).join('')}</div>`:''}
-  ${all.length?groups.map(([v,l])=>`<h2 class="clb-h">${I.pin}${esc(v)} <small>${l.length}</small></h2><div class="clb-grid">${l.map(clubCardHtml).join('')}</div>`).join('')
-     :`<div class="clb-empty"><span class="clb-lock big">${I.lock}</span><b>Le Club est encore vide</b><small>${S.owner?'Envoie des liens d\'invitation depuis l\'espace Paiements : chaque invité crée sa propre présentation.':'Sois le premier à te présenter !'}</small></div>`}
-  ${only?`<button class="btn btn-ghost" data-go="pay" data-param="full" style="width:100%;flex:none;height:48px;margin:22px 0 8px">${I.spark}Découvrir tout Koris (${fc(ACCESS_FEE)})</button>`:''}
-  </section>`}
-function openClubEdit(){if(!clubOk())return;const L=$('#layer'),p=me()||{},C=S.club,mine=(C.cards||[]).find(c=>c.uid===S.be.uid);
-  let photos=mine?clubPhotos(mine):[];
-  const opts=[...new Set([...(DRC_CITIES||[]),p.city||''])].filter(Boolean).map(v=>`<option${(mine?.city||p.city)===v?' selected':''}>${esc(v)}</option>`).join('');
-  L.innerHTML=`<div class="sheet-bg" id="sbg"><div class="sheet" role="dialog" aria-label="Ma présentation dans le Club"><span class="grab"></span>
-  <h2 style="font-size:20px">${mine?'Modifier ma présentation':'Me présenter dans le Club'}</h2>
-  <p class="hint" style="margin:-4px 0 4px">Visible seulement par les membres du Club Koris.</p>
-  <label class="field"><span>Prénom</span><input id="clName" maxlength="40" value="${esc(mine?.name||p.firstName||'')}" autocomplete="given-name"></label>
-  <div style="display:flex;gap:10px"><label class="field" style="width:110px"><span>Âge</span><input id="clAge" type="number" inputmode="numeric" min="18" max="99" value="${esc(String(mine?.age||p.age||''))}"></label>
-   <label class="field" style="flex:1"><span>Ville</span><select id="clCity">${opts}</select></label></div>
-  <p class="hint" style="margin:6px 0 6px;font-weight:600">Tes photos (2 à 4)</p>
-  <div class="clb-pick" id="clPh"></div><input id="clFile" type="file" accept="image/*" multiple class="fpick">
-  <label class="clb-ok"><input type="checkbox" id="clOk" ${mine?'checked':''}><span>J'ai 18 ans ou plus, ce sont mes propres photos, et je choisis moi-même de me présenter dans le Club. Je peux me retirer à tout moment.</span></label>
-  <p class="err" id="clErr"></p>
-  <div class="cta-row" style="margin:0"><button class="btn btn-ghost" id="clCancel">Annuler</button><button class="btn btn-primary" id="clSave">Enregistrer</button></div></div></div>`;
-  const draw=()=>{$('#clPh').innerHTML=photos.map((u,i)=>`<div class="it"><img src="${esc(u)}" alt=""><button type="button" data-i="${i}" aria-label="Retirer la photo">${I.x}</button></div>`).join('')+(photos.length<4?`<label class="add" for="clFile">${I.plus}<small>Ajouter</small></label>`:'');
-    $('#clPh').querySelectorAll('[data-i]').forEach(b=>b.onclick=e=>{e.preventDefault();photos.splice(+b.dataset.i,1);draw()})};draw();
-  $('#sbg').onclick=e=>{if(e.target.id==='sbg')L.innerHTML=''};$('#clCancel').onclick=()=>L.innerHTML='';
-  $('#clFile').onchange=async e=>{const fs=[...e.target.files].slice(0,4-photos.length);$('#clErr').textContent='';
-    for(const f of fs){if(!/^image\//.test(f.type))continue;try{photos.push(await compress(f,1280,260000))}catch(_){$('#clErr').textContent="Une photo n'a pas pu être lue (JPG ou PNG)."}}e.target.value='';draw()};
-  $('#clSave').onclick=async()=>{const b=$('#clSave'),er=$('#clErr');const name=$('#clName').value.trim(),age=parseInt($('#clAge').value,10),city=$('#clCity').value;
-    if(!name)return er.textContent='Écris ton prénom.';if(!(age>=18&&age<=99))return er.textContent='Le Club est réservé aux personnes de 18 ans et plus.';
-    if(photos.length<2)return er.textContent='Ajoute au moins 2 photos.';if(!$('#clOk').checked)return er.textContent='Coche la case pour confirmer.';
-    b.disabled=true;b.textContent='Envoi…';er.textContent='';
-    try{const urls=[];for(let i=0;i<photos.length;i++){b.textContent=`Envoi ${i+1}/${photos.length}`;urls.push(await clubPutPhoto(photos[i]))}
-      const row={uid:S.be.uid,name,age,city,photos:urls,visible:true,updated_at:new Date().toISOString()};
-      if(clubDemo()){const A=ls.get('clubCards',[]).filter(c=>c.uid!==S.be.uid);A.unshift(row);ls.set('clubCards',A)}
-      else{const {error}=await S.be.sb.from('club_cards').upsert(row);if(error)throw error}
-      L.innerHTML='';toast('Ta présentation est en ligne dans le Club');clubRefresh()}
-    catch(_){b.disabled=false;b.textContent='Enregistrer';er.textContent="L'enregistrement a échoué. Vérifie ta connexion et réessaie."}}}
-async function clubPutPhoto(u){if(/^https:/.test(u)||clubDemo())return u;const blob=await (await fetch(u)).blob();
-  const path=S.be.uid+'/club_'+Date.now().toString(36)+Math.random().toString(36).slice(2,8)+'.jpg';
-  const {error}=await S.be.sb.storage.from('media').upload(path,blob,{contentType:'image/jpeg',upsert:false});if(error)throw error;
-  return S.be.sb.storage.from('media').getPublicUrl(path).data.publicUrl}
-async function clubDelCard(uid){if(clubDemo()){ls.set('clubCards',ls.get('clubCards',[]).filter(c=>c.uid!==uid));return}
-  const {error}=await S.be.sb.from('club_cards').delete().eq('uid',uid);if(error)throw error}
-function clubExp(l){if(!l.expires_at)return '';const ms=Date.parse(l.expires_at)-Date.now();if(ms<=0)return 'expiré';const h=Math.round(ms/36e5);return h<1?'expire dans moins d\'1 h':h<48?`expire dans ${h} h`:`expire dans ${Math.round(h/24)} jours`}
-function admClubHtml(){const C=S.club;if(C.links===null){setTimeout(clubRefresh,0);return `<p class="hint" style="padding:8px 2px 0">Chargement…</p>`}
-  if(C.err&&!clubDemo())return `<div class="warn" style="margin-top:10px">Pour activer le Club, exécute une seule fois le fichier « koris-club.sql » dans Supabase (SQL Editor), puis rouvre cette page.</div>`;
-  const links=(C.links||[]).slice(0,30).map(l=>{const exp=clubExp(l),dead=!l.active||l.uses>=l.max_uses||exp==='expiré';
-    const st=!l.active?'bloqué':l.uses>=l.max_uses?'utilisé':exp==='expiré'?'expiré':exp;
-    return `<div class="inv-row${dead?' off':''}"><div class="mid"><b>${esc(clubLink(l.code).replace('https://',''))}</b><small>${l.uses}/${l.max_uses} utilisation${l.max_uses>1?'s':''} · ${esc(st)}</small></div>
-    ${dead?'':`<button type="button" class="mini" data-copy="${esc(clubLink(l.code))}">Copier</button><a class="mini solid" href="https://wa.me/?text=${encodeURIComponent('Tu es invité(e) dans le Club Koris 🔒, un espace privé. Lien personnel, valable une seule fois : '+clubLink(l.code))}" target="_blank" rel="noopener" aria-label="Envoyer sur WhatsApp">${I.wa}</a><button type="button" class="mini" data-clubblock="${esc(l.code)}">Bloquer</button>`}</div>`}).join('');
-  const mem=(C.mem||[]).filter(m=>m.active);
-  const mems=mem.map(m=>{const x=S.profiles[m.uid]||{};const card=(C.cards||[]).some(c=>c.uid===m.uid);
-    return `<div class="inv-row"><div class="mid"><b>${esc(fullName(x))}</b><small>${esc(x.city||'')}${card?' · présentation en ligne':' · pas encore présenté'}</small></div><button type="button" class="mini" data-clubkick="${esc(m.uid)}">Retirer l'accès</button></div>`}).join('');
-  return `${links||`<p class="hint" style="padding:8px 2px 0">Aucun lien pour l'instant.</p>`}
-   <p class="hint" style="padding:14px 2px 0;font-weight:600">${mem.length} membre${mem.length>1?'s':''} dans le Club · ${(C.cards||[]).length} présentation${(C.cards||[]).length>1?'s':''}</p>${mems}`}
-async function clubNew(){const h=parseInt(($('#clubDur')||{}).value,10)||24,max=Math.max(1,Math.min(50,parseInt(($('#clubMax')||{}).value,10)||1));
-  const A='ABCDEFGHJKMNPQRSTUVWXYZ23456789';let c='';crypto.getRandomValues(new Uint8Array(7)).forEach(x=>c+=A[x%A.length]);
-  const row={code:c,max_uses:max,uses:0,active:true,expires_at:new Date(Date.now()+h*36e5).toISOString(),created_at:new Date().toISOString()};
-  try{if(clubDemo()){const L=ls.get('clubLinks',[]);L.unshift(row);ls.set('clubLinks',L)}else{const {error}=await S.be.sb.from('club_links').insert({code:c,max_uses:max,expires_at:row.expires_at});if(error)throw error}
-    await clubLoad();const el=$('#admClub');if(el)el.innerHTML=admClubHtml();
-    try{await navigator.clipboard.writeText(clubLink(c));toast('Lien du Club créé et copié ✓')}catch(_){toast('Lien du Club créé')}}
-  catch(_){S.club.err='setup';const el=$('#admClub');if(el)el.innerHTML=admClubHtml();toast("Exécute d'abord le fichier SQL du Club")}}
-async function clubBlock(code){try{if(clubDemo()){const L=ls.get('clubLinks',[]);const l=L.find(x=>x.code===code);if(l)l.active=false;ls.set('clubLinks',L)}
-    else{const {error}=await S.be.sb.from('club_links').update({active:false}).eq('code',code);if(error)throw error}toast('Lien bloqué');clubRefresh()}catch(_){toast('Impossible pour le moment')}}
-async function clubKick(uid){try{if(clubDemo()){const M=ls.get('clubMembers',[]);M.forEach(m=>{if(m.uid===uid)m.active=false});ls.set('clubMembers',M)}
-    else{const {error}=await S.be.sb.from('club_members').update({active:false}).eq('uid',uid);if(error)throw error}
-    try{await clubDelCard(uid)}catch(_){}toast('Accès au Club retiré');clubRefresh()}catch(_){toast('Impossible pour le moment')}}
 
 /* =================== Activité : commentaires, disponibilités, publications (bannière + son + vibreur) =================== */
 const ACT={list:ls.get('acts',[]),q:[],busy:false,snap:{po:null,cm:null}};
