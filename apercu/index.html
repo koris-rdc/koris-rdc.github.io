@@ -1187,7 +1187,10 @@ bell:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1
 const $=s=>document.querySelector(s);
 function b64(blob){return new Promise((res,rej)=>{const fr=new FileReader();fr.onerror=()=>rej(new Error('lecture'));fr.onload=()=>res(String(fr.result).split(',')[1]||'');fr.readAsDataURL(blob)})}
 function unb64(s){const bin=atob(s);const u=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);return u}
-const VMAX=8*1024*1024,VDUR=90;
+const VMAX=8*1024*1024,VDUR=90,VRAW=45*1024*1024;
+/* si la page s'est fermée pendant une compression (mémoire du téléphone), on n'essaie plus de compresser sur cet appareil */
+try{if(localStorage.getItem('koris:vz')){localStorage.removeItem('koris:vz');localStorage.setItem('koris:noshrink','1')}}catch(_){}
+const canShrink=()=>{try{return !localStorage.getItem('koris:noshrink')&&!!window.MediaRecorder&&!!HTMLCanvasElement.prototype.captureStream}catch(_){return false}};
 function vidDur(file){return new Promise(res=>{const u=URL.createObjectURL(file);const v=document.createElement('video');v.preload='metadata';v.muted=true;
   const fin=d=>{try{URL.revokeObjectURL(u)}catch(_){}res(d)};v.onloadedmetadata=()=>fin(isFinite(v.duration)?v.duration:0);v.onerror=()=>fin(0);setTimeout(()=>fin(0),8000);v.src=u})}
 /* Compression vidéo dans le téléphone (canvas + MediaRecorder), en temps réel, pour passer sous VMAX */
@@ -1202,14 +1205,15 @@ async function shrinkVideo(file,onp){
     const dur=v.duration;if(!isFinite(dur)||dur<=0)throw new Error('lecture');
     if(dur>VDUR+1)throw Object.assign(new Error('long'),{code:'long'});
     const ab=96000,vb=Math.max(300000,Math.min(2500000,Math.floor(VMAX*.85*8/dur)-ab));
-    const side=vb>1300000?1280:vb>750000?960:720,sc=Math.min(1,side/Math.max(v.videoWidth||side,v.videoHeight||side));
+    const side=720,sc=Math.min(1,side/Math.max(v.videoWidth||side,v.videoHeight||side));
     const W=Math.max(2,Math.round((v.videoWidth||720)*sc/2)*2),H=Math.max(2,Math.round((v.videoHeight||1280)*sc/2)*2);
     const cv=document.createElement('canvas');cv.width=W;cv.height=H;const cx=cv.getContext('2d');cx.fillStyle='#000';cx.fillRect(0,0,W,H);
     const st=cv.captureStream(30);
     try{ac=new(window.AudioContext||window.webkitAudioContext)();const src=ac.createMediaElementSource(v),dst=ac.createMediaStreamDestination();src.connect(dst);dst.stream.getAudioTracks().forEach(t=>st.addTrack(t));await ac.resume()}catch(_){ac=null}
     const rec=new MediaRecorder(st,{mimeType:mime,videoBitsPerSecond:vb,audioBitsPerSecond:ab});const parts=[];
     rec.ondataavailable=e=>{if(e.data&&e.data.size)parts.push(e.data)};const stopped=new Promise(r=>rec.onstop=r);
-    const step=()=>{try{cx.drawImage(v,0,0,W,H)}catch(_){}onp&&onp(Math.min(.99,(v.currentTime||0)/dur));if(!v.ended)raf=requestAnimationFrame(step)};
+    const rvfc=typeof v.requestVideoFrameCallback==='function';
+    const step=()=>{try{cx.drawImage(v,0,0,W,H)}catch(_){}onp&&onp(Math.min(.99,(v.currentTime||0)/dur));if(!v.ended){if(rvfc)v.requestVideoFrameCallback(step);else raf=requestAnimationFrame(step)}};
     rec.start(1000);
     try{await v.play()}catch(_){v.muted=true;await v.play()}
     step();
@@ -1349,8 +1353,14 @@ function makeSupabaseBackend(sb,uid){
     async setShares(id,n){const cur=strip(S.posts.find(x=>x.id===id)||{});const {error}=await sb.from('posts').update({data:{...cur,shares:n}}).eq('id',id);if(error)throw error},
     async addComment(c){const {error}=await sb.from('comments').insert({uid,at:c.at||Date.now(),data:c});if(error)throw error},
     async deleteComment(id){const {error}=await sb.from('comments').delete().eq('id',id);if(error)throw error},
-    async putVideo(file,onp){const ext=((file.type||'video/mp4').split('/')[1]||'mp4').replace('quicktime','mov');const path=uid+'/v_'+rnd()+'.'+ext;onp&&onp(.15);
-      const {error}=await sb.storage.from('media').upload(path,file,{contentType:file.type||'video/mp4',upsert:false});if(error)throw error;onp&&onp(1);return{url:pub(path),path,type:file.type||'video/mp4'}},
+    async putVideo(file,onp){const ext=((file.type||'video/mp4').split('/')[1]||'mp4').replace('quicktime','mov');const path=uid+'/v_'+rnd()+'.'+ext;const ct=file.type||'video/mp4';onp&&onp(.02);
+      let tok='';try{tok=(await sb.auth.getSession()).data?.session?.access_token||''}catch(_){}
+      if(tok){await new Promise((res,rej)=>{const x=new XMLHttpRequest();x.open('POST',SB_URL+'/storage/v1/object/media/'+path.split('/').map(encodeURIComponent).join('/'));
+          x.setRequestHeader('Authorization','Bearer '+tok);x.setRequestHeader('apikey',SB_KEY);x.setRequestHeader('Content-Type',ct);x.setRequestHeader('x-upsert','false');
+          x.upload.onprogress=e=>{if(e.lengthComputable&&onp)onp(Math.max(.02,Math.min(.98,e.loaded/e.total)))};
+          x.onload=()=>x.status>=200&&x.status<300?res():rej(Object.assign(new Error('upload '+x.status),{code:x.status===413?'toobig':'upload'}));x.onerror=()=>rej(new Error('réseau'));x.send(file)})}
+      else{const {error}=await sb.storage.from('media').upload(path,file,{contentType:ct,upsert:false});if(error)throw error}
+      onp&&onp(1);return{url:pub(path),path,type:ct}},
     async getVideo(v){if(v&&v.url)return v.url;throw new Error('vidéo indisponible')},
     async dropVideo(v){if(v?.path){try{await sb.storage.from('media').remove([v.path])}catch(_){}}},
     async sendMsg(other,text){const cid=chatId(uid,other),at=Date.now(),members=[uid,other];
@@ -2023,16 +2033,22 @@ function openCompose(withPic){let data='';const L=$('#layer');
   $('#cFile').onchange=async e=>{const f=e.target.files[0];if(!f)return;$('#cErr').textContent='';
     if(/^video\//.test(f.type)){big=false;if(f.size>VMAX){const d=await vidDur(f);if(d>VDUR+1){$('#cErr').textContent=`Cette vidéo dure ${Math.round(d)} secondes : choisis une vidéo de ${VDUR} secondes maximum.`;e.target.value='';return}big=true}
       data='';orig='';fmt='orig';nat=9/16;if(vurl)URL.revokeObjectURL(vurl);vfile=f;vurl=URL.createObjectURL(f);
-      const mv=document.createElement('video');mv.preload='metadata';mv.muted=true;mv.onloadedmetadata=()=>{if(mv.videoWidth&&mv.videoHeight){nat=mv.videoWidth/mv.videoHeight;draw()}};mv.src=vurl;draw();sync();if(big)$('#cErr').innerHTML=`<span style="color:var(--lime,#C8F04A)">Vidéo de ${(f.size/1048576).toFixed(1)} Mo : elle sera compressée automatiquement quand tu publies (garde l'application ouverte pendant la compression).</span>`;return}
+      const mv=document.createElement('video');mv.preload='metadata';mv.muted=true;mv.onloadedmetadata=()=>{if(mv.videoWidth&&mv.videoHeight){nat=mv.videoWidth/mv.videoHeight;draw()}};mv.src=vurl;draw();sync();if(big)$('#cErr').innerHTML=canShrink()?`<span style="color:var(--lime,#C8F04A)">Vidéo de ${(f.size/1048576).toFixed(1)} Mo : elle sera compressée automatiquement quand tu publies (garde l'application ouverte pendant la compression).</span>`
+        :f.size<=VRAW?`<span style="color:var(--lime,#C8F04A)">Vidéo de ${(f.size/1048576).toFixed(1)} Mo : elle sera envoyée telle quelle, l'envoi peut prendre un moment.</span>`:`Cette vidéo fait ${(f.size/1048576).toFixed(1)} Mo : choisis une vidéo plus courte (${Math.round(VRAW/1048576)} Mo maximum sur ce téléphone).`;return}
     try{vfile=null;fmt='orig';orig=await compress(f,1280,260000);nat=await imgDims(orig);data=orig;draw();sync()}catch(_){$('#cErr').textContent="Ce fichier n'a pas pu être lu. Essaie une photo JPG/PNG ou une vidéo MP4."}};
   if(withPic)$('#cFile').click();else cap.focus();
   $('#cPub').onclick=async()=>{const b=$('#cPub');const text=cap.value.trim();if(!data&&!vfile&&!text)return;b.disabled=true;b.textContent='Publication…';
     try{let vid=null;if(vfile){const pr=$('#cProg');pr.hidden=false;
-      if(big||vfile.size>VMAX){$('#cErr').textContent='';b.textContent='Compression 0 %';const sm=await shrinkVideo(vfile,f=>{pr.firstElementChild.style.width=Math.round(f*100)+'%';b.textContent='Compression '+Math.round(f*100)+' %'});
-        if(sm.size>VMAX)throw Object.assign(new Error('big'),{code:'toobig'});vfile=sm;big=false;pr.firstElementChild.style.width='0%'}
+      if((big||vfile.size>VMAX)&&canShrink()){$('#cErr').textContent='';b.textContent='Compression 0 %';
+        const pv=$('#cArea video');if(pv){try{pv.pause();pv.removeAttribute('src');pv.load()}catch(_){}}
+        let sm=null;try{localStorage.setItem('koris:vz','1')}catch(_){}
+        try{sm=await shrinkVideo(vfile,f=>{pr.firstElementChild.style.width=Math.round(f*100)+'%';b.textContent='Compression '+Math.round(f*100)+' %'})}catch(e){if(e?.code==='long')throw e;sm=null}
+        finally{try{localStorage.removeItem('koris:vz')}catch(_){}}
+        if(sm&&sm.size<=VMAX&&sm.size<vfile.size){vfile=sm;big=false}pr.firstElementChild.style.width='0%'}
+      if(vfile.size>VRAW)throw Object.assign(new Error('big'),{code:'toobig'});
       const poster=await videoPoster(vfile);vid=await S.be.putVideo(vfile,f=>{pr.firstElementChild.style.width=Math.round(f*100)+'%';b.textContent='Envoi '+Math.round(f*100)+' %'});vid.poster=poster||''}
       await S.be.addPost({uid:S.be.uid,img:data,vid,caption:text,at:Date.now(),likes:[],shares:0,...(data||vfile?{ar:Math.round(curAr()*10000)/10000}:{})});L.innerHTML='';toast('Publié');go('feed')}
-    catch(e){b.disabled=false;b.textContent='Publier';$('#cErr').textContent=e?.code==='norec'?"Ton téléphone ne peut pas compresser cette vidéo. Choisis une vidéo plus courte (8 Mo maximum).":e?.code==='toobig'?"Même compressée, la vidéo reste trop lourde. Choisis une vidéo plus courte.":e?.code==='long'?`Vidéo trop longue : ${VDUR} secondes maximum.`:e?.code==='quota_exceeded'?"L'espace de stockage est plein. Supprime d'anciennes photos.":"La publication a échoué. Vérifie ta connexion et réessaie."}}}
+    catch(e){b.disabled=false;b.textContent='Publier';$('#cProg').hidden=true;if(vfile&&!$('#cArea video')?.getAttribute('src'))draw();$('#cErr').textContent=e?.code==='norec'?"Ton téléphone ne peut pas compresser cette vidéo. Choisis une vidéo plus courte (8 Mo maximum).":e?.code==='toobig'?"La vidéo est trop lourde. Choisis une vidéo plus courte.":e?.code==='long'?`Vidéo trop longue : ${VDUR} secondes maximum.`:e?.code==='quota_exceeded'?"L'espace de stockage est plein. Supprime d'anciennes photos.":"La publication a échoué. Vérifie ta connexion et réessaie."}}}
 
 /* =================== Commentaires =================== */
 let cmOpen=null;
