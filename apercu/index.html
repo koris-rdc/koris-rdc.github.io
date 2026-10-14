@@ -70,6 +70,19 @@
 .clb-ok{display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--muted);line-height:1.4;margin:8px 0 2px}.clb-ok input{width:20px;height:20px;flex:none;margin-top:1px;accent-color:#FF9A2E}
 body.shop-mode{--ink:#1B0904;--panel:rgba(255,226,200,.07);--panel-2:rgba(255,226,200,.11);--line:rgba(255,170,90,.16);--muted:#E8C3A4;--text:#FFF6EE;background:radial-gradient(110% 60% at 15% 0%,#C2510F 0%,#6E2208 34%,#2A0D05 62%,#1B0904 100%) fixed}
 body.shop-mode #app{background:transparent}
+.want-c{flex:none;width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#FFD58F,#FF9A2E 48%,#E2561B);color:#3A1300;display:grid;place-items:center;box-shadow:0 8px 20px rgba(226,86,27,.45),inset 0 1px 0 rgba(255,255,255,.5);position:relative;transition:transform .2s}
+.want-c span{font-size:10px;font-weight:900;line-height:1.05;text-align:center;letter-spacing:-.01em}
+.want-c::after{content:"";position:absolute;inset:-4px;border-radius:50%;border:2px solid rgba(255,170,90,.55);animation:wantP 2.4s ease-out infinite}@keyframes wantP{0%{opacity:.9;transform:scale(.9)}100%{opacity:0;transform:scale(1.25)}}
+.want-c:active{transform:scale(.92)}
+.sc-inf .want-c{width:48px;height:48px;margin-bottom:-2px}
+.vw-ic{font-size:17px;line-height:1}
+.shp-list{display:flex;flex-direction:column;gap:10px}
+.sr{display:flex;align-items:center;gap:12px;padding:8px 10px 8px 8px;border-radius:20px;background:var(--panel);border:1px solid var(--line);animation:scIn .55s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(var(--i,0)*55ms)}.sr.off{opacity:.5}
+.sr-img{position:relative;flex:none;width:76px;height:94px;border-radius:14px;overflow:hidden;padding:0;background:var(--panel-2)}.sr-img img{width:100%;height:100%;object-fit:cover}.sr-img .vbadge{width:20px;height:20px;top:6px;right:6px;font-size:8px}
+.sr-inf{flex:1;min-width:0;text-align:left;background:none;padding:0;color:var(--text)}.sr-inf b{display:block;font-size:14px;line-height:1.25;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.sr-inf b .vip{vertical-align:middle;margin-left:4px}
+.sr-inf small{display:block;font-size:11.5px;color:var(--muted);margin:2px 0 4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sd-buy svg{width:20px;height:20px;margin-right:6px;vertical-align:-4px}
+
 /* Pépites : compact + animations */
 .shp-top{padding-block:6px 4px!important;gap:6px!important}.shp-top .icon-btn{width:34px;height:34px;min-width:34px}.shp-top .icon-btn svg{width:16px;height:16px}
 .shp-ttl b{font-size:14px!important}.shp-ttl small{font-size:9.5px!important}
@@ -1885,6 +1898,7 @@ function vAdmin(){
   <div class="opbox"><div class="inv-new"><label class="pill" style="flex:1">${I.user}<input id="invMax" type="number" min="1" max="500" value="10" aria-label="Nombre de places"></label><button class="btn btn-primary" data-invnew="1" style="flex:none;height:50px;padding:0 18px">Créer un lien</button></div><div id="admInv">${admInvHtml()}</div></div>
   <h2>Les Pépites Koris ✨</h2><p class="hint" style="padding:0 2px 8px">Ajoute tes habits (2 à 4 photos, nom, prix, tailles, lieux de livraison). Les commandes arrivent dans Les Pépites, onglet « Commandes ».</p>
   <div class="opbox"><div class="pl-url" style="font-weight:700;font-size:13px;word-break:break-all">${esc(shopLink('').replace('https://',''))}</div><small class="hint" style="padding:0">Lien du catalogue : à envoyer à tes clients, même sans compte Koris.</small>
+   <small class="hint" style="padding:0">${(S.helpCfg||{}).wa?`💬 Les « Je le veux » arrivent sur ton WhatsApp : <b>+${esc(String(S.helpCfg.wa).replace(/\D/g,''))}</b>`:`⚠️ Ajoute ton numéro WhatsApp plus bas dans « Contacts de l'aide » pour recevoir les « Je le veux ».`}</small>
    <div style="display:flex;gap:6px;flex-wrap:wrap"><button type="button" class="mini solid" data-go="shop">🛍️ Ouvrir Les Pépites</button><button type="button" class="mini" data-shopshare="1">${I.share}Partager le catalogue</button><button type="button" class="mini" data-copy="${esc(shopVisitLink())}">👁 Copier le lien de visite</button><a class="mini" href="https://wa.me/?text=${encodeURIComponent('🛍️ Les Pépites Koris : vêtements livrés chez toi en RDC. Regarde le catalogue ici 👉 '+shopLink(''))}" target="_blank" rel="noopener">${I.wa}WhatsApp</a></div></div>
   <h2>À vérifier</h2><div id="admList">${admListHtml()}</div>
   <h2>Membres</h2><p class="hint" style="padding:0 2px 8px">Un membre t'a payé directement (Mobile Money sur ton numéro, espèces…) ? Cherche-le et touche <b>${SUBSCRIPTION?'« +1 mois »':'« Activer »'}</b> : son accès s'ouvre tout de suite.</p>
@@ -2097,7 +2111,7 @@ function render(){const app=$('#app');const r=S.route;
   if(render.last!==r.v){render.last=r.v;app.classList.remove('enter');void app.offsetWidth;app.classList.add('enter');clearTimeout(render.t);render.t=setTimeout(()=>app.classList.remove('enter'),400)}
   if(['feed','discover','messages','me','chat','profile','about','admin','certif','shop','shopitem'].includes(r.v)&&me())ls.set('lastRoute',{v:r.v,param:r.param||null});
   app.classList.toggle('no-nav',['auth','onboard','signup','pay','chat','profile','about','admin','certif','shop','shopitem'].includes(r.v));
-  loveMusic(r.v==='signup'?1:(['shop','shopitem'].includes(r.v)&&ls.get('shopMusic',true))?.3:0);
+  loveMusic(r.v==='signup');
   document.body.classList.toggle('shop-mode',['shop','shopitem'].includes(r.v));
   if(r.v==='auth'){if(r.param)S.authMode=r.param;app.innerHTML=vAuth()}
   else if(r.v==='onboard'){app.innerHTML=vOnboard();sphereStop=initWelcome()}
@@ -2551,7 +2565,8 @@ document.addEventListener('click',async e=>{const t=e.target.closest('button,[da
   if(d.invnew){if(!S.owner)return;t.disabled=true;await invCreate();t.disabled=false;return}
   if(d.shopitem){return go('shopitem',d.shopitem)}
   if(d.shopbuy){return openShopBuy(d.shopbuy)}
-  if(d.shopmus){const v=!ls.get('shopMusic',true);ls.set('shopMusic',v);if(v&&!ls.get('music',true))ls.set('music',true);loveMusic(v?.3:0);toast(v?'Musique douce activée 🎵':'Musique coupée');return render()}
+  if(d.shopview){S.shop.view=S.shop.view==='list'?'grid':'list';ls.set('shopView',S.shop.view);return render()}
+  if(d.want){return shopWant(d.want)}
   if(d.shoprec){const L=ls.get('shopRecs',[]),on=L.includes(d.shoprec);ls.set('shopRecs',on?L.filter(x=>x!==d.shoprec):[...L,d.shoprec]);if(!on){try{fx.like&&fx.like()}catch(_){}toast('Merci pour ta recommandation ❤')}await shopBump(d.shoprec,on?'unrec':'rec');return render()}
   if(d.shopedit){if(!shopOwn())return;return openShopEdit(d.shopedit)}
   if(d.shopdel){if(!shopOwn())return;if(!t.dataset.armed){t.dataset.armed='1';t.textContent='Confirmer ?';setTimeout(()=>{delete t.dataset.armed;t.textContent='Retirer'},3000);return}return shopDel(d.shopdel)}
@@ -2804,7 +2819,7 @@ const SHOP_LINK=(()=>{try{const q=new URLSearchParams(location.search);return {o
 const shopLink=id=>APP_URL+'?boutique'+(id?'='+id:'');
 const SHOP_CATS=['Femme','Homme','Enfant','Chaussures','Accessoires'];
 const usd=n=>'$'+(+n||0).toLocaleString('en-US',{maximumFractionDigits:2});
-S.shop={items:null,orders:null,err:'',cat:'',q:'',tab:'items',newN:0,img:0};
+S.shop={items:null,orders:null,err:'',cat:'',q:'',tab:'items',newN:0,img:0,view:ls.get('shopView','grid')};
 const SHOP_TRIAL=(()=>{try{if(new URLSearchParams(location.search).has('essai'))sessionStorage.setItem('koris:shoptrial','1');return !!sessionStorage.getItem('koris:shoptrial')}catch(_){return false}})();
 const SHOP_VISIT=(()=>{try{if(new URLSearchParams(location.search).has('visite'))sessionStorage.setItem('koris:shopvisit','1');return !!sessionStorage.getItem('koris:shopvisit')}catch(_){return false}})();
 const shopDemo=()=>SHOP_TRIAL||!S.be?.sb;const shopOwn=()=>!SHOP_VISIT&&!!(S.owner||SHOP_TRIAL);
@@ -2828,7 +2843,11 @@ function shopBanner(){const it=(S.shop.items||[]).filter(x=>x.active!==false);if
   return `<button type="button" class="shp-ban" data-go="shop"><span class="ims">${ph.map(u=>`<img src="${esc(u)}" alt="">`).join('')}</span><span class="tx"><b>🛍️ Les Pépites Koris</b><small>${it.length} article${it.length>1?'s':''} · livraison en RDC</small></span><span class="go">Voir</span></button>`}
 function shopCardHtml(it,ix=0){const ph=shopPh(it);
   return `<div class="sc${it.active===false?' off':''}" style="--i:${Math.min(ix,12)}"><button type="button" class="sc-img" data-shopitem="${esc(it.id)}" aria-label="${esc(it.name)}">${ph[0]?`<img src="${esc(ph[0])}" alt="${esc(it.name)}" loading="lazy">`:''}${isVip(it)?'<span class="vip">VIP</span>':''}${shopVid(it)?'<span class="vbadge">▶</span>':''}${it.active===false?'<span class="hid">Masqué</span>':''}</button>
-   <div class="sc-inf"><div><b>${esc(it.name)}</b><small>${esc(it.category||'')}${ph.length>1?` · ${ph.length} photos`:''}</small>${priceHtml(it)}</div><button type="button" class="sc-go" data-shopitem="${esc(it.id)}" aria-label="Voir ${esc(it.name)}">${I.plus}</button></div></div>`}
+   <div class="sc-inf"><div><b>${esc(it.name)}</b><small>${esc(it.category||'')}${ph.length>1?` · ${ph.length} photos`:''}</small>${priceHtml(it)}</div><button type="button" class="want-c" data-want="${esc(it.id)}" aria-label="Je le veux : ${esc(it.name)}"><span>Je le<br>veux</span></button></div></div>`}
+function shopRowHtml(it,ix=0){const ph=shopPh(it);
+  return `<div class="sr${it.active===false?' off':''}" style="--i:${Math.min(ix,14)}"><button type="button" class="sr-img" data-shopitem="${esc(it.id)}" aria-label="${esc(it.name)}">${ph[0]?`<img src="${esc(ph[0])}" alt="" loading="lazy">`:''}${shopVid(it)?'<span class="vbadge">▶</span>':''}</button>
+   <button type="button" class="sr-inf" data-shopitem="${esc(it.id)}"><b>${esc(it.name)}${isVip(it)?' <i class="vip sm">VIP</i>':''}</b><small>${esc(it.category||'')}${(it.sizes||[]).length?' · '+it.sizes.map(esc).join(', '):''}</small>${priceHtml(it)}</button>
+   <button type="button" class="want-c" data-want="${esc(it.id)}" aria-label="Je le veux : ${esc(it.name)}"><span>Je le<br>veux</span></button></div>`}
 
 function shopStats(){const it=(S.shop.items||[]).filter(x=>x.active!==false);return {mv:Math.max(1,...it.map(x=>+x.views||0)),mr:Math.max(1,...it.map(x=>+x.recs||0))}}
 const shopQ=it=>Math.min(10,Math.max(0,Math.round(+(it.quality??8))));
@@ -2845,7 +2864,7 @@ async function shopBump(id,kind){const it=(S.shop.items||[]).find(x=>x.id===id);
 function shopView(id){try{const k='koris:sv:'+id;if(sessionStorage.getItem(k)||shopOwn())return;sessionStorage.setItem(k,'1')}catch(_){}shopBump(id,'view')}
 function vShop(){const H=S.shop,p=me(),own=shopOwn();
   const top=`<div class="top shp-top" style="padding-inline:0"><button class="icon-btn" data-go="${p?(isActive(p)?'feed':'pay'):'onboard'}" aria-label="Retour">${I.back}</button>
-   <div class="shp-ttl"><small>Livraison partout en RDC</small><b>Les Pépites Koris</b></div><button class="icon-btn" data-shopmus="1" aria-label="Musique">${ls.get('shopMusic',true)?I.sound:'<span style="font-size:15px">🔇</span>'}</button><button class="icon-btn" data-shopshare="1" aria-label="Partager le catalogue">${I.share}</button></div>`;
+   <div class="shp-ttl"><small>Livraison partout en RDC</small><b>Les Pépites Koris</b></div><button class="icon-btn" data-shopview="1" aria-label="${S.shop.view==='list'?'Afficher en grille':'Afficher en liste'}">${S.shop.view==='list'?'<span class="vw-ic">▦</span>':'<span class="vw-ic">☰</span>'}</button><button class="icon-btn" data-shopshare="1" aria-label="Partager le catalogue">${I.share}</button></div>`;
   if(H.items===null){setTimeout(shopRefresh,0);return `<section class="shp">${top}<div class="loading" style="min-height:50vh"><div class="spin"></div></div></section>`}
   const all=H.items.filter(x=>own||x.active!==false);
   const cats=SHOP_CATS.filter(c=>all.some(x=>x.category===c));
@@ -2864,7 +2883,7 @@ function vShop(){const H=S.shop,p=me(),own=shopOwn();
   ${hero?scoreCard(hero,true):''}
   ${own?`<button type="button" class="btn shp-add" data-shopedit="new">${I.plus}Ajouter un produit</button>`:''}
   ${all.length?`<div class="shp-chips">${chips.map(([k,l])=>`<button type="button" class="${H.cat===k?'on':''}" data-shopcat="${k||'*'}">${esc(l)}</button>`).join('')}</div>`:''}
-  ${list.length?`<div class="shp-grid">${list.map(shopCardHtml).join('')}</div>`:`<div class="shp-empty"><span>🛍️</span><b>${all.length?'Aucun article ici':'Les Pépites arrivent bientôt'}</b><small>${own?'Ajoute ton premier produit avec le bouton ci-dessus.':'Reviens très vite pour découvrir la collection.'}</small></div>`}`}
+  ${list.length?(H.view==='list'?`<div class="shp-list">${list.map(shopRowHtml).join('')}</div>`:`<div class="shp-grid">${list.map(shopCardHtml).join('')}</div>`):`<div class="shp-empty"><span>🛍️</span><b>${all.length?'Aucun article ici':'Les Pépites arrivent bientôt'}</b><small>${own?'Ajoute ton premier produit avec le bouton ci-dessus.':'Reviens très vite pour découvrir la collection.'}</small></div>`}`}
   ${!p?`<button class="btn btn-ghost" data-go="onboard" style="width:100%;flex:none;height:48px;margin:22px 0 8px">${I.spark}Découvrir l'application Koris</button>`:''}
   </section>`}
 function vShopItem(id){const it=(S.shop.items||[]).find(x=>x.id===id);const own=shopOwn();
@@ -2884,7 +2903,7 @@ function vShopItem(id){const it=(S.shop.items||[]).find(x=>x.id===id);const own=
   ${it.descr?`<p class="sd-desc">${esc(it.descr)}</p>`:''}
   <ul class="sd-facts">${sz.length?`<li><span>Tailles</span><b>${sz.map(esc).join(', ')}</b></li>`:''}<li><span>Prix</span><b>${usd(it.price_usd)}</b></li><li><span>Cote</span><b>★ ${shopQ(it)}/10</b></li><li><span>Gamme</span><b>${isVip(it)?'VIP':'Normal'}</b></li>${(it.places||[]).length?`<li><span>Livraison</span><b>${it.places.map(esc).join(', ')}</b></li>`:''}</ul>
   <div class="sd-bar">${own?`<button class="btn sd-ghost" data-shopdel="${esc(it.id)}">${I.trash}Retirer</button><button class="btn sd-buy" data-shopedit="${esc(it.id)}">${I.edit}Modifier</button>`
-     :`<button class="btn sd-buy" data-shopbuy="${esc(it.id)}">Commander</button><button class="sd-cart" data-shopbuy="${esc(it.id)}" aria-label="Commander">${I.wallet}</button>`}</div>
+     :`<button class="btn sd-buy" data-want="${esc(it.id)}">${I.wa}Je le veux</button><button class="sd-cart" data-shopbuy="${esc(it.id)}" aria-label="Commander avec livraison">${I.wallet}</button>`}</div>
   </section>`}
 function sdBind(){const trk=$('#sdTrk');if(!trk)return;const sl=[...trk.children],n=sl.length;clearInterval(sdBind.t);const W=()=>trk.clientWidth||1;
   if(S.shop.img)trk.scrollLeft=S.shop.img*W();
@@ -2910,6 +2929,12 @@ function shopOrdersHtml(){const o=S.shop.orders||[];if(!o.length)return `<div cl
     ${x.status==='new'?`<button type="button" class="mini" data-ordst="${esc(x.id)}" data-st="ok">Confirmer</button>`:''}${x.status==='ok'?`<button type="button" class="mini" data-ordst="${esc(x.id)}" data-st="done">Livrée</button>`:''}${['new','ok'].includes(x.status)?`<button type="button" class="mini" data-ordst="${esc(x.id)}" data-st="cancel">Annuler</button>`:''}</div></div>`}).join('')}
 async function shopSetSt(id,st){try{if(shopDemo()){const O=ls.get('shopOrders',[]);const o=O.find(x=>x.id===id);if(o)o.status=st;ls.set('shopOrders',O)}else{const {error}=await S.be.sb.from('shop_orders').update({status:st}).eq('id',id);if(error)throw error}
   toast(st==='ok'?'Commande confirmée':st==='done'?'Commande livrée ✓':'Commande annulée');shopRefresh()}catch(_){toast('Impossible pour le moment')}}
+function shopWant(id){const it=(S.shop.items||[]).find(x=>x.id===id);if(!it)return;const wa=String(S.helpCfg?.wa||'').replace(/\D/g,'').replace(/^0/,'243');
+  if(!wa){if(shopOwn())toast("Ajoute ton numéro WhatsApp dans Paiements → Contacts de l'aide");return openShopBuy(id)}
+  const size=S.route.v==='shopitem'?((document.querySelector('#sdSz .on')||{}).dataset?.sz||''):'';const p=me();
+  const msg=`Bonjour 👋 Je le veux !\n\n🛍️ ${it.name}${size?' · taille '+size:''}\n💵 ${usd(it.price_usd)}${isVip(it)?' · VIP':''}\n\nVu sur Les Pépites Koris : ${shopLink(it.id)}${p&&p.firstName?'\n\n— '+fullName(p):''}`;
+  try{fx.like&&fx.like()}catch(_){}
+  const url='https://wa.me/'+wa+'?text='+encodeURIComponent(msg);const w=window.open(url,'_blank');if(!w)location.href=url;}
 function openShopBuy(id){const it=(S.shop.items||[]).find(x=>x.id===id);if(!it)return;const L=$('#layer'),p=me()||{},ph=shopPh(it);
   const size=(document.querySelector('#sdSz .on')||{}).dataset?.sz||(it.sizes||[])[0]||'';
   L.innerHTML=`<div class="sheet-bg" id="sbg"><div class="sheet" role="dialog" aria-label="Commander"><span class="grab"></span>
