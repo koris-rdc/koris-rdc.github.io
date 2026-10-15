@@ -70,6 +70,12 @@
 .clb-ok{display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--muted);line-height:1.4;margin:8px 0 2px}.clb-ok input{width:20px;height:20px;flex:none;margin-top:1px;accent-color:#FF9A2E}
 body.shop-mode{--ink:#1B0904;--panel:rgba(255,226,200,.07);--panel-2:rgba(255,226,200,.11);--line:rgba(255,170,90,.16);--muted:#E8C3A4;--text:#FFF6EE;background:radial-gradient(110% 60% at 15% 0%,#C2510F 0%,#6E2208 34%,#2A0D05 62%,#1B0904 100%) fixed}
 body.shop-mode #app{background:transparent}
+.want-c{width:auto!important;height:30px!important;padding:0 11px;border-radius:9px!important}
+.want-c span{font-size:11px!important;white-space:nowrap}
+.want-c::after{border-radius:11px!important;inset:-3px!important}
+.sc-inf .want-c{width:auto!important;height:28px!important;margin-bottom:0!important;padding:0 9px}
+.sc-inf{align-items:flex-end}
+
 .shp-sw{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:16px;background:rgba(255,226,200,.06);border:1px solid rgba(255,120,90,.35);margin:0 0 10px}
 .shp-sw.on{border-color:rgba(255,170,90,.3)}.shp-sw>div{flex:1;min-width:0}.shp-sw b{display:block;font-size:13px}.shp-sw small{display:block;font-size:11px;color:var(--muted);line-height:1.35}
 .shp-sw .tg{flex:none;width:50px;height:28px;border-radius:999px;background:rgba(255,255,255,.18);position:relative;transition:background .25s}
@@ -2855,11 +2861,11 @@ function shopBanner(){if(!shopOn()&&!S.owner)return '';const it=(S.shop.items||[
   return `<button type="button" class="shp-ban" data-go="shop"><span class="ims">${ph.map(u=>`<img src="${esc(u)}" alt="">`).join('')}</span><span class="tx"><b>🛍️ Les Pépites Koris</b><small>${it.length} article${it.length>1?'s':''} · livraison en RDC</small></span><span class="go">Voir</span></button>`}
 function shopCardHtml(it,ix=0){const ph=shopPh(it);
   return `<div class="sc${it.active===false?' off':''}" style="--i:${Math.min(ix,12)}"><button type="button" class="sc-img" data-shopitem="${esc(it.id)}" aria-label="${esc(it.name)}">${ph[0]?`<img src="${esc(ph[0])}" alt="${esc(it.name)}" loading="lazy">`:''}${isVip(it)?'<span class="vip">VIP</span>':''}${shopVid(it)?'<span class="vbadge">▶</span>':''}${it.active===false?'<span class="hid">Masqué</span>':''}</button>
-   <div class="sc-inf"><div><b>${esc(it.name)}</b><small>${esc(it.category||'')}${ph.length>1?` · ${ph.length} photos`:''}</small>${priceHtml(it)}</div><button type="button" class="want-c" data-want="${esc(it.id)}" aria-label="Je le veux : ${esc(it.name)}"><span>Je le<br>veux</span></button></div></div>`}
+   <div class="sc-inf"><div><b>${esc(it.name)}</b><small>${esc(it.category||'')}${ph.length>1?` · ${ph.length} photos`:''}</small>${priceHtml(it)}</div><button type="button" class="want-c" data-want="${esc(it.id)}" aria-label="Je le veux : ${esc(it.name)}"><span>Je le veux</span></button></div></div>`}
 function shopRowHtml(it,ix=0){const ph=shopPh(it);
   return `<div class="sr${it.active===false?' off':''}" style="--i:${Math.min(ix,14)}"><button type="button" class="sr-img" data-shopitem="${esc(it.id)}" aria-label="${esc(it.name)}">${ph[0]?`<img src="${esc(ph[0])}" alt="" loading="lazy">`:''}${shopVid(it)?'<span class="vbadge">▶</span>':''}</button>
    <button type="button" class="sr-inf" data-shopitem="${esc(it.id)}"><b>${esc(it.name)}${isVip(it)?' <i class="vip sm">VIP</i>':''}</b><small>${esc(it.category||'')}${(it.sizes||[]).length?' · '+it.sizes.map(esc).join(', '):''}</small>${priceHtml(it)}</button>
-   <button type="button" class="want-c" data-want="${esc(it.id)}" aria-label="Je le veux : ${esc(it.name)}"><span>Je le<br>veux</span></button></div>`}
+   <button type="button" class="want-c" data-want="${esc(it.id)}" aria-label="Je le veux : ${esc(it.name)}"><span>Je le veux</span></button></div>`}
 
 function shopStats(){const it=(S.shop.items||[]).filter(x=>x.active!==false);return {mv:Math.max(1,...it.map(x=>+x.views||0)),mr:Math.max(1,...it.map(x=>+x.recs||0))}}
 const shopQ=it=>Math.min(10,Math.max(0,Math.round(+(it.quality??8))));
