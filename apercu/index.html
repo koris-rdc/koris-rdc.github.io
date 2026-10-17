@@ -144,6 +144,25 @@ body.shop-mode .top{background:linear-gradient(rgba(27,9,4,.0),rgba(27,9,4,0))}
 .sx.hero{cursor:pointer}
 .sx-rec{width:100%;height:38px;font-size:13px!important;margin:-4px 0 4px;border-radius:999px;background:rgba(255,226,200,.08);border:1px solid rgba(255,170,90,.35);color:#FFD2A6;font-weight:800;font-size:14px}.sx-rec.on{background:linear-gradient(135deg,#FFD58F,#FF9A2E 48%,#E2561B);color:#3A1300;border-color:transparent}
 .pe-q{width:100%;accent-color:#FF9A2E;padding:0!important;border:0!important;background:none!important;height:34px}
+/* Boost externe */
+.chip-btn.boost{font-size:12px;font-weight:800;color:#C8F04A;border:1px solid rgba(200,240,74,.35)}.chip-btn.boost.on{background:rgba(200,240,74,.14)}
+.bsh .lbl{font-weight:800;font-size:14px;margin:12px 0 6px}
+.bt-it{display:flex;gap:12px;align-items:center;padding:10px;border-radius:16px;background:var(--panel);border:1px solid var(--line)}.bt-it b{display:block;font-size:14px}.bt-it small{display:block;font-size:12px;color:var(--muted)}
+.bt-th{position:relative;flex:none;width:56px;height:70px;border-radius:12px;overflow:hidden;background:var(--panel-2);display:grid;place-items:center}.bt-th img{width:100%;height:100%;object-fit:cover}.bt-th em{position:absolute;inset:0;display:grid;place-items:center;font-style:normal;color:#fff;background:rgba(0,0,0,.3);font-size:14px}.bt-ph{font-weight:800;color:var(--muted)}
+.bplans{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.bplans button{display:flex;flex-direction:column;align-items:center;gap:2px;padding:12px 6px;border-radius:16px;background:var(--panel);border:1.5px solid var(--line);color:var(--text)}
+.bplans b{font-size:13.5px}.bplans small{font-size:11.5px;color:var(--muted)}.bplans em{font-style:normal;font-weight:800;font-size:13px;color:#C8F04A;margin-top:4px}
+.bplans button.on{border-color:#C8F04A;background:rgba(200,240,74,.1);box-shadow:0 0 0 3px rgba(200,240,74,.12)}
+.bnets{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}.bnets button{height:36px;padding:0 13px;border-radius:999px;background:var(--panel);border:1px solid var(--line);color:var(--text);font-weight:700;font-size:12.5px}.bnets button.on{background:#C8F04A;color:#03100E;border-color:transparent}
+.brules{margin:10px 0 0;padding:10px 14px 10px 28px;border-radius:14px;background:var(--panel);font-size:12.5px;color:var(--muted);line-height:1.5}
+.bst{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin:12px 0 4px}.bst span{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:11px;color:var(--muted);text-align:center;opacity:.5}.bst span.on{opacity:1;color:var(--text);font-weight:700}
+.bst i{font-style:normal;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--panel);border:1px solid var(--line);font-size:15px}.bst span.on i{background:rgba(200,240,74,.15);border-color:#C8F04A}
+.bres{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}.bres span{padding:12px;border-radius:14px;background:var(--panel);text-align:center}.bres b{display:block;font-size:20px}.bres small{font-size:11.5px;color:var(--muted)}
+.bad{display:flex;gap:10px;padding:12px 0;border-top:1px solid var(--line)}.bad .mid{flex:1;min-width:0}.bad b{font-size:13px}.bad small{display:block;font-size:11.5px;color:var(--muted)}
+.bad .st{display:inline-block;margin-top:4px;font-size:11px;font-weight:800;padding:3px 9px;border-radius:999px;background:var(--panel-2)}.bad.pending .st{background:#C8F04A;color:#03100E}.bad.refused,.bad.done{opacity:.65}
+.bad .a{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}.bad .a .mini{height:32px;padding:0 11px;font-size:12px}
+.bedit{margin:2px 0 8px}.bedit summary{cursor:pointer;font-weight:700;font-size:13px;color:var(--orange-2,#C8F04A);padding:6px 0}.bed-r{display:flex;align-items:center;gap:8px;margin:6px 0}.bed-r b{width:90px;font-size:13px}.bed-r .pill{flex:1;height:40px}.bed-r input{width:100%;min-width:0}.bed-r small{color:var(--muted);font-size:11px}
+.bpk-m{border-radius:18px;overflow:hidden;background:#000;max-height:46vh;display:grid;place-items:center}.bpk-m img,.bpk-m video{width:100%;max-height:46vh;object-fit:contain}
+.bpk-t{padding:12px 14px;border-radius:14px;background:var(--panel);font-size:13px;line-height:1.5;margin-bottom:6px}.bpk-s{margin:0;padding-left:18px;font-size:13px;line-height:1.7}.bpk-l{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
 </style></head><body><div id="ksplash" class="wait" role="img" aria-label="Koris" title="Touchez pour passer">
 <style>
 #ksplash{position:fixed;inset:0;z-index:99999;background:#03100E;display:grid;place-items:center;overflow:hidden;cursor:pointer;animation:ksOut .7s cubic-bezier(.7,0,.3,1) 10.4s forwards}
@@ -1913,6 +1932,8 @@ function vAdmin(){
   <div class="opbox"><div class="pl-url" style="font-weight:700;font-size:13px;word-break:break-all">${esc(shopLink('').replace('https://',''))}</div>${shopSwitchHtml()}<small class="hint" style="padding:0">Lien du catalogue : à envoyer à tes clients, même sans compte Koris.</small>
    <small class="hint" style="padding:0">${(S.helpCfg||{}).wa?`💬 Les « Je le veux » arrivent sur ton WhatsApp : <b>+${esc(String(S.helpCfg.wa).replace(/\D/g,''))}</b>`:`⚠️ Ajoute ton numéro WhatsApp plus bas dans « Contacts de l'aide » pour recevoir les « Je le veux ».`}</small>
    <div style="display:flex;gap:6px;flex-wrap:wrap"><button type="button" class="mini solid" data-go="shop">🛍️ Ouvrir Les Pépites</button><button type="button" class="mini" data-shopshare="1">${I.share}Partager le catalogue</button><button type="button" class="mini" data-copy="${esc(shopVisitLink())}">👁 Copier le lien de visite</button><a class="mini" href="https://wa.me/?text=${encodeURIComponent('🛍️ Les Pépites Koris : vêtements livrés chez toi en RDC. Regarde le catalogue ici 👉 '+shopLink(''))}" target="_blank" rel="noopener">${I.wa}WhatsApp</a></div></div>
+  <h2>Boosts externes 🚀</h2><p class="hint" style="padding:0 2px 8px">Les membres paient pour que leur publication soit diffusée en pub sur Facebook, Instagram ou TikTok. Vérifie le paiement, valide, puis lance la pub avec le « Pack pub ».</p>
+  <div class="opbox" id="admBoost">${admBoostHtml()}</div>
   <h2>À vérifier</h2><div id="admList">${admListHtml()}</div>
   <h2>Membres</h2><p class="hint" style="padding:0 2px 8px">Un membre t'a payé directement (Mobile Money sur ton numéro, espèces…) ? Cherche-le et touche <b>${SUBSCRIPTION?'« +1 mois »':'« Activer »'}</b> : son accès s'ouvre tout de suite.</p>
   <label class="pill">${I.search}<input id="memQ" placeholder="Nom, numéro, ville…" autocomplete="off" aria-label="Chercher un membre"></label>
@@ -1973,7 +1994,7 @@ function postHtml(x){const a=S.profiles[x.uid]||{};const likes=Array.isArray(x.l
   ${vid?vidHtml(x):''}
   ${!media&&x.caption?`<p class="post-text">${esc(x.caption)}</p>`:''}
   ${media&&x.caption?`<p class="post-cap">${esc(x.caption)}</p>`:''}
-  <div class="post-acts"><button class="chip-btn ${liked?'on':''}" data-like="${esc(x.id)}" aria-label="J'aime">${liked?I.heart:I.heartO}${likes.length}</button><button class="chip-btn" data-cmt="${esc(x.id)}" aria-label="Commenter">${I.comment}${cms.length}</button><button class="chip-btn" data-share="${esc(x.id)}" aria-label="Partager">${I.share}${+x.shares||0}</button><span class="sp"></span>${mine?'':`<button class="chip-btn" data-msg="${esc(x.uid)}" aria-label="Écrire à ${esc(a.firstName||'ce membre')}">${I.chat}</button>`}</div>
+  <div class="post-acts"><button class="chip-btn ${liked?'on':''}" data-like="${esc(x.id)}" aria-label="J'aime">${liked?I.heart:I.heartO}${likes.length}</button><button class="chip-btn" data-cmt="${esc(x.id)}" aria-label="Commenter">${I.comment}${cms.length}</button><button class="chip-btn" data-share="${esc(x.id)}" aria-label="Partager">${I.share}${+x.shares||0}</button><span class="sp"></span>${mine?boostChip(x):''}${mine?'':`<button class="chip-btn" data-msg="${esc(x.uid)}" aria-label="Écrire à ${esc(a.firstName||'ce membre')}">${I.chat}</button>`}</div>
   ${last?`<button class="post-last" data-cmt="${esc(x.id)}"><b>${esc(la.firstName||'Membre')}</b> ${esc(last.text.length>90?last.text.slice(0,90)+'…':last.text)}${cms.length>1?` · voir les ${cms.length} commentaires`:''}</button>`:''}</article>`}
 
 function vDiscover(){const q=(S.route.q||'').toLowerCase(),city=S.route.city||'';
@@ -2116,7 +2137,7 @@ function render(){const app=$('#app');const r=S.route;
   if(!KNOWN.includes(r.v)){S.route={v:p?(isActive(p)?'feed':'pay'):'onboard'};return render()}
   // garde-fous : pas de profil → onboarding ; profil non payé → paiement
   const open=['onboard','signup','pay','about','auth','shop','shopitem'];
-  shopTick();
+  shopTick();boostTick();
   if(r.v==='auth'&&S.be.uid&&!S.pendingProf){S.route=p?(isActive(p)?{v:'feed'}:{v:'pay'}):{v:'signup'};return render()}
   if(r.v==='admin'&&!S.owner){S.route={v:'feed'};return render()}
   if(!p&&!open.includes(r.v)){S.route={v:'onboard'};return render()}
@@ -2579,6 +2600,11 @@ document.addEventListener('click',async e=>{const t=e.target.closest('button,[da
   if(d.shopitem){return go('shopitem',d.shopitem)}
   if(d.shopbuy){return openShopBuy(d.shopbuy)}
   if(d.shoptoggle){return shopToggle()}
+  if(d.boost){return openBoost(d.boost)}
+  if(d.bst){if(!S.owner)return;return boostSet(d.bst,{status:d.v})}
+  if(d.bpack){if(!S.owner)return;return boostPack(d.bpack)}
+  if(d.bend){if(!S.owner)return;return boostEnd(d.bend)}
+  if(d.bsave){return boostSavePrices()}
   if(d.shopview){S.shop.view=S.shop.view==='list'?'grid':'list';ls.set('shopView',S.shop.view);return render()}
   if(d.want){return shopWant(d.want)}
   if(d.shoprec){const L=ls.get('shopRecs',[]),on=L.includes(d.shoprec);ls.set('shopRecs',on?L.filter(x=>x!==d.shoprec):[...L,d.shoprec]);if(!on){try{fx.like&&fx.like()}catch(_){}toast('Merci pour ta recommandation ❤')}await shopBump(d.shoprec,on?'unrec':'rec');return render()}
@@ -3031,6 +3057,98 @@ async function shopShare(){const n=(S.shop.items||[]).filter(x=>x.active!==false
   const text=`🛍️ Les Pépites Koris : ${n?n+' article'+(n>1?'s':'')+' à découvrir':'la nouvelle collection'} — vêtements livrés chez toi en RDC. Regarde le catalogue ici 👉 ${url}`;
   try{if(navigator.share){await navigator.share({title:'Les Pépites Koris',text,url});return}}catch(e){if(e?.name==='AbortError')return}
   try{await navigator.clipboard.writeText(text);toast('Lien du catalogue copié ✓')}catch(_){window.open('https://wa.me/?text='+encodeURIComponent(text),'_blank')}}
+
+/* =================== Boost externe : Facebook / Instagram / TikTok =================== */
+const BOOST_DEF=[{id:'d',name:'Découverte',days:3,budget:5,price:20000},{id:'s',name:'Standard',days:7,budget:15,price:55000},{id:'p',name:'Premium',days:14,budget:35,price:120000}];
+const boostPlans=()=>{const b=S.payCfg&&S.payCfg.boostPlans;return Array.isArray(b)&&b.length===3?BOOST_DEF.map((d,i)=>({...d,...b[i]})):BOOST_DEF};
+const BOOST_ST={pending:['En attente','⏳'],ok:['Validé','✅'],live:['En diffusion','📣'],done:['Terminé','🏁'],refused:['Refusé','✖']};
+const BOOST_NETS={meta:'Facebook + Instagram',tiktok:'TikTok',all:'Facebook, Instagram et TikTok'};
+S.boosts=null;let boostBoot=false;
+const boostDemo=()=>!S.be?.sb;
+async function boostLoad(){if(!S.be?.uid)return;if(boostDemo()){S.boosts=ls.get('boosts',[]);return}
+  try{const {data,error}=await S.be.sb.from('boosts').select('*').order('created_at',{ascending:false}).limit(300);if(error)throw error;S.boosts=data||[];S.boostErr=''}catch(_){S.boosts=[];S.boostErr='setup'}}
+function boostRefresh(){boostLoad().then(()=>{if(['feed','me','profile'].includes(S.route.v)&&!$('#layer').innerHTML.trim())softRender();const el=$('#admBoost');if(el)el.innerHTML=admBoostHtml()})}
+function boostTick(){if(!S.be?.uid||boostBoot)return;boostBoot=true;setTimeout(boostRefresh,600)}
+const boostOf=pid=>(S.boosts||[]).find(b=>b.post_id===pid&&b.uid===S.be.uid);
+function boostChip(x){const b=boostOf(x.id),st=b&&b.status;const lbl=!b||st==='done'?'Booster':st==='pending'?'Boost en attente':st==='ok'?'Boost validé':st==='live'?'En diffusion':'Boost refusé';
+  return `<button class="chip-btn boost${b&&['pending','ok','live'].includes(st)?' on':''}" data-boost="${esc(x.id)}" aria-label="Booster hors de Koris">🚀 ${lbl}</button>`}
+function boostMedia(x){const img=safeImg(x.img);if(img)return {type:'img',src:img};if(isVid(x)){const v=x.vid||{};return {type:'vid',src:/^https:/.test(v.url||'')?v.url:'',poster:safeImg(v.poster)}}return {type:'txt'}}
+function boostThumb(x){const m=boostMedia(x);return m.type==='img'?`<img src="${esc(m.src)}" alt="">`:m.type==='vid'?(m.poster?`<img src="${esc(m.poster)}" alt=""><em>▶</em>`:'<span class="bt-ph">▶</span>'):`<span class="bt-ph">Aa</span>`}
+function boostSteps(st){const order=['pending','ok','live','done'];const k=order.indexOf(st);
+  return `<div class="bst">${order.map((s,i)=>`<span class="${st==='refused'?'':i<=k?'on':''}"><i>${BOOST_ST[s][1]}</i>${BOOST_ST[s][0]}</span>`).join('')}</div>`}
+function openBoost(pid){const x=S.posts.find(p=>p.id===pid);if(!x||x.uid!==S.be.uid)return;const L=$('#layer'),b=boostOf(pid);
+  if(b&&['pending','ok','live','refused'].includes(b.status)){
+    L.innerHTML=`<div class="sheet-bg" id="sbg"><div class="sheet bsh" role="dialog" aria-label="Mon boost"><span class="grab"></span>
+    <h2 style="font-size:20px">🚀 Mon boost</h2>
+    <div class="bt-it"><span class="bt-th">${boostThumb(x)}</span><div><b>Formule ${esc(b.plan)} · ${b.days} jours</b><small>${esc(BOOST_NETS[b.nets]||b.nets)} · ${esc(b.city||'Toute la RDC')}</small><small>${fc(+b.price||0)} · réf. ${esc(b.ref)}</small></div></div>
+    ${b.status==='refused'?`<div class="warn">Ce boost a été refusé${b.note?' : '+esc(b.note):''}. Contacte l'aide Koris pour un remboursement ou pour booster une autre publication.</div>`:boostSteps(b.status)}
+    <p class="hint" style="margin:6px 0 0">${b.status==='pending'?'Koris vérifie ton paiement. Ta publication partira ensuite en publicité.':b.status==='ok'?'Paiement confirmé ✓ Ta publicité est en préparation.':'Ta publication est diffusée en publicité hors de Koris 📣'}</p>
+    ${b.reach||b.clicks?`<div class="bres"><span><b>${(+b.reach).toLocaleString('fr-FR')}</b><small>personnes touchées</small></span><span><b>${(+b.clicks).toLocaleString('fr-FR')}</b><small>clics</small></span></div>`:''}
+    <div class="cta-row" style="margin:6px 0 0"><button class="btn btn-ghost" data-act="help">${I.help}Aide</button><button class="btn btn-primary" id="bClose">OK</button></div></div></div>`;
+    $('#sbg').onclick=e=>{if(e.target.id==='sbg')L.innerHTML=''};$('#bClose').onclick=()=>L.innerHTML='';return}
+  const plans=boostPlans();let plan=plans[0].id,nets='meta',op=S.payOp||'orange';
+  const cities=['Toute la RDC',...(DRC_CITIES||[]).slice(0,12)];
+  L.innerHTML=`<div class="sheet-bg" id="sbg"><div class="sheet bsh" role="dialog" aria-label="Booster hors de Koris"><span class="grab"></span>
+  <h2 style="font-size:20px">🚀 Booster hors de Koris</h2>
+  <p class="hint" style="margin:-4px 0 2px">Ta publication diffusée en publicité sur Facebook, Instagram ou TikTok, auprès de personnes qui ne sont pas encore sur Koris.</p>
+  <div class="bt-it"><span class="bt-th">${boostThumb(x)}</span><div><b>${esc(x.caption?(x.caption.length>70?x.caption.slice(0,70)+'…':x.caption):'Ma publication')}</b><small>${ago(x.at)}</small></div></div>
+  <p class="lbl">Formule</p><div class="bplans">${plans.map((p,i)=>`<button type="button" class="${i?'':'on'}" data-bplan="${p.id}"><b>${esc(p.name)}</b><small>${p.days} jours</small><em>${fc(p.price)}</em></button>`).join('')}</div>
+  <p class="lbl">Où diffuser</p><div class="bnets"><button type="button" class="on" data-bnet="meta">Facebook + Instagram</button><button type="button" data-bnet="tiktok">TikTok</button><button type="button" data-bnet="all">Les trois</button></div>
+  <label class="field"><span>Ville ciblée</span><select id="bCity">${cities.map(c=>`<option>${esc(c)}</option>`).join('')}</select></label>
+  <ul class="brules"><li>Seulement tes propres photos et vidéos, sans autre personne sans son accord.</li><li>Pas de nudité, de contenu choquant ni de fausses promesses : la plateforme refuserait la pub.</li><li>La diffusion dépend de la validation de Facebook, Instagram ou TikTok.</li></ul>
+  <label class="clb-ok"><input type="checkbox" id="bOk"><span>J'accepte que ma publication soit diffusée en publicité hors de Koris.</span></label>
+  <p class="lbl">Paiement</p>
+  <div class="mm" role="radiogroup" aria-label="Moyen de paiement">${OPS.map(o=>`<button type="button" role="radio" aria-checked="${o.id===op}" data-mm="${o.id}" class="${o.id===op?'on':''}" style="--c:${o.c}"><span class="lg" style="background:${o.c}">${o.short}</span>${o.name}</button>`).join('')}</div>
+  <div id="payDest">${destHtml(op)}</div>
+  <p class="hint" style="margin:0">Envoie <b id="bAmt">${fc(plans[0].price)}</b> à ce numéro, puis écris la référence de la transaction (reçue par SMS).</p>
+  <label class="field"><span>Référence du paiement</span><input id="bRef" maxlength="40" placeholder="Ex. CI230512.1530.A12345" autocomplete="off"></label>
+  <p class="err" id="bErr"></p>
+  <button class="btn btn-primary" id="bSend" style="width:100%;flex:none;height:52px">🚀 Envoyer ma demande de boost</button></div></div>`;
+  $('#sbg').onclick=e=>{if(e.target.id==='sbg')L.innerHTML=''};
+  L.querySelectorAll('[data-bplan]').forEach(b=>b.onclick=()=>{plan=b.dataset.bplan;L.querySelectorAll('[data-bplan]').forEach(y=>y.classList.toggle('on',y===b));$('#bAmt').textContent=fc(plans.find(p=>p.id===plan).price)});
+  L.querySelectorAll('[data-bnet]').forEach(b=>b.onclick=()=>{nets=b.dataset.bnet;L.querySelectorAll('[data-bnet]').forEach(y=>y.classList.toggle('on',y===b))});
+  $('#bSend').onclick=async()=>{const er=$('#bErr'),btn=$('#bSend'),ref=$('#bRef').value.trim(),P=plans.find(p=>p.id===plan);
+    if(!$('#bOk').checked)return er.textContent='Coche la case pour accepter la diffusion.';if(ref.length<4)return er.textContent='Écris la référence du paiement.';
+    const row={post_id:pid,plan:P.name,days:P.days,price:P.price,city:$('#bCity').value,nets,op:S.payOp||op,ref,status:'pending'};btn.disabled=true;er.textContent='';
+    try{if(boostDemo()){const A=ls.get('boosts',[]);A.unshift({...row,id:'b'+Date.now(),uid:S.be.uid,reach:0,clicks:0,note:'',created_at:new Date().toISOString()});ls.set('boosts',A)}
+      else{const {error}=await S.be.sb.from('boosts').insert(row);if(error)throw error}
+      L.innerHTML='';toast('Demande de boost envoyée 🚀');try{fx.ok()}catch(_){}boostRefresh()}
+    catch(_){btn.disabled=false;er.textContent=S.boostErr?"Le boost n'est pas encore activé. Réessaie plus tard.":"L'envoi a échoué. Vérifie ta connexion et réessaie."}}}
+/* ---- administrateur ---- */
+function admBoostHtml(){if(S.boosts===null){setTimeout(boostRefresh,0);return '<p class="hint" style="padding:8px 2px 0">Chargement…</p>'}
+  if(S.boostErr)return `<div class="warn" style="margin-top:6px">Pour activer le boost externe, exécute une seule fois le fichier « koris-boost.sql » dans Supabase (SQL Editor).</div>`;
+  const plans=boostPlans();
+  const editor=`<details class="bedit"><summary>Formules et prix</summary>${plans.map((p,i)=>`<div class="bed-r"><b>${esc(p.name)}</b><label class="pill"><input type="number" min="1" max="60" data-bpd="${i}" value="${p.days}" aria-label="Jours"><small>jours</small></label><label class="pill"><input type="number" min="0" step="500" data-bpp="${i}" value="${p.price}" aria-label="Prix"><small>FC</small></label></div>`).join('')}<button type="button" class="mini solid" data-bsave="1">Enregistrer les prix</button></details>`;
+  const list=(S.boosts||[]).slice().sort((a,b)=>(a.status==='pending'?0:1)-(b.status==='pending'?0:1));
+  if(!list.length)return editor+'<p class="hint" style="padding:8px 2px 0">Aucune demande de boost pour l\'instant.</p>';
+  return editor+list.map(b=>{const x=S.posts.find(p=>p.id===b.post_id),a=S.profiles[b.uid]||{},st=BOOST_ST[b.status]||BOOST_ST.pending;
+    return `<div class="bad ${b.status}"><span class="bt-th">${x?boostThumb(x):'<span class="bt-ph">?</span>'}</span><div class="mid"><b>${esc(fullName(a))} · ${esc(b.plan)} ${b.days} j</b>
+     <small>${fc(+b.price||0)} · ${esc((opById(b.op)||{}).name||b.op)} · réf. <b>${esc(b.ref)}</b></small><small>${esc(BOOST_NETS[b.nets]||b.nets)} · ${esc(b.city)} · ${new Date(b.created_at).toLocaleDateString('fr-FR')}</small>
+     ${b.reach||b.clicks?`<small>📊 ${b.reach} personnes · ${b.clicks} clics</small>`:''}<span class="st">${st[1]} ${st[0]}</span>
+     <div class="a">${b.status==='pending'?`<button type="button" class="mini solid" data-bst="${esc(b.id)}" data-v="ok">Valider</button><button type="button" class="mini" data-bst="${esc(b.id)}" data-v="refused">Refuser</button>`:''}
+     ${['ok','live'].includes(b.status)&&x?`<button type="button" class="mini solid" data-bpack="${esc(b.id)}">📦 Pack pub</button>`:''}${b.status==='ok'?`<button type="button" class="mini" data-bst="${esc(b.id)}" data-v="live">En diffusion</button>`:''}${b.status==='live'?`<button type="button" class="mini" data-bend="${esc(b.id)}">Terminer</button>`:''}</div></div></div>`}).join('')}
+async function boostSet(id,patch){try{if(boostDemo()){const A=ls.get('boosts',[]);const b=A.find(y=>y.id===id);if(b)Object.assign(b,patch);ls.set('boosts',A)}else{const {error}=await S.be.sb.from('boosts').update(patch).eq('id',id);if(error)throw error}
+  toast(patch.status==='ok'?'Boost validé ✓':patch.status==='live'?'Boost en diffusion 📣':patch.status==='done'?'Boost terminé 🏁':patch.status==='refused'?'Boost refusé':'Enregistré');boostRefresh()}catch(_){toast('Impossible pour le moment')}}
+async function boostSavePrices(){if(!S.owner)return;const plans=boostPlans().map((p,i)=>({days:Math.max(1,parseInt(($(`[data-bpd="${i}"]`)||{}).value,10)||p.days),price:Math.max(0,parseInt(($(`[data-bpp="${i}"]`)||{}).value,10)||0)}));
+  const c={...(S.payCfg||{}),boostPlans:plans};delete c.free;try{await S.be.savePayCfg(c);S.payCfg=c;toast('Prix des boosts enregistrés');const el=$('#admBoost');if(el)el.innerHTML=admBoostHtml()}catch(_){toast("L'enregistrement a échoué")}}
+function boostEnd(id){const L=$('#layer');L.innerHTML=`<div class="sheet-bg" id="sbg"><div class="sheet" role="dialog" aria-label="Terminer le boost"><span class="grab"></span><h2 style="font-size:20px">🏁 Résultats du boost</h2>
+  <p class="hint" style="margin:-4px 0 4px">Recopie les chiffres de Meta ou TikTok (facultatif). Le membre les verra.</p>
+  <div style="display:flex;gap:10px"><label class="field" style="flex:1"><span>Personnes touchées</span><input id="beR" type="number" min="0" inputmode="numeric" placeholder="0"></label><label class="field" style="flex:1"><span>Clics</span><input id="beC" type="number" min="0" inputmode="numeric" placeholder="0"></label></div>
+  <div class="cta-row" style="margin:6px 0 0"><button class="btn btn-ghost" id="beX">Annuler</button><button class="btn btn-primary" id="beOk">Terminer</button></div></div></div>`;
+  $('#sbg').onclick=e=>{if(e.target.id==='sbg')L.innerHTML=''};$('#beX').onclick=()=>L.innerHTML='';
+  $('#beOk').onclick=()=>{const r=Math.max(0,parseInt($('#beR')?.value,10)||0),c=Math.max(0,parseInt($('#beC')?.value,10)||0);L.innerHTML='';boostSet(id,{status:'done',reach:r,clicks:c})}}
+function boostPack(id){const b=(S.boosts||[]).find(y=>y.id===id);if(!b)return;const x=S.posts.find(p=>p.id===b.post_id);if(!x)return;const a=S.profiles[b.uid]||{},m=boostMedia(x),L=$('#layer');
+  const text=`${x.caption?x.caption.trim()+'\n\n':''}💚 Rejoins ${a.firstName||'nous'} sur Koris, l'appli de rencontre 100 % RD Congo : flirt, vraie rencontre ou dîner, près de chez toi. Inscris-toi 👉 ${APP_URL}`;
+  L.innerHTML=`<div class="sheet-bg" id="sbg"><div class="sheet bsh" role="dialog" aria-label="Pack pub"><span class="grab"></span>
+  <h2 style="font-size:20px">📦 Pack pub prêt</h2>
+  <div class="bpk-m">${m.type==='img'?`<img src="${esc(m.src)}" alt="">`:m.type==='vid'&&m.src?`<video src="${esc(m.src)}" controls playsinline ${m.poster?`poster="${esc(m.poster)}"`:''}></video>`:'<p class="hint">Publication sans média : utilise une de tes vidéos de présentation Koris.</p>'}</div>
+  ${m.type==='img'?`<a class="btn btn-primary" style="flex:none;height:48px" href="${esc(m.src)}" download="koris-boost-${esc(id)}.jpg">⬇ Télécharger la photo</a>`:m.type==='vid'&&m.src?`<a class="btn btn-primary" style="flex:none;height:48px" href="${esc(m.src)}" download target="_blank" rel="noopener">⬇ Télécharger la vidéo</a>`:''}
+  <p class="lbl">Texte de la pub</p><div class="bpk-t">${esc(text).replace(/\n/g,'<br>')}</div><button type="button" class="mini" data-copy="${esc(text)}">Copier le texte</button>
+  <p class="lbl">Réglages</p><ul class="bpk-s"><li><b>Diffusion :</b> ${esc(BOOST_NETS[b.nets]||b.nets)}</li><li><b>Ciblage :</b> ${esc(b.city)}, 18 à 40 ans</li><li><b>Durée :</b> ${b.days} jours</li><li><b>Lien :</b> ${esc(APP_URL)}</li></ul>
+  <p class="hint" style="margin:4px 0 0">Crée la pub avec « Créer une publicité » (pas « publication existante ») : elle ne s'affichera pas sur ta page.</p>
+  <div class="bpk-l">${b.nets!=='tiktok'?`<a class="mini solid" href="https://adsmanager.facebook.com" target="_blank" rel="noopener">Ouvrir Meta Ads Manager</a>`:''}${b.nets!=='meta'?`<a class="mini solid" href="https://ads.tiktok.com" target="_blank" rel="noopener">Ouvrir TikTok Ads</a>`:''}</div>
+  ${b.status==='ok'?`<button class="btn btn-primary" id="bpLive" style="flex:none;height:48px">📣 C'est lancé : passer en diffusion</button>`:''}</div></div>`;
+  $('#sbg').onclick=e=>{if(e.target.id==='sbg')L.innerHTML=''};const lv=$('#bpLive');if(lv)lv.onclick=()=>{L.innerHTML='';boostSet(id,{status:'live'})}}
 
 /* =================== Activité : commentaires, disponibilités, publications (bannière + son + vibreur) =================== */
 const ACT={list:ls.get('acts',[]),q:[],busy:false,snap:{po:null,cm:null}};
