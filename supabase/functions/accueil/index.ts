@@ -48,6 +48,10 @@ Deno.serve(async (req) => {
     if (!UUID.test(vid)) return json({ error: "visiteur invalide" }, 400);
     const { data: row } = await sb.from("visit_chats").select("*").eq("id", vid).maybeSingle();
 
+    if (action === "history") {
+      return json({ msgs: (row?.msgs || []).slice(-150).map((m: any) => ({ role: m.role, text: m.text, at: m.at })) });
+    }
+
     if (action === "poll") {
       const since = Number(body.since || 0);
       const msgs = (row?.msgs || []).filter((m: any) => m.at > since && m.role !== "user");
@@ -108,20 +112,27 @@ Deno.serve(async (req) => {
 // --- Google Gemini (disponible en RDC) ---
 async function askGemini(key: string, system: string, msgs: any[], audio: { mime: string; data: string } | null = null): Promise<string> {
   const models = [Deno.env.get("GEMINI_MODEL"), "gemini-flash-lite-latest", "gemini-flash-latest"].filter(Boolean) as string[];
+  const deadline = Date.now() + 9000; // réponse en moins de 10 secondes
   const contents: any[] = msgs.map((m) => ({ role: m.role === "assistant" ? "model" : "user", parts: [{ text: m.content }] }));
   if (audio && contents.length) contents[contents.length - 1].parts.push({ inline_data: { mime_type: audio.mime, data: audio.data } });
   for (const model of models) {
+    const left = deadline - Date.now();
+    if (left < 1500) break;
+    const ac = new AbortController();
+    const to = setTimeout(() => ac.abort(), left);
     try {
       const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
+        signal: ac.signal,
         method: "POST",
         headers: { "x-goog-api-key": key, "content-type": "application/json" },
-        body: JSON.stringify({ systemInstruction: { parts: [{ text: system }] }, contents, generationConfig: { maxOutputTokens: 2048, temperature: 0.6 } }),
+        body: JSON.stringify({ systemInstruction: { parts: [{ text: system }] }, contents, generationConfig: { maxOutputTokens: 700, temperature: 0.6 } }),
       });
       if (!r.ok) { console.log("gemini", model, r.status, (await r.text()).slice(0, 300)); continue; }
       const out = await r.json();
       const t = (out.candidates?.[0]?.content?.parts || []).map((p: any) => (p.thought ? "" : p.text || "")).join("").trim();
       if (t) return t;
     } catch (e) { console.log("gemini", model, String(e)); }
+    finally { clearTimeout(to); }
   }
   return "";
 }
