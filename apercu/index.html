@@ -3114,7 +3114,12 @@ function vsInit(){if(VS.msgs)return;VS.vid=ls.get('vsVid','')||vsUuid();ls.set('
   if(!VS.cfgDone){VS.cfgDone=true;const sb=sbClient&&sbClient();
     (sb?sb.from('settings').select('data').eq('id','concierge').maybeSingle().then(({data})=>data?.data||{}):Promise.resolve({})).then(c=>{VS.local=c;if(c.name)VS.cfg.name=c.name;if(c.welcome)VS.cfg.welcome=c.welcome;if(S.route.v==='visit')vsDraw(true)}).catch(()=>{});
     vsCall({action:'config'}).then(c=>{VS.cfg={...VS.cfg,...c};VS.fn=true;if(S.route.v==='visit')vsDraw(true)}).catch(()=>{VS.fn=false})}}
-async function vsCall(body){const r=await fetch(ACC_FN,{method:'POST',headers:{'Content-Type':'application/json',apikey:SB_KEY,Authorization:'Bearer '+SB_KEY},body:JSON.stringify(body)});if(!r.ok)throw new Error(r.status);return r.json()}
+const ACC_FNS=[SB_URL+'/functions/v1/koris-ia',ACC_FN];let accIx=0;
+async function vsCall(body){let err;for(let i=accIx;i<ACC_FNS.length;i++){
+    try{const r=await fetch(ACC_FNS[i],{method:'POST',headers:{'Content-Type':'application/json',apikey:SB_KEY,Authorization:'Bearer '+SB_KEY},body:JSON.stringify(body)});
+      if(r.ok){accIx=i;return r.json()}err=new Error(r.status);if(![401,403,404].includes(r.status))throw err}
+    catch(e){err=e;if(navigator.onLine===false)break}}
+  throw err||new Error('fn')}
 const vsHm=t=>new Date(t).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
 function vVisit(){vsInit();const p=me();
   return `<section class="vs"><header class="vs-hd"><button class="icon-btn" data-go="${p?(isActive(p)?'feed':'pay'):'onboard'}" aria-label="Retour">${I.back}</button><span class="vs-av" id="vsAv">${esc((VS.cfg.name||'K')[0].toUpperCase())}</span><div class="mid"><b id="vsNm">${esc(VS.cfg.name)}</b><small>En ligne · répond en quelques secondes</small></div><span class="vs-tag">Assistant IA</span></header>
