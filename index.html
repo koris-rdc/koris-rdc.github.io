@@ -1326,6 +1326,12 @@ header.top{margin-inline:-16px;padding-inline:16px;top:0;padding-top:calc(18px +
 .vs-ph{flex:none;width:46px;height:46px;border-radius:50%;display:grid;place-items:center;background:var(--panel);border:1px solid var(--line);color:var(--text);cursor:pointer}.vs-ph svg{width:21px;height:21px}
 .vb.ph{padding:6px 6px 8px}.vb.ph small{padding-right:6px}.vs-img{display:block;width:100%;max-width:240px;border-radius:13px;margin-bottom:4px}.vs-up{display:block;padding:24px 18px;font-size:13px;opacity:.8}
 .cc-img{display:block;margin:4px 0;border-radius:10px;overflow:hidden;max-width:240px;background:rgba(255,255,255,.05)}.cc-img img{display:block;width:100%}.cc-img span{display:block;padding:18px 12px;font-size:12px;color:var(--muted)}
+.vs-f{position:relative}.vs-rec{display:none}.vs-f.rec>:not(.vs-rec){visibility:hidden}
+.vs-f.rec .vs-rec{display:flex;align-items:center;gap:10px;position:absolute;inset:8px 12px calc(10px + env(safe-area-inset-bottom,0px));background:var(--panel);border:1px solid var(--line);border-radius:24px;padding:0 6px}
+.vs-f .vs-rx{width:38px;height:38px;border-radius:50%;background:transparent;color:var(--muted);font-size:17px;flex:none}.vs-f .vs-rs{margin-left:auto;flex:none;width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#E9FF8A,#C8F04A 50%,#2EE0B0);color:#03100E;display:grid;place-items:center}.vs-rs svg{width:19px;height:19px}
+.vs-dot{width:10px;height:10px;border-radius:50%;background:#FF4D5E;animation:recB 1s ease-in-out infinite;flex:none}@keyframes recB{50%{opacity:.25}}
+.vs-rl{font-size:12.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}#vsRecT{font-variant-numeric:tabular-nums;font-size:15px}
+.vs-aud{display:block;width:230px;max-width:100%;height:40px;margin-bottom:4px}.cc-aud{display:block;margin:4px 0;font-size:12px;color:var(--muted)}.cc-aud audio{width:230px;max-width:100%;height:40px}
 </style>
 
 <div class="app" id="app"><div class="loading"><div class="spin" aria-label="Chargement"></div></div></div>
@@ -2640,6 +2646,7 @@ document.addEventListener('click',async e=>{const t=e.target.closest('button,[da
   if(d.faqadd){faqSync();S.conc.faq.push({q:'',a:''});$('#faqList').insertAdjacentHTML('beforeend',faqRow(S.conc.faq[S.conc.faq.length-1],S.conc.faq.length-1));const r=$('#faqList').lastElementChild;r&&r.querySelector('.fq').focus();return}
   if(d.faqdel!==undefined){faqSync();S.conc.faq.splice(+d.faqdel,1);$('#faqList').innerHTML=S.conc.faq.map((x,i)=>faqRow(x,i)).join('');return}
   if(d.faqtest){faqSync();const q=($('#ccTq')||{}).value||'';const m=faqMatch(q,S.conc.faq.filter(x=>x.q.trim()&&x.a.trim()));const r=$('#ccTr');if(r)r.innerHTML=!q.trim()?'':m?`<div class="ccb ai"><em>Réponse trouvée · « ${esc(m.q)} »</em>${esc(m.a)}</div><small class="hint">Avec l'IA activée, la réponse sera reformulée naturellement à partir de cette fiche.</small>`:`<div class="ccb ai"><em>Aucune fiche ne correspond</em>L'IA dira qu'elle ne sait pas et proposera que l'équipe réponde. Ajoute une question-réponse pour ce cas.</div>`;return}
+  if(d.vsrec){return vsRecStop(d.vsrec==='send')}
   if(d.vsq){return vsSend(d.vsq)}
   if(d.vsct){if(d.vsct==='skip'){ls.set('vsContact',{skip:1});return vsDraw()}const n=($('#vsCn')||{}).value?.trim()||'',ph=($('#vsCp')||{}).value?.trim()||'';if(!n&&!ph)return;ls.set('vsContact',{n,ph});return vsSend(`Je m'appelle ${n||'—'}${ph?', mon numéro : '+ph:''}`,{name:n,phone:ph})}
   if(d.shopview){S.shop.view=S.shop.view==='list'?'grid':'list';ls.set('shopView',S.shop.view);return render()}
@@ -3101,7 +3108,7 @@ const CONC_URL=APP_URL.replace(/\/?$/,'/')+'?discuter';
 const ACC_FN=SB_URL+'/functions/v1/accueil';
 S.conc={cfg:null,chats:null,err:'',tab:'conv',faq:null};
 /* ---------- côté visiteur (route « visit », sans compte) ---------- */
-const VS={vid:null,msgs:null,last:0,cfg:{name:'Koris',welcome:'Bonjour 👋 Comment puis-je vous aider ?'},busy:false,iv:0,cfgDone:false};
+const VS={vid:null,msgs:null,last:0,cfg:{name:'Koris',welcome:'Bonjour 👋 Comment puis-je vous aider ?'},busy:false,iv:0,cfgDone:false,auds:{}};
 const vsUuid=()=>crypto.randomUUID?crypto.randomUUID():'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,c=>{const r=Math.random()*16|0;return(c==='x'?r:r&3|8).toString(16)});
 function vsInit(){if(VS.msgs)return;VS.vid=ls.get('vsVid','')||vsUuid();ls.set('vsVid',VS.vid);VS.msgs=ls.get('vsMsgs',[]);VS.last=ls.get('vsLast',0);
   if(!VS.cfgDone){VS.cfgDone=true;const sb=sbClient&&sbClient();
@@ -3112,29 +3119,59 @@ const vsHm=t=>new Date(t).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-d
 function vVisit(){vsInit();const p=me();
   return `<section class="vs"><header class="vs-hd"><button class="icon-btn" data-go="${p?(isActive(p)?'feed':'pay'):'onboard'}" aria-label="Retour">${I.back}</button><span class="vs-av" id="vsAv">${esc((VS.cfg.name||'K')[0].toUpperCase())}</span><div class="mid"><b id="vsNm">${esc(VS.cfg.name)}</b><small>En ligne · répond en quelques secondes</small></div><span class="vs-tag">Assistant IA</span></header>
   <div class="vs-m" id="vsM" aria-live="polite"></div><p class="vs-note">Vous discutez avec un assistant virtuel. L'équipe peut aussi vous répondre ici.</p>
-  <form class="vs-f" id="vsF"><label class="vs-ph" for="vsP" aria-label="Envoyer une photo" title="Envoyer une photo">${I.camera}</label><input type="file" id="vsP" accept="image/*" class="fpick"><textarea id="vsT" rows="1" maxlength="1200" placeholder="Écrivez votre message…" aria-label="Votre message"></textarea><button id="vsB" aria-label="Envoyer" disabled>${I.send}</button></form></section>`}
+  <form class="vs-f" id="vsF"><label class="vs-ph" for="vsP" aria-label="Envoyer une photo" title="Envoyer une photo">${I.camera}</label><input type="file" id="vsP" accept="image/*" class="fpick"><textarea id="vsT" rows="1" maxlength="1200" placeholder="Écrivez votre message…" aria-label="Votre message"></textarea><button id="vsB" aria-label="Enregistrer un vocal">${GKI.mic}</button><div class="vs-rec"><button type="button" class="vs-rx" data-vsrec="cancel" aria-label="Annuler le vocal">✕</button><span class="vs-dot"></span><b id="vsRecT">0:00</b><span class="vs-rl">Parlez… (1 min max)</span><button type="button" class="vs-rs" data-vsrec="send" aria-label="Envoyer le vocal">${I.send}</button></div></form></section>`}
 function vsDraw(head){const M=$('#vsM');if(!M)return;if(head){const n=$('#vsNm'),a=$('#vsAv');if(n)n.textContent=VS.cfg.name;if(a)a.textContent=(VS.cfg.name||'K').trim()[0].toUpperCase()}
   const ct=ls.get('vsContact',null);
   M.innerHTML=`<span class="vs-day">Aujourd'hui</span><div class="vb">${esc(VS.cfg.welcome)}</div>`+
    (VS.msgs.length?'':`<div class="vs-sg">${['Comment ça marche ?','Quels sont vos prix ?',"Je veux m'inscrire"].map(s=>`<button type="button" data-vsq="${esc(s)}">${esc(s)}</button>`).join('')}</div>`)+
-   VS.msgs.map(m=>`<div class="vb ${m.role==='user'?'me':m.role==='admin'?'adm':''}${m.img||m.up?' ph':''}">${m.role==='admin'?`<em>${esc(VS.cfg.name)} · équipe</em>`:''}${m.img?`<img class="vs-img" src="${esc(m.img)}" alt="Photo envoyée">`:''}${m.up?'<span class="vs-up">Envoi de la photo…</span>':''}${esc(imgStrip(m.text))}<small>${vsHm(m.at)}</small></div>`).join('')+
+   VS.msgs.map(m=>`<div class="vb ${m.role==='user'?'me':m.role==='admin'?'adm':''}${m.img||m.up?' ph':''}">${m.role==='admin'?`<em>${esc(VS.cfg.name)} · équipe</em>`:''}${m.img?`<img class="vs-img" src="${esc(m.img)}" alt="Photo envoyée">`:''}${m.up?`<span class="vs-up">${m.up===2?'Envoi du vocal…':'Envoi de la photo…'}</span>`:''}${(()=>{const a=(String(m.text||'').match(/\[aud:([\w\-\/.]+)\]/)||[])[1];return a&&VS.auds[a]?`<audio class="vs-aud" controls preload="metadata" src="${esc(VS.auds[a])}"></audio>`:''})()}${esc(imgStrip(m.text))}<small>${vsHm(m.at)}</small></div>`).join('')+
    (VS.msgs.filter(m=>m.role==='user').length>=2&&!ct?`<div class="vs-ct"><b>Pour qu'on puisse vous recontacter (facultatif)</b><div class="r"><input id="vsCn" placeholder="Prénom" maxlength="60" value="${esc(me()?.firstName||'')}"><input id="vsCp" type="tel" placeholder="Numéro WhatsApp" maxlength="20" inputmode="tel"></div><div class="r" style="justify-content:flex-end"><button type="button" class="mini" data-vsct="skip">Plus tard</button><button type="button" class="mini solid" data-vsct="send">Envoyer</button></div></div>`:'')+
    (VS.busy?'<div class="vb vs-typ"><i></i><i></i><i></i></div>':'');
   requestAnimationFrame(()=>{M.scrollTop=M.scrollHeight})}
 function vsBind(){vsDraw(true);const T=$('#vsT'),B=$('#vsB'),F=$('#vsF');if(!T)return;
-  const fit=()=>{T.style.height='auto';T.style.height=Math.min(150,T.scrollHeight)+'px';T.scrollTop=T.scrollHeight;B.disabled=!T.value.trim()};T.oninput=fit;
+  const fit=()=>{T.style.height='auto';T.style.height=Math.min(150,T.scrollHeight)+'px';T.scrollTop=T.scrollHeight;vsBtn()};T.oninput=fit;
   T.onfocus=()=>{[80,300,600].forEach(t=>setTimeout(()=>{const M=$('#vsM');if(M)M.scrollTop=M.scrollHeight;T.scrollIntoView({block:'nearest'})},t))};
-  T.onkeydown=e=>{if(e.key==='Enter'&&!e.shiftKey&&window.innerWidth>700){e.preventDefault();vsSend(T.value)}};F.onsubmit=e=>{e.preventDefault();vsSend(T.value)};
+  T.onkeydown=e=>{if(e.key==='Enter'&&!e.shiftKey&&window.innerWidth>700){e.preventDefault();vsSend(T.value)}};F.onsubmit=e=>{e.preventDefault();T.value.trim()?vsSend(T.value):vsRecStart()};
   const P=$('#vsP');if(P)P.onchange=()=>{const f=P.files&&P.files[0];P.value='';if(f)vsPhoto(f)};
   clearInterval(VS.iv);VS.iv=setInterval(vsPoll,6000)}
 async function vsSend(text,extra,img){text=String(text||'').trim();if(!text||VS.busy)return;VS.msgs.push({role:'user',text,at:Date.now(),...(img?{img}:{})});ls.set('vsMsgs',VS.msgs.slice(-150));
-  const T=$('#vsT');if(T){T.value='';T.style.height='auto'}const B=$('#vsB');if(B)B.disabled=true;VS.busy=true;vsDraw();
+  const T=$('#vsT');if(T){T.value='';T.style.height='auto'}vsBtn();VS.busy=true;vsDraw();
   try{const r=await vsCall({action:'send',vid:VS.vid,text,src:VISIT_LINK.src||(me()?'membre':'direct'),...(extra||{})});if(r.reply){VS.msgs.push({role:'ai',text:r.reply,at:r.at||Date.now()});VS.last=Math.max(VS.last,r.at||0)}}
   catch(_){const L=VS.local||{},m=faqMatch(text,L.faq||[]),wa=String(L.wa||'').replace(/\D/g,'');
     VS.msgs.push({role:'ai',text:m?m.a:navigator.onLine===false?"Oups, le message n'est pas passé. Vérifiez votre connexion et réessayez.":`Merci pour votre message ! Je n'ai pas encore la réponse à cette question.${wa?' Écrivez directement à l\'équipe sur WhatsApp : +'+wa:' L\'équipe vous répondra bientôt.'}`,at:Date.now(),local:1})}
   VS.busy=false;ls.set('vsMsgs',VS.msgs.slice(-150));ls.set('vsLast',VS.last);vsDraw()}
-const IMG_RE=/\n?\[img:([\w\-\/.]+)\]/;
-const imgStrip=t=>String(t||'').replace(IMG_RE,'');
+const IMG_RE=/\n?\[img:([\w\-\/.]+)\]/,AUD_RE=/\n?\[aud:([\w\-\/.]+)\]/;
+const imgStrip=t=>String(t||'').replace(IMG_RE,'').replace(AUD_RE,'');
+function vsBtn(){const T=$('#vsT'),B=$('#vsB');if(!T||!B)return;const t=!!T.value.trim();B.innerHTML=t?I.send:GKI.mic;B.setAttribute('aria-label',t?'Envoyer':'Enregistrer un vocal');B.classList.toggle('mic',!t)}
+/* Messages vocaux : enregistrement → WAV 16 kHz mono (lisible partout et compris par l'IA) */
+let REC=null;
+async function vsRecStart(){if(VS.busy||REC)return;
+  if(!navigator.mediaDevices?.getUserMedia||!window.MediaRecorder){toast("Les vocaux ne marchent pas sur ce navigateur. Écris ton message.");return}
+  let st;try{st=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true}})}catch(_){toast("Autorise le micro pour envoyer un vocal.");return}
+  let mr;try{mr=new MediaRecorder(st)}catch(_){st.getTracks().forEach(t=>t.stop());toast("Impossible d'enregistrer sur ce téléphone.");return}
+  const r={mr,st,ch:[],t0:Date.now(),iv:0,send:false};REC=r;mr.ondataavailable=e=>{if(e.data&&e.data.size)r.ch.push(e.data)};
+  mr.onstop=()=>{st.getTracks().forEach(t=>t.stop());clearInterval(r.iv);REC=null;const F=$('#vsF');if(F)F.classList.remove('rec');
+    if(!r.send)return;const dur=Math.floor((Date.now()-r.t0)/1000);if(dur<1){toast('Vocal trop court : appuie, parle, puis envoie.');return}
+    vsVoice(new Blob(r.ch,{type:mr.mimeType||'audio/webm'}),Math.min(dur,60))};
+  mr.start(250);const F=$('#vsF');if(F)F.classList.add('rec');const T=$('#vsRecT');if(T)T.textContent='0:00';
+  r.iv=setInterval(()=>{const s=Math.floor((Date.now()-r.t0)/1000);if(T)T.textContent=Math.floor(s/60)+':'+String(s%60).padStart(2,'0');if(s>=60)vsRecStop(true)},250)}
+function vsRecStop(send){if(!REC)return;REC.send=send;try{REC.mr.state!=='inactive'?REC.mr.stop():REC.mr.onstop()}catch(_){}}
+async function toWav(blob){const ab=await blob.arrayBuffer();const AC=window.AudioContext||window.webkitAudioContext;const ac=new AC();
+  const buf=await new Promise((res,rej)=>ac.decodeAudioData(ab,res,rej));try{ac.close()}catch(_){}
+  const sr=16000,len=Math.max(1,Math.ceil(buf.duration*sr));const off=new (window.OfflineAudioContext||window.webkitOfflineAudioContext)(1,len,sr);
+  const src=off.createBufferSource();src.buffer=buf;src.connect(off.destination);src.start(0);const out=await off.startRendering();
+  const d=out.getChannelData(0),v=new DataView(new ArrayBuffer(44+d.length*2)),w=(o,t)=>{for(let i=0;i<t.length;i++)v.setUint8(o+i,t.charCodeAt(i))};
+  w(0,'RIFF');v.setUint32(4,36+d.length*2,true);w(8,'WAVE');w(12,'fmt ');v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,1,true);
+  v.setUint32(24,sr,true);v.setUint32(28,sr*2,true);v.setUint16(32,2,true);v.setUint16(34,16,true);w(36,'data');v.setUint32(40,d.length*2,true);
+  for(let i=0;i<d.length;i++){const x=Math.max(-1,Math.min(1,d[i]));v.setInt16(44+i*2,x<0?x*0x8000:x*0x7fff,true)}
+  return new Blob([v],{type:'audio/wav'})}
+async function vsVoice(raw,dur){const sb=sbClient&&sbClient();if(!sb){toast("Envoi du vocal impossible pour l'instant.");return}
+  const ph={role:'user',text:'',at:Date.now(),up:2};VS.msgs.push(ph);vsDraw();
+  try{let blob=raw;try{blob=await toWav(raw)}catch(_){}
+    const ext=blob.type==='audio/wav'?'wav':/mp4|aac/.test(blob.type)?'m4a':'webm',ct=blob.type.split(';')[0]||'audio/webm';
+    const path=`${VS.vid}/${Date.now()}.${ext}`;const {error}=await sb.storage.from('visites').upload(path,blob,{contentType:ct,upsert:false});if(error)throw error;
+    VS.auds[path]=URL.createObjectURL(blob);VS.msgs.splice(VS.msgs.indexOf(ph),1);await vsSend(`🎤 Message vocal (${dur} s)\n[aud:${path}]`)}
+  catch(e){VS.msgs.splice(VS.msgs.indexOf(ph),1);vsDraw();toast("Le vocal n'est pas passé. Vérifie ta connexion et réessaie.")}}
 async function vsPhoto(f){if(VS.busy)return;if(!/^image\//.test(f.type||'')){toast('Choisis une photo (capture d\'écran ou image).');return}
   const sb=sbClient&&sbClient();if(!sb){toast("Envoi de photo impossible pour l'instant.");return}
   const ph={role:'user',text:'',at:Date.now(),up:1};VS.msgs.push(ph);vsDraw();
@@ -3143,7 +3180,7 @@ async function vsPhoto(f){if(VS.busy)return;if(!/^image\//.test(f.type||'')){toa
     const {error}=await sb.storage.from('visites').upload(path,blob,{contentType:'image/jpeg',upsert:false});if(error)throw error;
     VS.msgs.splice(VS.msgs.indexOf(ph),1);await vsSend(`📷 Photo envoyée\n[img:${path}]`,null,thumb)}
   catch(e){VS.msgs.splice(VS.msgs.indexOf(ph),1);vsDraw();toast("La photo n'est pas passée. Vérifie ta connexion et réessaie.")}}
-async function vsPoll(){if(S.route.v!=='visit'){clearInterval(VS.iv);return}if(document.hidden||VS.busy)return;
+async function vsPoll(){if(S.route.v!=='visit'){clearInterval(VS.iv);vsRecStop(false);return}if(document.hidden||VS.busy)return;
   try{const r=await vsCall({action:'poll',vid:VS.vid,since:VS.last});let n=0;(r.msgs||[]).forEach(m=>{if(!VS.msgs.some(x=>x.at===m.at&&x.text===m.text)){VS.msgs.push(m);n++}VS.last=Math.max(VS.last,m.at)});if(n){ls.set('vsMsgs',VS.msgs.slice(-150));ls.set('vsLast',VS.last);vsDraw()}}catch(_){}}
 const FAQ_STOP=new Set('les des une est que qui quoi pour avec dans sur par pas vous nous ils elle elles mon ton son mes tes ses aux ces cet cette comment combien quel quelle quels quelles est-ce faire fait peut peux veux bonjour salut svp stp merci the and'.split(' '));
 const faqTok=t=>String(t||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9 ]+/g,' ').split(/\s+/).filter(w=>w.length>2&&!FAQ_STOP.has(w)).map(w=>w.replace(/s$/,''));
@@ -3194,8 +3231,9 @@ async function concSave(){faqSync();const er=$('#ccErr'),b=$('#ccSave');const fa
   b.disabled=true;er.textContent='';try{const {error}=await S.be.sb.from('settings').upsert({id:'concierge',data});if(error)throw error;S.conc.cfg=data;S.conc.faq=faq.map(x=>({...x}));toast(`Enregistré ✓ · ${faq.length} question${faq.length>1?'s':''}-réponse${faq.length>1?'s':''}`);$('#ibBody').innerHTML=inboxBody()}catch(_){er.textContent="L'enregistrement a échoué. Vérifie ta connexion et réessaie."}b.disabled=false}
 document.addEventListener('submit',e=>{if(e.target&&e.target.id==='fConc'){e.preventDefault();concSave()}else if(e.target&&e.target.id==='vsF'){e.preventDefault()}},true);
 function openConc(id){const x=(S.conc.chats||[]).find(y=>y.id===id);if(!x)return;const L=$('#layer');
-  const draw=()=>{const box=$('#ccMsgs');if(!box)return;box.innerHTML=(x.msgs||[]).map(m=>{const ip=(String(m.text||'').match(IMG_RE)||[])[1];return `<div class="ccb ${m.role}">${m.role==='admin'?'<em>Toi</em>':m.role==='ai'?'<em>IA</em>':''}${ip?`<a class="cc-img" data-sp="${esc(ip)}" target="_blank" rel="noopener"><span>Chargement de la photo…</span></a>`:''}${esc(imgStrip(m.text))}<small>${new Date(m.at).toLocaleString('fr-FR',{dateStyle:'short',timeStyle:'short'})}</small></div>`}).join('');box.scrollTop=box.scrollHeight;
-    box.querySelectorAll('[data-sp]').forEach(async a=>{try{const {data,error}=await S.be.sb.storage.from('visites').createSignedUrl(a.dataset.sp,3600);if(error)throw error;a.href=data.signedUrl;a.innerHTML=`<img src="${esc(data.signedUrl)}" alt="Photo du visiteur" onload="this.closest('.cc-msgs').scrollTop=1e6">`}catch(_){a.innerHTML='<span>Photo indisponible</span>'}})};
+  const draw=()=>{const box=$('#ccMsgs');if(!box)return;box.innerHTML=(x.msgs||[]).map(m=>{const ip=(String(m.text||'').match(IMG_RE)||[])[1];return `<div class="ccb ${m.role}">${m.role==='admin'?'<em>Toi</em>':m.role==='ai'?'<em>IA</em>':''}${ip?`<a class="cc-img" data-sp="${esc(ip)}" target="_blank" rel="noopener"><span>Chargement de la photo…</span></a>`:''}${(()=>{const ap=(String(m.text||'').match(AUD_RE)||[])[1];return ap?`<span class="cc-aud" data-sa="${esc(ap)}">Chargement du vocal…</span>`:''})()}${esc(imgStrip(m.text))}<small>${new Date(m.at).toLocaleString('fr-FR',{dateStyle:'short',timeStyle:'short'})}</small></div>`}).join('');box.scrollTop=box.scrollHeight;
+    box.querySelectorAll('[data-sp]').forEach(async a=>{try{const {data,error}=await S.be.sb.storage.from('visites').createSignedUrl(a.dataset.sp,3600);if(error)throw error;a.href=data.signedUrl;a.innerHTML=`<img src="${esc(data.signedUrl)}" alt="Photo du visiteur" onload="this.closest('.cc-msgs').scrollTop=1e6">`}catch(_){a.innerHTML='<span>Photo indisponible</span>'}});
+    box.querySelectorAll('[data-sa]').forEach(async a=>{try{const {data,error}=await S.be.sb.storage.from('visites').createSignedUrl(a.dataset.sa,3600);if(error)throw error;a.innerHTML=`<audio controls preload="metadata" src="${esc(data.signedUrl)}"></audio>`}catch(_){a.textContent='Vocal indisponible'}})};
   const wa=String(x.phone||'').replace(/\D/g,'').replace(/^0/,'243');
   L.innerHTML=`<div class="sheet-bg" id="sbg"><div class="sheet" role="dialog" aria-label="Conversation"><span class="grab"></span>
   <h2 style="font-size:19px">${esc(x.name||'Visiteur')}</h2><p class="hint" style="margin:-6px 0 4px">${x.phone?esc(x.phone)+' · ':''}${esc(x.src||'')}</p>
