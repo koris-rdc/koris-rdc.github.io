@@ -1492,12 +1492,12 @@ header.top{margin-inline:-16px;padding-inline:16px;top:0;padding-top:calc(18px +
 /* ===== Thème animé : maille bordeaux en mouvement ===== */
 .mesh{position:absolute;inset:0;overflow:hidden;z-index:0;pointer-events:none;background:#050102}
 .wa.fx>.mesh{position:fixed;top:0;bottom:0;left:50%;width:min(460px,100%);transform:translateX(-50%)}
-.mesh i{position:absolute;border-radius:50%;will-change:transform;mix-blend-mode:screen}
+.mesh i{position:absolute;border-radius:50%;will-change:transform;mix-blend-mode:screen;opacity:.8}
 .mesh .m1{width:95%;height:55%;left:-25%;top:-8%;background:radial-gradient(closest-side,rgba(226,82,109,.95),rgba(158,27,54,.55) 45%,transparent 72%);animation:mz1 17s ease-in-out infinite alternate}
 .mesh .m2{width:90%;height:50%;right:-30%;top:28%;background:radial-gradient(closest-side,rgba(255,120,140,.85),rgba(170,24,52,.5) 45%,transparent 72%);animation:mz2 21s ease-in-out infinite alternate}
 .mesh .m3{width:85%;height:48%;left:-20%;bottom:-6%;background:radial-gradient(closest-side,rgba(190,30,62,.9),rgba(110,15,34,.45) 50%,transparent 72%);animation:mz3 19s ease-in-out infinite alternate}
 .mesh .m4{width:60%;height:34%;right:-10%;bottom:12%;background:radial-gradient(closest-side,rgba(255,160,175,.55),transparent 70%);animation:mz4 13s ease-in-out infinite alternate}
-.mesh b{position:absolute;inset:0;background-image:radial-gradient(rgba(0,0,0,.78) 1.15px,transparent 1.55px),radial-gradient(rgba(255,255,255,.07) .7px,transparent 1px);background-size:5px 5px,5px 5px;background-position:0 0,2.5px 2.5px;box-shadow:inset 0 0 120px 40px rgba(5,1,2,.85)}
+.mesh b{position:absolute;inset:0;background-image:radial-gradient(rgba(0,0,0,.8) 1.15px,transparent 1.55px),radial-gradient(rgba(255,255,255,.05) .7px,transparent 1px),linear-gradient(rgba(5,1,2,.42),rgba(5,1,2,.52));background-size:5px 5px,5px 5px,100% 100%;background-position:0 0,2.5px 2.5px,0 0;box-shadow:inset 0 0 120px 40px rgba(5,1,2,.85)}
 @keyframes mz1{0%{transform:translate(0,0) scale(1)}50%{transform:translate(35%,18%) scale(1.15)}100%{transform:translate(10%,45%) scale(.9)}}
 @keyframes mz2{0%{transform:translate(0,0) scale(1.05)}50%{transform:translate(-40%,-25%) scale(.9)}100%{transform:translate(-15%,30%) scale(1.2)}}
 @keyframes mz3{0%{transform:translate(0,0) scale(1)}50%{transform:translate(45%,-30%) scale(1.2)}100%{transform:translate(20%,-55%) scale(.95)}}
@@ -1518,6 +1518,7 @@ header.top{margin-inline:-16px;padding-inline:16px;top:0;padding-top:calc(18px +
 .vg-err{min-height:16px;font-size:12.5px;color:#FF8A9E;margin:-2px 2px 4px}
 .vg-hint{font-size:11.5px;color:#8E747A;margin:-2px 2px 4px}
 .vg-card form label[for=vsGp]{margin-top:4px}
+.wa.fx .wa-mid b,.wa.fx .wa-h,.wa.fx .wa-arch b{text-shadow:0 1px 8px rgba(0,0,0,.6)}.wa.fx .wa-mid small{color:#B9A2A8}
 </style>
 
 <div class="app" id="app"><div class="loading"><div class="spin" aria-label="Chargement"></div></div></div>
@@ -3440,7 +3441,7 @@ const ibUnread=x=>{if(!x.unread)return 0;let n=0;const m=x.msgs||[];for(let i=m.
 function ibTime(ms){if(!ms)return '';const d=new Date(ms),n=new Date();if(d.toDateString()===n.toDateString())return d.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
   const y=new Date(n);y.setDate(n.getDate()-1);if(d.toDateString()===y.toDateString())return 'Hier';return d.toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit',year:'2-digit'})}
 const ibCol=id=>{let h=0;for(const c of String(id))h=(h*31+c.charCodeAt(0))>>>0;return ['#5B3A8E','#1F5F8B','#8E3A59','#2D6A4F','#8A5A1F','#3A4A8E','#7A2E2E','#2E6F6F'][h%8]};
-function ibAv(x,sz=56){const n=(x.name||'').trim(),ini=n?n.split(/\s+/).map(w=>w[0]).slice(0,2).join('').toUpperCase():'';
+function ibAv(x,sz=56){const n=(x.name||'').replace(/[^A-Za-zÀ-ÖØ-öø-ÿ' -]/g,' ').trim(),ini=n?n.split(/\s+/).filter(Boolean).map(w=>w[0]).slice(0,2).join('').toUpperCase():'';
   return `<span class="wa-av${x.unread?' ring':''}" style="--s:${sz}px"><i style="background:${ibCol(x.id)}">${ini?esc(ini):'<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="8.5" r="4"/><path d="M4 20c1.2-4 4.4-6 8-6s6.8 2 8 6z"/></svg>'}</i></span>`}
 function ibPrev(x){const l=concLast(x);if(!l||!l.text)return '';const t=String(l.text);
   const body=AUD_RE.test(t)?'🎤 Message vocal':IMG_RE.test(t)?'📷 Photo':imgStrip(t);
