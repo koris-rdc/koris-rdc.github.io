@@ -336,7 +336,7 @@ if(!c0||c0.state==='running'){go()}else{
 </div>
 <title>Koris — Application de rencontre en RDC (Kinshasa, Lubumbashi, Goma)</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Montserrat:wght@300;400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Montserrat:wght@300;400;500;600;700;800&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap">
 <style>
 /* Layout: colonne mobile centrée (max 460px), barre de navigation fixe en bas, cartes noires avec halo orange dans un coin */
 :root{
@@ -1435,6 +1435,57 @@ header.top{margin-inline:-16px;padding-inline:16px;top:0;padding-top:calc(18px +
 .wa-chat .wa-in input{background:#24121A}.wa-chat .wa-in button{background:linear-gradient(140deg,#D23A58,var(--bx));color:#fff}
 .wa-chat .wa-menu{background:#22111A}.wa-chat .wa-menu button,.wa-chat .wa-menu a{border-color:#33171F}
 .wa-mid small .wpf{color:#F07A8F!important}
+/* ===== Messagerie : typographie et formes v2 ===== */
+.vs,.vs-gate,.wa,.wa-chat{font-family:'DM Sans',system-ui,sans-serif;letter-spacing:-.005em}
+.vs-gate h1,.wa-h,.vs .vs-hd b,.wa-who b,.wa-faq .wa-top h1{font-family:'Bricolage Grotesque','DM Sans',sans-serif;letter-spacing:-.02em}
+/* page du nom */
+.vs-gate{align-items:flex-end;padding:20px 16px calc(20px + env(safe-area-inset-bottom,0px))}
+.vg-card{position:relative;width:100%;background:#120A0C;border:1px solid #2A161B;border-radius:28px;padding:22px 20px 18px;display:flex;flex-direction:column;gap:6px;box-shadow:0 30px 60px rgba(0,0,0,.5)}
+.vg-brand{display:flex;align-items:center;gap:12px;margin-bottom:14px}.vg-brand b{display:block;font-size:15px;font-weight:700;color:#fff}.vg-brand small{display:flex;align-items:center;gap:6px;font-size:12px;color:#A98F95}.vg-brand small i{width:7px;height:7px;border-radius:50%;background:#3BD97A}
+.vg-card .vg-logo{width:46px;height:46px;border-radius:15px;font-size:20px;margin:0;box-shadow:0 8px 20px rgba(110,15,34,.5)}
+.vg-step{display:flex;flex-direction:column;gap:7px;margin-bottom:12px}.vg-step span{font-size:12px;font-weight:600;color:#A98F95}.vg-step em{height:4px;border-radius:2px;background:#2A161B;overflow:hidden}.vg-step em b{display:block;height:100%;width:55%;border-radius:2px;background:linear-gradient(90deg,#D23A58,#9E1B36)}
+.vg-card h1{font-size:28px;font-weight:800;color:#fff;text-align:left}
+.vg-card p{color:#B49AA0;font-size:14px;line-height:1.5;text-align:left;max-width:none}
+.vg-card form{display:flex;flex-direction:column;gap:8px;margin-top:16px}
+.vg-card label{font-size:13.5px;font-weight:600;color:#EBDDE0}
+.vg-card input{height:52px;border-radius:14px;background:#0B0507;border:1px solid #33191F;color:#fff;font:inherit;font-size:16px;padding:0 16px;outline:none;text-align:left}
+.vg-card input:focus{border-color:#D23A58;box-shadow:0 0 0 3px rgba(210,58,88,.15)}
+.vg-card button{margin-top:10px;height:52px;border-radius:14px;background:#9E1B36;color:#fff;font:inherit;font-weight:700;font-size:15.5px;box-shadow:none}
+.vg-card button:disabled{opacity:.35}
+.vg-foot{color:#806A6F;font-size:12px;text-align:center;margin-top:12px}
+/* discussion du visiteur */
+.vs .vs-hd{padding-top:calc(8px + env(safe-area-inset-top,0px));padding-bottom:8px}
+.vs .vs-av{width:36px;height:36px;font-size:15px;border-radius:12px}
+.vs .vs-hd b{font-size:15.5px}.vs .vs-hd small{font-size:11.5px}
+.vs .vs-tag{font-size:10px;padding:4px 8px}
+.vs .vs-m{gap:5px;padding:12px 12px}
+.vs .vb{font-size:13.5px;line-height:1.42;padding:7px 11px 6px;max-width:78%;border-radius:4px 16px 16px 16px;background:#160E10;border:1px solid #2A161B;box-shadow:none;animation-duration:.2s}
+.vs .vb.me{border-radius:16px 4px 16px 16px;background:#8A1830;font-weight:400}
+.vs .vb small{font-size:9.5px;margin-top:2px;opacity:.55}
+.vs .vb em{font-size:10px}
+.vs .vs-day{font-size:10.5px;padding:3px 10px;border-radius:7px}
+.vs .vs-sg button{font-size:12px;padding:7px 11px;border-radius:12px}
+.vs .vs-note{font-size:10px}
+.vs .vs-f textarea{font-size:16px;min-height:44px;border-radius:14px;padding:11px 14px}
+.vs .vs-f button,.vs .vs-ph{width:44px;height:44px;border-radius:14px}.vs .vs-f button{background:#9E1B36}
+.vs .vs-ct{font-size:12.5px;border-radius:14px}
+.vs .vs-img{border-radius:10px}
+/* messagerie admin */
+.wa-h{font-size:28px;font-weight:800;margin:8px 0 12px}
+.wa-q{height:42px;border-radius:12px}.wa-q input{font-size:16px}
+.wa-chips button{height:32px;font-size:13px;padding:0 14px}
+.wa-arch{padding:11px 4px}.wa-arch b{font-size:14.5px}.wa-arch .ic{width:50px}
+.wa-row{padding:9px 4px;gap:12px}.wa-av{--s:50px}
+.wa-mid b{font-size:15px}.wa-mid small{font-size:13.5px}
+.wa-end .tm{font-size:12px}.wa-end .bd{min-width:20px;height:20px;font-size:11.5px}
+.wa-ch{padding-top:calc(6px + env(safe-area-inset-top,0px));padding-bottom:6px}.wa-who b{font-size:15px}.wa-who small{font-size:11.5px}
+.wa-mode button{height:28px;font-size:12px;padding:0 9px}
+.wa-mode-note{font-size:11px;padding:6px 12px}
+.wa-chat .wb{font-size:13.5px;line-height:1.42;padding:6px 10px 5px;max-width:78%;border-radius:4px 16px 16px 16px;background:#160E10;border:1px solid #2A161B}
+.wa-chat .wb.out{border-radius:16px 4px 16px 16px;border:0;background:#7A1628}.wa-chat .wb.out.ai{background:#3A0F1A}
+.wa-chat .wb em{font-size:10px}.wa-chat .wb small{font-size:9.5px}
+.wa-chat .wa-day{font-size:10.5px;padding:3px 10px;border-radius:7px}
+.wa-chat .wa-in input{height:44px;border-radius:14px;font-size:16px}.wa-chat .wa-in button{width:44px;height:44px;border-radius:14px;background:#9E1B36}
 </style>
 
 <div class="app" id="app"><div class="loading"><div class="spin" aria-label="Chargement"></div></div></div>
@@ -3209,14 +3260,16 @@ async function shopShare(){const n=(S.shop.items||[]).filter(x=>x.active!==false
   try{await navigator.clipboard.writeText(text);toast('Lien du catalogue copié ✓')}catch(_){window.open('https://wa.me/?text='+encodeURIComponent(text),'_blank')}}
 
 /* =================== Messagerie d'accueil : visiteurs ↔ IA + administrateur =================== */
-const VISIT_LINK=(()=>{try{const q=new URLSearchParams(location.search);return {on:q.has('discuter'),src:(q.get('src')||q.get('discuter')||'').slice(0,60),used:false}}catch(_){return {on:false,src:'',used:false}}})();
+const VISIT_LINK=(()=>{try{const q=new URLSearchParams(location.search);return {on:q.has('discuter'),src:(q.get('src')||q.get('discuter')||'').slice(0,60),used:false,fresh:q.has('nouveau')}}catch(_){return {on:false,src:'',used:false}}})();
 const CONC_URL=APP_URL.replace(/\/?$/,'/')+'?discuter';
 const ACC_FN=SB_URL+'/functions/v1/accueil';
 S.conc={cfg:null,chats:null,err:'',tab:'conv',faq:null};
 /* ---------- côté visiteur (route « visit », sans compte) ---------- */
 const VS={vid:null,msgs:null,last:0,cfg:{name:'Koris',welcome:'Bonjour 👋 Comment puis-je vous aider ?'},busy:false,iv:0,cfgDone:false,auds:{}};
 const vsUuid=()=>crypto.randomUUID?crypto.randomUUID():'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,c=>{const r=Math.random()*16|0;return(c==='x'?r:r&3|8).toString(16)});
-function vsInit(){if(VS.msgs)return;VS.name=ls.get('vsName','');VS.vid=ls.get('vsVid','')||vsUuid();ls.set('vsVid',VS.vid);VS.msgs=ls.get('vsMsgs',[]);VS.last=ls.get('vsLast',0);
+function vsInit(){if(VS.msgs)return;
+  if(VISIT_LINK.fresh){['vsName','vsVid','vsMsgs','vsLast','vsContact'].forEach(k=>{try{localStorage.removeItem('koris:'+k)}catch(_){}});VISIT_LINK.fresh=false;try{const u=new URL(location.href);u.searchParams.delete('nouveau');history.replaceState(history.state,'',u)}catch(_){}}
+  VS.name=ls.get('vsName','');VS.vid=ls.get('vsVid','')||vsUuid();ls.set('vsVid',VS.vid);VS.msgs=ls.get('vsMsgs',[]);VS.last=ls.get('vsLast',0);
   if(!VS.cfgDone){VS.cfgDone=true;const sb=sbClient&&sbClient();
     (sb?sb.from('settings').select('data').eq('id','concierge').maybeSingle().then(({data})=>data?.data||{}):Promise.resolve({})).then(c=>{VS.local=c;if(c.name)VS.cfg.name=c.name;if(c.welcome)VS.cfg.welcome=c.welcome;if(S.route.v==='visit')vsDraw(true)}).catch(()=>{});
     vsCall({action:'config'}).then(c=>{VS.cfg={...VS.cfg,...c};VS.fn=true;if(S.route.v==='visit')vsDraw(true)}).catch(()=>{VS.fn=false})}}
@@ -3227,12 +3280,14 @@ async function vsCall(body){let err;for(let i=accIx;i<ACC_FNS.length;i++){
     catch(e){err=e;if(navigator.onLine===false)break}}
   throw err||new Error('fn')}
 const vsHm=t=>new Date(t).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
-function vVisit(){vsInit();const p=me();if(!VS.name&&p&&p.firstName){VS.name=String(p.firstName).trim().slice(0,40);ls.set('vsName',VS.name)}
-  if(!VS.name)return `<section class="vs-gate"><div class="vg-glow"></div>
-   <div class="vg-in"><span class="vg-logo">${esc((VS.cfg.name||'K')[0].toUpperCase())}</span>
-    <h1>Bienvenue 👋</h1><p>Écris ton nom pour commencer la discussion avec <b>${esc(VS.cfg.name||'Koris')}</b>.</p>
-    <form id="vsG" novalidate autocomplete="off"><input id="vsGn" maxlength="40" placeholder="Ton nom" aria-label="Ton nom" autocapitalize="words" enterkeyhint="go">
-    <button id="vsGb" disabled>Accéder</button></form><small>Pas besoin de compte · Réponse en quelques secondes</small></div></section>`;
+function vVisit(){vsInit();const p=me();
+  if(!VS.name)return `<section class="vs-gate"><div class="vg-glow"></div><div class="vg-card">
+    <div class="vg-brand"><span class="vg-logo">${esc((VS.cfg.name||'K')[0].toUpperCase())}</span><div><b>${esc(VS.cfg.name||'Koris')}</b><small><i></i>En ligne · répond en quelques secondes</small></div></div>
+    <div class="vg-step"><span>Avant de commencer</span><em><b></b></em></div>
+    <h1>Qui êtes-vous ?</h1><p>Écrivez votre nom pour que l'on sache à qui l'on répond.</p>
+    <form id="vsG" novalidate autocomplete="off"><label for="vsGn">Votre nom</label><input id="vsGn" maxlength="40" placeholder="Ex. : Mukendi Jean" value="${esc(p&&p.firstName?[p.firstName,p.lastName].filter(Boolean).join(' '):'')}" autocapitalize="words" enterkeyhint="go">
+    <button id="vsGb" ${p&&p.firstName?'':'disabled'}>Accéder à la messagerie</button></form>
+    <small class="vg-foot">🔒 Pas besoin de compte · votre nom reste entre vous et l'équipe</small></div></section>`;
   return `<section class="vs"><header class="vs-hd"><button class="icon-btn" data-go="${p?(isActive(p)?'feed':'pay'):'onboard'}" aria-label="Retour">${I.back}</button><span class="vs-av" id="vsAv">${esc((VS.cfg.name||'K')[0].toUpperCase())}</span><div class="mid"><b id="vsNm">${esc(VS.cfg.name)}</b><small>En ligne · répond en quelques secondes</small></div><span class="vs-tag">Assistant IA</span></header>
   <div class="vs-m" id="vsM" aria-live="polite"></div><p class="vs-note">Vous discutez avec un assistant virtuel. L'équipe peut aussi vous répondre ici.</p>
   <form class="vs-f" id="vsF"><label class="vs-ph" for="vsP" aria-label="Envoyer une photo" title="Envoyer une photo">${I.camera}</label><input type="file" id="vsP" accept="image/*" class="fpick"><textarea id="vsT" rows="1" maxlength="1200" placeholder="Écrivez votre message…" aria-label="Votre message"></textarea><button id="vsB" aria-label="Enregistrer un vocal">${GKI.mic}</button><div class="vs-rec"><button type="button" class="vs-rx" data-vsrec="cancel" aria-label="Annuler le vocal">✕</button><span class="vs-dot"></span><b id="vsRecT">0:00</b><span class="vs-rl">Parlez… (1 min max)</span><button type="button" class="vs-rs" data-vsrec="send" aria-label="Envoyer le vocal">${I.send}</button></div></form></section>`}
