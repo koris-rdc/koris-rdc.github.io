@@ -1387,6 +1387,54 @@ header.top{margin-inline:-16px;padding-inline:16px;top:0;padding-top:calc(18px +
 .wa-menu-bg{position:absolute;inset:0;background:rgba(0,0,0,.45);z-index:3;display:flex;align-items:flex-start;justify-content:flex-end;padding:calc(56px + env(safe-area-inset-top,0px)) 10px 0}
 .wa-menu{background:#232326;border-radius:14px;min-width:230px;overflow:hidden;box-shadow:0 14px 40px rgba(0,0,0,.5)}
 .wa-menu button,.wa-menu a{display:block;width:100%;text-align:left;padding:14px 16px;font-size:15px;color:#fff;border-bottom:1px solid #2E2E30}.wa-menu .red{color:#FF5A5F;border:0}
+/* ===== Messagerie : thème bordeaux & noir ===== */
+.vs,.vs-gate,.wa,.wa-chat{--bx:#6E0F22;--bx2:#9E1B36;--bxl:#E2526D;--bxs:#1A0C10;--bxln:#2A1419}
+.vs{background:#070304 radial-gradient(130% 55% at 50% -12%,rgba(158,27,54,.38),transparent 62%)!important}
+.vs .vs-hd{background:rgba(10,4,6,.9);border-bottom-color:var(--bxln)}
+.vs .vs-hd .icon-btn{background:var(--bxs);border-color:var(--bxln)}
+.vs .vs-av{background:linear-gradient(140deg,#F07A8F,var(--bx2) 55%,var(--bx));color:#fff}
+.vs .vs-av::after{border-color:#070304}
+.vs .vs-tag{background:rgba(226,82,109,.12);color:#F7A3B3;border-color:rgba(226,82,109,.35)}
+.vs .vs-day{background:var(--bxs);color:#C9A9B0}
+.vs .vb{background:#1B1013;border:1px solid var(--bxln)}
+.vs .vb.me{background:linear-gradient(140deg,#B5223F,var(--bx));color:#fff;border:0;font-weight:500}
+.vs .vb.adm{border-color:rgba(226,82,109,.5)}.vs .vb em{color:#F7A3B3}
+.vs .vs-sg button{background:var(--bxs);border-color:#3A1820;color:#F3DDE2}
+.vs .vs-ct{background:var(--bxs);border-color:var(--bxln)}.vs .vs-ct input{background:#22121A;border-color:#3A1820}
+.vs .vs-note{color:#A88A91}
+.vs .vs-f{background:rgba(10,4,6,.95);border-top-color:var(--bxln)}
+.vs .vs-f textarea{background:var(--bxs);border-color:#3A1820}
+.vs .vs-f button,.vs .vs-f .vs-rs{background:linear-gradient(140deg,#D23A58,var(--bx));color:#fff}
+.vs .vs-f .vs-rx{background:transparent;color:#C9A9B0}
+.vs .vs-ph{background:var(--bxs);border-color:#3A1820}
+.vs .vs-f.rec .vs-rec{background:var(--bxs);border-color:#3A1820}
+.vs .mini.solid{background:linear-gradient(140deg,#D23A58,var(--bx));color:#fff;border:0}
+.vs .mini:not(.solid){background:#24121A;color:#F3DDE2;border:1px solid #3A1820}
+.vs-gate{position:fixed;inset:0 auto 0 50%;bottom:var(--kb,0px);transform:translateX(-50%);width:min(460px,100%);z-index:5;display:flex;align-items:center;justify-content:center;padding:24px;background:#070304;overflow:hidden}
+.vg-glow{position:absolute;inset:-30% -40% auto;height:80%;background:radial-gradient(closest-side,rgba(158,27,54,.55),transparent);filter:blur(10px)}
+.vg-in{position:relative;width:100%;display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px}
+.vg-logo{width:84px;height:84px;border-radius:28px;display:grid;place-items:center;font-size:36px;font-weight:800;color:#fff;background:linear-gradient(140deg,#F07A8F,var(--bx2) 55%,var(--bx));box-shadow:0 18px 40px rgba(110,15,34,.55),inset 0 1px 0 rgba(255,255,255,.25);margin-bottom:8px}
+.vg-in h1{font-size:30px;font-weight:800;color:#fff}.vg-in p{color:#CBB0B6;font-size:15px;line-height:1.45;max-width:300px}.vg-in p b{color:#fff}
+.vg-in form{width:100%;display:flex;flex-direction:column;gap:12px;margin-top:14px}
+.vg-in input{height:56px;border-radius:18px;background:#160A0D;border:1.5px solid #3A1820;color:#fff;font:inherit;font-size:18px;text-align:center;outline:none}
+.vg-in input:focus{border-color:var(--bxl);box-shadow:0 0 0 4px rgba(226,82,109,.15)}
+.vg-in button{height:56px;border-radius:18px;background:linear-gradient(140deg,#D23A58,var(--bx));color:#fff;font-weight:800;font-size:17px;box-shadow:0 12px 28px rgba(110,15,34,.5)}
+.vg-in button:disabled{opacity:.4;box-shadow:none}
+.vg-in small{color:#8E747A;font-size:12.5px;margin-top:6px}
+.wa{--wg:#E2526D;--wbg:#070304;--wsf:#1A0C10;--wln:#24121A;--wmu:#9C8389;background:#070304 radial-gradient(120% 40% at 50% -8%,rgba(158,27,54,.35),transparent 60%)}
+.wa .wa-chips button{border-color:#3A1820;color:#D9C2C7}.wa .wa-chips button.on{background:#3A1520;border-color:#5A1F2E;color:#fff}
+.wa .wa-row:active{background:#140A0D}.wa-end .bd{color:#fff!important}
+.wa-chat{--wg:#E2526D;background:#070304}
+.wa-chat .wa-ch,.wa-chat .wa-in{background:#12080B;border-color:#24121A}
+.wa-chat .wa-mode{background:#24121A}.wa-chat .wa-mode button.on{background:#5A1F2E;color:#fff}.wa-chat .wa-mode button.on.me{background:linear-gradient(140deg,#D23A58,var(--bx));color:#fff}
+.wa-chat .wa-mode-note{background:#0D0507;border-color:#1E0E13}
+.wa-chat .wa-msgs{background:#070304 radial-gradient(circle at 80% 0%,rgba(158,27,54,.18),transparent 45%)}
+.wa-chat .wa-day{background:#1A0C10;color:#D9C2C7}
+.wa-chat .wb.in{background:#1C1114}.wa-chat .wb.out{background:#6A1528}.wa-chat .wb.out.ai{background:#3E0E1B}
+.wa-chat .wb em{color:#F7A3B3}.wa-chat .wb.admin em{color:#FFD0D9}
+.wa-chat .wa-in input{background:#24121A}.wa-chat .wa-in button{background:linear-gradient(140deg,#D23A58,var(--bx));color:#fff}
+.wa-chat .wa-menu{background:#22111A}.wa-chat .wa-menu button,.wa-chat .wa-menu a{border-color:#33171F}
+.wa-mid small .wpf{color:#F07A8F!important}
 </style>
 
 <div class="app" id="app"><div class="loading"><div class="spin" aria-label="Chargement"></div></div></div>
@@ -2246,7 +2294,7 @@ function render(){const app=$('#app');const r=S.route;
   else if(r.v==='signup')app.innerHTML=vSignup();
   else if(r.v==='pay')app.innerHTML=vPay();
   else if(r.v==='shop'){app.innerHTML=vShop();const q=$('#shopQ');if(q){if(render.shopQ){q.focus();q.setSelectionRange(q.value.length,q.value.length)}q.oninput=()=>{S.shop.q=q.value;render.shopQ=true;render();render.shopQ=false}}}
-  else if(r.v==='visit'){app.innerHTML=vVisit();vsBind()}
+  else if(r.v==='visit'){app.innerHTML=vVisit();if($('#vsG'))vsGate();else vsBind()}
   else if(r.v==='inbox'){app.innerHTML=vInbox();if(S.conc.cfg===null||S.conc.chats===null)concRefresh()}
   else if(r.v==='shopitem'){if(render.sdId!==r.param){render.sdId=r.param;S.shop.img=0}app.innerHTML=vShopItem(r.param);sdBind();if(S.shop.items&&S.shop.items.some(x=>x.id===r.param))shopView(r.param)}
   else if(r.v==='admin')app.innerHTML=vAdmin();
@@ -2706,7 +2754,7 @@ document.addEventListener('click',async e=>{const t=e.target.closest('button,[da
   if(d.faqtest){faqSync();const q=($('#ccTq')||{}).value||'';const m=faqMatch(q,S.conc.faq.filter(x=>x.q.trim()&&x.a.trim()));const r=$('#ccTr');if(r)r.innerHTML=!q.trim()?'':m?`<div class="ccb ai"><em>Réponse trouvée · « ${esc(m.q)} »</em>${esc(m.a)}</div><small class="hint">Avec l'IA activée, la réponse sera reformulée naturellement à partir de cette fiche.</small>`:`<div class="ccb ai"><em>Aucune fiche ne correspond</em>L'IA dira qu'elle ne sait pas et proposera que l'équipe réponde. Ajoute une question-réponse pour ce cas.</div>`;return}
   if(d.vsrec){return vsRecStop(d.vsrec==='send')}
   if(d.vsq){return vsSend(d.vsq)}
-  if(d.vsct){if(d.vsct==='skip'){ls.set('vsContact',{skip:1});return vsDraw()}const n=($('#vsCn')||{}).value?.trim()||'',ph=($('#vsCp')||{}).value?.trim()||'';if(!n&&!ph)return;ls.set('vsContact',{n,ph});return vsSend(`Je m'appelle ${n||'—'}${ph?', mon numéro : '+ph:''}`,{name:n,phone:ph})}
+  if(d.vsct){if(d.vsct==='skip'){ls.set('vsContact',{skip:1});return vsDraw()}const n=VS.name||'',ph=($('#vsCp')||{}).value?.trim()||'';if(!ph)return;ls.set('vsContact',{n,ph});return vsSend(`Mon numéro WhatsApp : ${ph}`,{phone:ph})}
   if(d.shopview){S.shop.view=S.shop.view==='list'?'grid':'list';ls.set('shopView',S.shop.view);return render()}
   if(d.want){return shopWant(d.want)}
   if(d.shoprec){const L=ls.get('shopRecs',[]),on=L.includes(d.shoprec);ls.set('shopRecs',on?L.filter(x=>x!==d.shoprec):[...L,d.shoprec]);if(!on){try{fx.like&&fx.like()}catch(_){}toast('Merci pour ta recommandation ❤')}await shopBump(d.shoprec,on?'unrec':'rec');return render()}
@@ -3168,7 +3216,7 @@ S.conc={cfg:null,chats:null,err:'',tab:'conv',faq:null};
 /* ---------- côté visiteur (route « visit », sans compte) ---------- */
 const VS={vid:null,msgs:null,last:0,cfg:{name:'Koris',welcome:'Bonjour 👋 Comment puis-je vous aider ?'},busy:false,iv:0,cfgDone:false,auds:{}};
 const vsUuid=()=>crypto.randomUUID?crypto.randomUUID():'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,c=>{const r=Math.random()*16|0;return(c==='x'?r:r&3|8).toString(16)});
-function vsInit(){if(VS.msgs)return;VS.vid=ls.get('vsVid','')||vsUuid();ls.set('vsVid',VS.vid);VS.msgs=ls.get('vsMsgs',[]);VS.last=ls.get('vsLast',0);
+function vsInit(){if(VS.msgs)return;VS.name=ls.get('vsName','');VS.vid=ls.get('vsVid','')||vsUuid();ls.set('vsVid',VS.vid);VS.msgs=ls.get('vsMsgs',[]);VS.last=ls.get('vsLast',0);
   if(!VS.cfgDone){VS.cfgDone=true;const sb=sbClient&&sbClient();
     (sb?sb.from('settings').select('data').eq('id','concierge').maybeSingle().then(({data})=>data?.data||{}):Promise.resolve({})).then(c=>{VS.local=c;if(c.name)VS.cfg.name=c.name;if(c.welcome)VS.cfg.welcome=c.welcome;if(S.route.v==='visit')vsDraw(true)}).catch(()=>{});
     vsCall({action:'config'}).then(c=>{VS.cfg={...VS.cfg,...c};VS.fn=true;if(S.route.v==='visit')vsDraw(true)}).catch(()=>{VS.fn=false})}}
@@ -3179,18 +3227,27 @@ async function vsCall(body){let err;for(let i=accIx;i<ACC_FNS.length;i++){
     catch(e){err=e;if(navigator.onLine===false)break}}
   throw err||new Error('fn')}
 const vsHm=t=>new Date(t).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
-function vVisit(){vsInit();const p=me();
+function vVisit(){vsInit();const p=me();if(!VS.name&&p&&p.firstName){VS.name=String(p.firstName).trim().slice(0,40);ls.set('vsName',VS.name)}
+  if(!VS.name)return `<section class="vs-gate"><div class="vg-glow"></div>
+   <div class="vg-in"><span class="vg-logo">${esc((VS.cfg.name||'K')[0].toUpperCase())}</span>
+    <h1>Bienvenue 👋</h1><p>Écris ton nom pour commencer la discussion avec <b>${esc(VS.cfg.name||'Koris')}</b>.</p>
+    <form id="vsG" novalidate autocomplete="off"><input id="vsGn" maxlength="40" placeholder="Ton nom" aria-label="Ton nom" autocapitalize="words" enterkeyhint="go">
+    <button id="vsGb" disabled>Accéder</button></form><small>Pas besoin de compte · Réponse en quelques secondes</small></div></section>`;
   return `<section class="vs"><header class="vs-hd"><button class="icon-btn" data-go="${p?(isActive(p)?'feed':'pay'):'onboard'}" aria-label="Retour">${I.back}</button><span class="vs-av" id="vsAv">${esc((VS.cfg.name||'K')[0].toUpperCase())}</span><div class="mid"><b id="vsNm">${esc(VS.cfg.name)}</b><small>En ligne · répond en quelques secondes</small></div><span class="vs-tag">Assistant IA</span></header>
   <div class="vs-m" id="vsM" aria-live="polite"></div><p class="vs-note">Vous discutez avec un assistant virtuel. L'équipe peut aussi vous répondre ici.</p>
   <form class="vs-f" id="vsF"><label class="vs-ph" for="vsP" aria-label="Envoyer une photo" title="Envoyer une photo">${I.camera}</label><input type="file" id="vsP" accept="image/*" class="fpick"><textarea id="vsT" rows="1" maxlength="1200" placeholder="Écrivez votre message…" aria-label="Votre message"></textarea><button id="vsB" aria-label="Enregistrer un vocal">${GKI.mic}</button><div class="vs-rec"><button type="button" class="vs-rx" data-vsrec="cancel" aria-label="Annuler le vocal">✕</button><span class="vs-dot"></span><b id="vsRecT">0:00</b><span class="vs-rl">Parlez… (1 min max)</span><button type="button" class="vs-rs" data-vsrec="send" aria-label="Envoyer le vocal">${I.send}</button></div></form></section>`}
 function vsDraw(head){const M=$('#vsM');if(!M)return;if(head){const n=$('#vsNm'),a=$('#vsAv');if(n)n.textContent=VS.cfg.name;if(a)a.textContent=(VS.cfg.name||'K').trim()[0].toUpperCase()}
   const ct=ls.get('vsContact',null);
-  M.innerHTML=`<span class="vs-day">Aujourd'hui</span><div class="vb">${esc(VS.cfg.welcome)}</div>`+
+  M.innerHTML=`<span class="vs-day">Aujourd'hui</span><div class="vb">${esc(VS.name?String(VS.cfg.welcome).replace(/^(Bonjour|Salut|Hello|Mbote)\b/i,'$1 '+VS.name):VS.cfg.welcome)}</div>`+
    (VS.msgs.length?'':`<div class="vs-sg">${['Comment ça marche ?','Quels sont vos prix ?',"Je veux m'inscrire"].map(s=>`<button type="button" data-vsq="${esc(s)}">${esc(s)}</button>`).join('')}</div>`)+
    VS.msgs.map(m=>`<div class="vb ${m.role==='user'?'me':m.role==='admin'?'adm':''}${m.img||m.up?' ph':''}">${m.role==='admin'?`<em>${esc(VS.cfg.name)} · équipe</em>`:''}${m.img?`<img class="vs-img" src="${esc(m.img)}" alt="Photo envoyée">`:''}${m.up?`<span class="vs-up">${m.up===2?'Envoi du vocal…':'Envoi de la photo…'}</span>`:''}${(()=>{const a=(String(m.text||'').match(/\[aud:([\w\-\/.]+)\]/)||[])[1];return a&&VS.auds[a]?`<audio class="vs-aud" controls preload="metadata" src="${esc(VS.auds[a])}"></audio>`:''})()}${esc(imgStrip(m.text))}<small>${vsHm(m.at)}</small></div>`).join('')+
-   (VS.msgs.filter(m=>m.role==='user').length>=2&&!ct?`<div class="vs-ct"><b>Pour qu'on puisse vous recontacter (facultatif)</b><div class="r"><input id="vsCn" placeholder="Prénom" maxlength="60" value="${esc(me()?.firstName||'')}"><input id="vsCp" type="tel" placeholder="Numéro WhatsApp" maxlength="20" inputmode="tel"></div><div class="r" style="justify-content:flex-end"><button type="button" class="mini" data-vsct="skip">Plus tard</button><button type="button" class="mini solid" data-vsct="send">Envoyer</button></div></div>`:'')+
+   (VS.msgs.filter(m=>m.role==='user').length>=2&&!ct?`<div class="vs-ct"><b>Ton numéro WhatsApp, pour qu'on te recontacte (facultatif)</b><div class="r"><input id="vsCp" type="tel" placeholder="Ex. 0812345678" maxlength="20" inputmode="tel"></div><div class="r" style="justify-content:flex-end"><button type="button" class="mini" data-vsct="skip">Plus tard</button><button type="button" class="mini solid" data-vsct="send">Envoyer</button></div></div>`:'')+
    (VS.busy?'<div class="vb vs-typ"><i></i><i></i><i></i></div>':'');
   requestAnimationFrame(()=>{M.scrollTop=M.scrollHeight})}
+function vsGate(){const F=$('#vsG'),N=$('#vsGn'),B=$('#vsGb');const ok=()=>N.value.trim().replace(/\s+/g,' ').length>=2;
+  N.oninput=()=>{B.disabled=!ok()};setTimeout(()=>{try{N.focus()}catch(_){}},250);
+  F.onsubmit=e=>{e.preventDefault();if(!ok()){N.focus();return}VS.name=N.value.trim().replace(/\s+/g,' ').slice(0,40);ls.set('vsName',VS.name);
+    render()}}
 function vsBind(){vsDraw(true);const T=$('#vsT'),B=$('#vsB'),F=$('#vsF');if(!T)return;
   const fit=()=>{T.style.height='auto';T.style.height=Math.min(150,T.scrollHeight)+'px';T.scrollTop=T.scrollHeight;vsBtn()};T.oninput=fit;
   T.onfocus=()=>{[80,300,600].forEach(t=>setTimeout(()=>{const M=$('#vsM');if(M)M.scrollTop=M.scrollHeight;T.scrollIntoView({block:'nearest'})},t))};
@@ -3202,7 +3259,7 @@ async function vsSend(text,extra,img){text=String(text||'').trim();if(!text)retu
   if(VS.busy){(VS.pending=VS.pending||[]).push(text);vsDraw();return}vsPost(text,extra)}
 /* Plusieurs messages envoyés pendant que l'IA écrit : elle y répond ensemble, en une seule réponse */
 async function vsPost(text,extra){VS.busy=true;vsDraw();
-  try{const r=await vsCall({action:'send',vid:VS.vid,text,src:VISIT_LINK.src||(me()?'membre':'direct'),...(extra||{})});if(r.reply){VS.msgs.push({role:'ai',text:r.reply,at:r.at||Date.now()});VS.last=Math.max(VS.last,r.at||0)}}
+  try{const r=await vsCall({action:'send',vid:VS.vid,text,src:VISIT_LINK.src||(me()?'membre':'direct'),name:VS.name||undefined,...(extra||{})});if(r.reply){VS.msgs.push({role:'ai',text:r.reply,at:r.at||Date.now()});VS.last=Math.max(VS.last,r.at||0)}}
   catch(_){const L=VS.local||{},m=faqMatch(text,L.faq||[]),wa=String(L.wa||'').replace(/\D/g,'');
     VS.msgs.push({role:'ai',text:m?m.a:navigator.onLine===false?"Oups, le message n'est pas passé. Vérifiez votre connexion et réessayez.":`Merci pour votre message ! Je n'ai pas encore la réponse à cette question.${wa?' Écrivez directement à l\'équipe sur WhatsApp : +'+wa:' L\'équipe vous répondra bientôt.'}`,at:Date.now(),local:1})}
   VS.busy=false;ls.set('vsMsgs',VS.msgs.slice(-150));ls.set('vsLast',VS.last);vsDraw();
