@@ -29,8 +29,8 @@ Deno.serve(async (req) => {
     const sb = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
     const body = await req.json().catch(() => ({}));
     const action = String(body.action || "send");
-    const { data: cfgRow } = await sb.from("concierge_cfg").select("data").eq("id", "main").maybeSingle();
-    const cfg: any = cfgRow?.data || {};
+    const { data: setRow } = await sb.from("settings").select("data").eq("id", "concierge").maybeSingle();
+    const cfg: any = setRow?.data || {};
     const pub = { on: cfg.on !== false, name: String(cfg.name || "Koris"), welcome: String(cfg.welcome || "Bonjour 👋 Comment puis-je vous aider ?"), color: String(cfg.color || "") };
 
     if (action === "config") return json(pub);

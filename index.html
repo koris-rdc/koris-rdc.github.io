@@ -159,6 +159,7 @@ body.shop-mode .top{background:linear-gradient(rgba(27,9,4,.0),rgba(27,9,4,0))}
 .cc-rep{display:flex;gap:8px}.cc-rep input{flex:1;min-width:0;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:12px 14px;color:var(--text);outline:none}
 .ib-tabs{display:flex;gap:6px;margin:0 0 12px}.ib-tabs button{flex:1;height:40px;border-radius:999px;background:var(--panel);border:1px solid var(--line);color:var(--text);font-weight:700;font-size:13px}.ib-tabs button.on{background:#C8F04A;color:#03100E;border-color:transparent}
 .ib-instr span{font-weight:800;color:#C8F04A}.ib-instr textarea{border-color:rgba(200,240,74,.35)!important}
+.ib-test{margin-top:18px;padding-top:14px;border-top:1px solid var(--line)}.ib-tr{margin-top:8px;display:flex;flex-direction:column;gap:6px}.ib-tr .ccb{max-width:100%}
 .ib-lbl{font-weight:800;font-size:15px;margin:8px 0 0}.ib-lbl small{font-weight:500;font-size:12px;color:var(--muted);margin-left:6px}
 .faq-r{display:flex;flex-direction:column;gap:6px;padding:10px;border-radius:16px;background:var(--panel);border:1px solid var(--line);margin-bottom:8px}
 .faq-r .h{display:flex;align-items:center;justify-content:space-between}.faq-r .h span{width:24px;height:24px;border-radius:50%;background:rgba(200,240,74,.15);color:#C8F04A;font-size:12px;font-weight:800;display:grid;place-items:center}
@@ -2627,6 +2628,7 @@ document.addEventListener('click',async e=>{const t=e.target.closest('button,[da
   if(d.ibtab){if(S.conc.tab==='faq')faqSync();S.conc.tab=d.ibtab;return render()}
   if(d.faqadd){faqSync();S.conc.faq.push({q:'',a:''});$('#faqList').insertAdjacentHTML('beforeend',faqRow(S.conc.faq[S.conc.faq.length-1],S.conc.faq.length-1));const r=$('#faqList').lastElementChild;r&&r.querySelector('.fq').focus();return}
   if(d.faqdel!==undefined){faqSync();S.conc.faq.splice(+d.faqdel,1);$('#faqList').innerHTML=S.conc.faq.map((x,i)=>faqRow(x,i)).join('');return}
+  if(d.faqtest){faqSync();const q=($('#ccTq')||{}).value||'';const m=faqMatch(q,S.conc.faq.filter(x=>x.q.trim()&&x.a.trim()));const r=$('#ccTr');if(r)r.innerHTML=!q.trim()?'':m?`<div class="ccb ai"><em>Réponse trouvée · « ${esc(m.q)} »</em>${esc(m.a)}</div><small class="hint">Avec l'IA activée, la réponse sera reformulée naturellement à partir de cette fiche.</small>`:`<div class="ccb ai"><em>Aucune fiche ne correspond</em>L'IA dira qu'elle ne sait pas et proposera que l'équipe réponde. Ajoute une question-réponse pour ce cas.</div>`;return}
   if(d.vsq){return vsSend(d.vsq)}
   if(d.vsct){if(d.vsct==='skip'){ls.set('vsContact',{skip:1});return vsDraw()}const n=($('#vsCn')||{}).value?.trim()||'',ph=($('#vsCp')||{}).value?.trim()||'';if(!n&&!ph)return;ls.set('vsContact',{n,ph});return vsSend(`Je m'appelle ${n||'—'}${ph?', mon numéro : '+ph:''}`,{name:n,phone:ph})}
   if(d.shopview){S.shop.view=S.shop.view==='list'?'grid':'list';ls.set('shopView',S.shop.view);return render()}
@@ -3091,7 +3093,9 @@ S.conc={cfg:null,chats:null,err:'',tab:'conv',faq:null};
 const VS={vid:null,msgs:null,last:0,cfg:{name:'Koris',welcome:'Bonjour 👋 Comment puis-je vous aider ?'},busy:false,iv:0,cfgDone:false};
 const vsUuid=()=>crypto.randomUUID?crypto.randomUUID():'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,c=>{const r=Math.random()*16|0;return(c==='x'?r:r&3|8).toString(16)});
 function vsInit(){if(VS.msgs)return;VS.vid=ls.get('vsVid','')||vsUuid();ls.set('vsVid',VS.vid);VS.msgs=ls.get('vsMsgs',[]);VS.last=ls.get('vsLast',0);
-  if(!VS.cfgDone){VS.cfgDone=true;vsCall({action:'config'}).then(c=>{VS.cfg={...VS.cfg,...c};if(S.route.v==='visit')vsDraw(true)}).catch(()=>{})}}
+  if(!VS.cfgDone){VS.cfgDone=true;const sb=sbClient&&sbClient();
+    (sb?sb.from('settings').select('data').eq('id','concierge').maybeSingle().then(({data})=>data?.data||{}):Promise.resolve({})).then(c=>{VS.local=c;if(c.name)VS.cfg.name=c.name;if(c.welcome)VS.cfg.welcome=c.welcome;if(S.route.v==='visit')vsDraw(true)}).catch(()=>{});
+    vsCall({action:'config'}).then(c=>{VS.cfg={...VS.cfg,...c};VS.fn=true;if(S.route.v==='visit')vsDraw(true)}).catch(()=>{VS.fn=false})}}
 async function vsCall(body){const r=await fetch(ACC_FN,{method:'POST',headers:{'Content-Type':'application/json',apikey:SB_KEY,Authorization:'Bearer '+SB_KEY},body:JSON.stringify(body)});if(!r.ok)throw new Error(r.status);return r.json()}
 const vsHm=t=>new Date(t).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
 function vVisit(){vsInit();const p=me();
@@ -3113,14 +3117,20 @@ function vsBind(){vsDraw(true);const T=$('#vsT'),B=$('#vsB'),F=$('#vsF');if(!T)r
 async function vsSend(text,extra){text=String(text||'').trim();if(!text||VS.busy)return;VS.msgs.push({role:'user',text,at:Date.now()});ls.set('vsMsgs',VS.msgs.slice(-150));
   const T=$('#vsT');if(T){T.value='';T.style.height='auto'}const B=$('#vsB');if(B)B.disabled=true;VS.busy=true;vsDraw();
   try{const r=await vsCall({action:'send',vid:VS.vid,text,src:VISIT_LINK.src||(me()?'membre':'direct'),...(extra||{})});if(r.reply){VS.msgs.push({role:'ai',text:r.reply,at:r.at||Date.now()});VS.last=Math.max(VS.last,r.at||0)}}
-  catch(_){VS.msgs.push({role:'ai',text:"Oups, le message n'est pas passé. Vérifiez votre connexion et réessayez.",at:Date.now(),err:1})}
+  catch(_){const L=VS.local||{},m=faqMatch(text,L.faq||[]),wa=String(L.wa||'').replace(/\D/g,'');
+    VS.msgs.push({role:'ai',text:m?m.a:navigator.onLine===false?"Oups, le message n'est pas passé. Vérifiez votre connexion et réessayez.":`Merci pour votre message ! Je n'ai pas encore la réponse à cette question.${wa?' Écrivez directement à l\'équipe sur WhatsApp : +'+wa:' L\'équipe vous répondra bientôt.'}`,at:Date.now(),local:1})}
   VS.busy=false;ls.set('vsMsgs',VS.msgs.slice(-150));ls.set('vsLast',VS.last);vsDraw()}
 async function vsPoll(){if(S.route.v!=='visit'){clearInterval(VS.iv);return}if(document.hidden||VS.busy)return;
   try{const r=await vsCall({action:'poll',vid:VS.vid,since:VS.last});let n=0;(r.msgs||[]).forEach(m=>{if(!VS.msgs.some(x=>x.at===m.at&&x.text===m.text)){VS.msgs.push(m);n++}VS.last=Math.max(VS.last,m.at)});if(n){ls.set('vsMsgs',VS.msgs.slice(-150));ls.set('vsLast',VS.last);vsDraw()}}catch(_){}}
+const FAQ_STOP=new Set('les des une est que qui quoi pour avec dans sur par pas vous nous ils elle elles mon ton son mes tes ses aux ces cet cette comment combien quel quelle quels quelles est-ce faire fait peut peux veux bonjour salut svp stp merci the and'.split(' '));
+const faqTok=t=>String(t||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9 ]+/g,' ').split(/\s+/).filter(w=>w.length>2&&!FAQ_STOP.has(w)).map(w=>w.replace(/s$/,''));
+function faqMatch(q,faq){const qt=new Set(faqTok(q));if(!qt.size)return null;let best=null,bs=0;
+  (faq||[]).forEach(x=>{const ft=faqTok(x.q);const fs=new Set(ft);if(!fs.size)return;let hit=0;qt.forEach(w=>{if(fs.has(w))hit++;else if([...fs].some(f=>f.length>4&&(f.startsWith(w)||w.startsWith(f))))hit+=.6});
+    const sc=hit/Math.max(2,Math.min(qt.size,fs.size));if(sc>bs){bs=sc;best=x}});return bs>=.45?{...best,score:bs}:null}
 /* ---------- côté administrateur (route « inbox ») ---------- */
 async function concLoad(){if(!S.owner)return;if(!S.be?.sb){S.conc.cfg={};S.conc.chats=[];S.conc.err='demo';return}
-  try{const [a,b]=await Promise.all([S.be.sb.from('concierge_cfg').select('data').eq('id','main').maybeSingle(),S.be.sb.from('visit_chats').select('id,name,phone,src,msgs,ai,unread,updated_at').order('updated_at',{ascending:false}).limit(150)]);
-    if(a.error||b.error)throw a.error||b.error;S.conc.cfg=a.data?.data||{};S.conc.chats=b.data||[];S.conc.err=''}catch(_){S.conc.cfg={};S.conc.chats=[];S.conc.err='setup'}
+  try{const {data,error}=await S.be.sb.from('settings').select('data').eq('id','concierge').maybeSingle();if(error)throw error;S.conc.cfg=data?.data||{};S.conc.err=''}catch(_){S.conc.cfg={};S.conc.err='cfg'}
+  try{const {data,error}=await S.be.sb.from('visit_chats').select('id,name,phone,src,msgs,ai,unread,updated_at').order('updated_at',{ascending:false}).limit(150);if(error)throw error;S.conc.chats=data||[];S.conc.chatErr=''}catch(_){S.conc.chats=[];S.conc.chatErr='setup'}
   if(S.conc.faq===null)S.conc.faq=Array.isArray(S.conc.cfg.faq)?S.conc.cfg.faq.map(x=>({q:x.q||'',a:x.a||''})):[]}
 function concRefresh(){concLoad().then(()=>{if(S.route.v==='inbox'&&!$('#layer').innerHTML.trim()){const el=$('#ibBody');if(el){el.innerHTML=inboxBody();inboxBind()}}const b=$('#admInboxBtn');if(b)b.outerHTML=inboxBtn()})}
 const concUnread=()=>(S.conc.chats||[]).filter(x=>x.unread).length;
@@ -3128,11 +3138,10 @@ const inboxBtn=()=>`<button class="btn btn-primary" id="admInboxBtn" data-go="in
 const concLast=x=>{const m=(x.msgs||[]);return m[m.length-1]||{}};
 function vInbox(){if(S.conc.cfg===null)setTimeout(concRefresh,0);
   return `<section class="adm ib"><div class="top" style="padding-inline:0"><button class="icon-btn" data-go="admin" aria-label="Retour">${I.back}</button><h1 style="font-size:22px;flex:1;text-align:center">Messagerie</h1><button class="icon-btn" data-concref="1" aria-label="Actualiser">↻</button></div>
-  <div class="ib-tabs"><button type="button" class="${S.conc.tab==='conv'?'on':''}" data-ibtab="conv">Conversations</button><button type="button" class="${S.conc.tab==='faq'?'on':''}" data-ibtab="faq">Questions-réponses de l'IA</button></div>
+  <div class="ib-tabs"><button type="button" class="${S.conc.tab==='conv'?'on':''}" data-ibtab="conv">Conversations</button><button type="button" class="${S.conc.tab==='faq'?'on':''}" data-ibtab="faq">🧠 Nourrir l'IA</button></div>
   <div id="ibBody">${S.conc.cfg===null?'<div class="loading" style="min-height:40vh"><div class="spin"></div></div>':inboxBody()}</div></section>`}
 function inboxBody(){const C=S.conc;
   if(C.err==='demo')return '<p class="hint" style="padding:8px 2px 0">Disponible sur le vrai site.</p>';
-  if(C.err)return `<div class="warn">Pour activer la messagerie, exécute une seule fois « koris-accueil.sql » dans Supabase (SQL Editor), puis installe la fonction « accueil ».</div>`;
   const c=C.cfg||{};
   if(C.tab==='faq')return `<form id="fConc" novalidate class="cc-form">
    <label class="sw" style="padding:0"><span class="ic">🤖</span><div><b>Réponses automatiques par l'IA</b><small>Désactive-les pour répondre toi-même à tous les messages</small></div><input type="checkbox" id="ccOn" ${c.on!==false?'checked':''}></label>
@@ -3143,9 +3152,10 @@ function inboxBody(){const C=S.conc;
    <div id="faqList">${C.faq.map((x,i)=>faqRow(x,i)).join('')}</div>
    <button type="button" class="btn btn-ghost" data-faqadd="1" style="width:100%;flex:none;height:46px">${I.plus}Ajouter une question</button>
    <label class="field"><span>Informations générales (facultatif)</span><textarea id="ccInfo" maxlength="8000" style="min-height:120px" placeholder="Qui vous êtes, ce que vous proposez, horaires, moyens de paiement…">${esc(c.info||'')}</textarea></label>
-   <p class="err" id="ccErr"></p><button class="btn btn-primary" id="ccSave" style="width:100%;flex:none">Enregistrer</button></form>`;
+   <p class="err" id="ccErr"></p><button class="btn btn-primary" id="ccSave" style="width:100%;flex:none">Enregistrer</button></form>
+   <div class="ib-test"><p class="ib-lbl">🧪 Tester une question</p><div class="cc-rep"><input id="ccTq" maxlength="300" placeholder="Ex. Combien ça coûte ?"><button type="button" class="btn btn-primary" data-faqtest="1" style="flex:none;height:46px;padding:0 16px">Tester</button></div><div id="ccTr" class="ib-tr"></div></div>`;
   const chats=C.chats||[];
-  return `<div class="cc-link"><b>${esc((CONC_URL+'=whatsapp').replace('https://',''))}</b><div class="pl-acts"><button type="button" class="mini" data-copy="${esc(CONC_URL+'=whatsapp')}">Copier le lien</button><a class="mini solid" href="https://wa.me/?text=${encodeURIComponent('💬 Une question ? Écris-nous ici, on te répond tout de suite 👉 '+CONC_URL+'=whatsapp')}" target="_blank" rel="noopener">${I.wa}Partager sur WhatsApp</a><a class="mini" href="${esc(CONC_URL+'=test')}" target="_blank" rel="noopener">Tester</a></div>
+  return `${C.chatErr?`<div class="warn" style="margin-bottom:10px">Les questions-réponses marchent déjà. Pour <b>recevoir et garder les conversations</b>, exécute plus tard « koris-accueil.sql » et installe la fonction « accueil » dans Supabase.</div>`:''}<div class="cc-link"><b>${esc((CONC_URL+'=whatsapp').replace('https://',''))}</b><div class="pl-acts"><button type="button" class="mini" data-copy="${esc(CONC_URL+'=whatsapp')}">Copier le lien</button><a class="mini solid" href="https://wa.me/?text=${encodeURIComponent('💬 Une question ? Écris-nous ici, on te répond tout de suite 👉 '+CONC_URL+'=whatsapp')}" target="_blank" rel="noopener">${I.wa}Partager sur WhatsApp</a><a class="mini" href="${esc(CONC_URL+'=test')}" target="_blank" rel="noopener">Tester</a></div>
    <small class="hint" style="padding:0">Mets ce lien dans tes statuts, groupes ou messages WhatsApp (ou sur Facebook). Celui qui clique arrive directement dans cette discussion Koris, sans compte. L'IA et toi lui répondez ici.</small></div>
    ${chats.length?chats.map(x=>{const l=concLast(x);return `<button type="button" class="cc-row${x.unread?' un':''}" data-conc="${esc(x.id)}"><span class="av0">${esc((x.name||'V')[0].toUpperCase())}</span><span class="mid"><b>${esc(x.name||'Visiteur')}${x.phone?' · '+esc(x.phone):''}${x.ai===false?' · <i class="mn">Toi</i>':''}</b><small>${l.role==='user'?'':l.role==='admin'?'Toi : ':'IA : '}${esc(String(l.text||'').slice(0,70))}</small></span><span class="tm">${ago(Date.parse(x.updated_at))}${x.src?`<br>${esc(x.src)}`:''}</span></button>`}).join(''):'<div class="shp-empty" style="margin-top:14px"><span>💬</span><b>Aucune conversation pour l\'instant</b><small>Partage le lien ci-dessus dans tes publications.</small></div>'}`}
 const faqRow=(x,i)=>`<div class="faq-r" data-fi="${i}"><div class="h"><span>${i+1}</span><button type="button" data-faqdel="${i}" aria-label="Supprimer">${I.trash}</button></div><input class="fq" maxlength="300" placeholder="Question (ex. Combien coûte l'inscription ?)" value="${esc(x.q)}"><textarea class="fa" maxlength="1200" placeholder="Réponse que l'IA doit donner">${esc(x.a)}</textarea></div>`;
@@ -3153,7 +3163,7 @@ function faqSync(){document.querySelectorAll('#faqList .faq-r').forEach(r=>{cons
 function inboxBind(){}
 async function concSave(){faqSync();const er=$('#ccErr'),b=$('#ccSave');const faq=S.conc.faq.map(x=>({q:x.q.trim().slice(0,300),a:x.a.trim().slice(0,1200)})).filter(x=>x.q&&x.a).slice(0,120);
   const data={on:$('#ccOn').checked,name:$('#ccName').value.trim().slice(0,40)||'Koris',welcome:$('#ccWel').value.trim().slice(0,200),wa:$('#ccWa').value.replace(/\D/g,'').slice(0,15),info:$('#ccInfo').value.trim().slice(0,8000),instr:$('#ccInstr').value.trim().slice(0,6000),faq};
-  b.disabled=true;er.textContent='';try{const {error}=await S.be.sb.from('concierge_cfg').upsert({id:'main',data,updated_at:new Date().toISOString()});if(error)throw error;S.conc.cfg=data;S.conc.faq=faq.map(x=>({...x}));toast(`Enregistré ✓ · ${faq.length} question${faq.length>1?'s':''}-réponse${faq.length>1?'s':''}`);$('#ibBody').innerHTML=inboxBody()}catch(_){er.textContent="L'enregistrement a échoué. As-tu exécuté koris-accueil.sql ?"}b.disabled=false}
+  b.disabled=true;er.textContent='';try{const {error}=await S.be.sb.from('settings').upsert({id:'concierge',data});if(error)throw error;S.conc.cfg=data;S.conc.faq=faq.map(x=>({...x}));toast(`Enregistré ✓ · ${faq.length} question${faq.length>1?'s':''}-réponse${faq.length>1?'s':''}`);$('#ibBody').innerHTML=inboxBody()}catch(_){er.textContent="L'enregistrement a échoué. Vérifie ta connexion et réessaie."}b.disabled=false}
 document.addEventListener('submit',e=>{if(e.target&&e.target.id==='fConc'){e.preventDefault();concSave()}else if(e.target&&e.target.id==='vsF'){e.preventDefault()}},true);
 function openConc(id){const x=(S.conc.chats||[]).find(y=>y.id===id);if(!x)return;const L=$('#layer');
   const draw=()=>{const box=$('#ccMsgs');if(!box)return;box.innerHTML=(x.msgs||[]).map(m=>`<div class="ccb ${m.role}">${m.role==='admin'?'<em>Toi</em>':m.role==='ai'?'<em>IA</em>':''}${esc(m.text)}<small>${new Date(m.at).toLocaleString('fr-FR',{dateStyle:'short',timeStyle:'short'})}</small></div>`).join('');box.scrollTop=box.scrollHeight};
