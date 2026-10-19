@@ -144,6 +144,19 @@ body.shop-mode .top{background:linear-gradient(rgba(27,9,4,.0),rgba(27,9,4,0))}
 .sx.hero{cursor:pointer}
 .sx-rec{width:100%;height:38px;font-size:13px!important;margin:-4px 0 4px;border-radius:999px;background:rgba(255,226,200,.08);border:1px solid rgba(255,170,90,.35);color:#FFD2A6;font-weight:800;font-size:14px}.sx-rec.on{background:linear-gradient(135deg,#FFD58F,#FF9A2E 48%,#E2561B);color:#3A1300;border-color:transparent}
 .pe-q{width:100%;accent-color:#FF9A2E;padding:0!important;border:0!important;background:none!important;height:34px}
+/* Messagerie d'accueil */
+.cc-link{display:flex;flex-direction:column;gap:6px;padding-bottom:12px;border-bottom:1px solid var(--line);margin-bottom:12px}.cc-link b{font-size:13px;word-break:break-all}.cc-link .pl-acts{display:flex;gap:6px}
+.cc-form{display:flex;flex-direction:column;gap:10px}
+.cc-hd{display:flex;align-items:center;gap:8px;margin:16px 0 4px}.cc-hd b{font-size:15px}.cc-hd span{flex:1;font-size:12px;color:var(--muted)}.cc-hd i{font-style:normal;color:#C8F04A;font-weight:700}
+.cc-row{display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:10px 4px;border-top:1px solid var(--line);color:var(--text);background:none}
+.cc-row .av0{flex:none;width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:var(--panel-2);font-weight:800}.cc-row.un .av0{background:linear-gradient(135deg,#E9FF8A,#2EE0B0);color:#03100E}
+.cc-row .mid{flex:1;min-width:0}.cc-row b{display:block;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.cc-row small{display:block;font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.cc-row.un small{color:var(--text);font-weight:600}
+.cc-row .tm{flex:none;font-size:10.5px;color:var(--muted);text-align:right}
+.cc-msgs{display:flex;flex-direction:column;gap:6px;max-height:48vh;overflow-y:auto;padding:8px;border-radius:16px;background:var(--panel)}
+.ccb{max-width:84%;padding:8px 12px;border-radius:14px 14px 14px 4px;background:var(--panel-2);font-size:13.5px;line-height:1.4;white-space:pre-wrap}
+.ccb.ai,.ccb.admin{align-self:flex-end;border-radius:14px 14px 4px 14px;background:rgba(200,240,74,.14)}.ccb.admin{background:rgba(46,224,176,.2)}
+.ccb em{display:block;font-style:normal;font-size:10px;font-weight:800;color:#C8F04A}.ccb small{display:block;font-size:9.5px;color:var(--muted);margin-top:3px}
+.cc-rep{display:flex;gap:8px}.cc-rep input{flex:1;min-width:0;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:12px 14px;color:var(--text);outline:none}
 </style></head><body><div id="ksplash" class="wait" role="img" aria-label="Koris" title="Touchez pour passer">
 <style>
 #ksplash{position:fixed;inset:0;z-index:99999;background:#03100E;display:grid;place-items:center;overflow:hidden;cursor:pointer;animation:ksOut .7s cubic-bezier(.7,0,.3,1) 10.4s forwards}
@@ -1924,6 +1937,8 @@ function vAdmin(){
    <label class="pill">${I.user}<input data-cf="${o.id}.holder" placeholder="Nom affiché du titulaire" value="${esc(c.holder)}"></label>
    <label class="pill">${I.hash}<input data-cf="${o.id}.ussd" placeholder="Code du menu (${o.ussd})" value="${esc(c.ussd)}"></label></div>`}).join('')}
    <p class="err" id="cfgErr"></p><button class="btn btn-primary" id="cfgBtn" style="width:100%;flex:none">Enregistrer mes numéros</button></form>
+  <h2>Messagerie d'accueil 💬</h2><p class="hint" style="padding:0 2px 8px">Une page de discussion séparée de l'application. Les visiteurs de tes publicités y écrivent, et l'IA répond automatiquement avec les informations que tu lui donnes.</p>
+  <div class="opbox" id="admConc">${admConcHtml()}</div>
   <h2>Contacts de l'aide</h2>
   <form id="fHelp" novalidate><div class="opbox">
    <label class="pill">${I.wa}<input data-hc="wa" type="tel" placeholder="Numéro WhatsApp (ex. 243812345678)" value="${esc((S.helpCfg||{}).wa||'')}"></label>
@@ -2579,6 +2594,8 @@ document.addEventListener('click',async e=>{const t=e.target.closest('button,[da
   if(d.shopitem){return go('shopitem',d.shopitem)}
   if(d.shopbuy){return openShopBuy(d.shopbuy)}
   if(d.shoptoggle){return shopToggle()}
+  if(d.conc){if(!S.owner)return;return openConc(d.conc)}
+  if(d.concref){return concRefresh()}
   if(d.shopview){S.shop.view=S.shop.view==='list'?'grid':'list';ls.set('shopView',S.shop.view);return render()}
   if(d.want){return shopWant(d.want)}
   if(d.shoprec){const L=ls.get('shopRecs',[]),on=L.includes(d.shoprec);ls.set('shopRecs',on?L.filter(x=>x!==d.shoprec):[...L,d.shoprec]);if(!on){try{fx.like&&fx.like()}catch(_){}toast('Merci pour ta recommandation ❤')}await shopBump(d.shoprec,on?'unrec':'rec');return render()}
@@ -3031,6 +3048,49 @@ async function shopShare(){const n=(S.shop.items||[]).filter(x=>x.active!==false
   const text=`🛍️ Les Pépites Koris : ${n?n+' article'+(n>1?'s':'')+' à découvrir':'la nouvelle collection'} — vêtements livrés chez toi en RDC. Regarde le catalogue ici 👉 ${url}`;
   try{if(navigator.share){await navigator.share({title:'Les Pépites Koris',text,url});return}}catch(e){if(e?.name==='AbortError')return}
   try{await navigator.clipboard.writeText(text);toast('Lien du catalogue copié ✓')}catch(_){window.open('https://wa.me/?text='+encodeURIComponent(text),'_blank')}}
+
+/* =================== Messagerie d'accueil (page /discuter) avec réponses IA =================== */
+const CONC_URL=APP_URL.replace(/\/?$/,'/')+'discuter/';
+S.conc={cfg:null,chats:null,err:''};
+async function concLoad(){if(!S.owner)return;if(!S.be?.sb){S.conc.cfg={};S.conc.chats=[];S.conc.err='demo';return}
+  try{const [a,b]=await Promise.all([S.be.sb.from('concierge_cfg').select('data').eq('id','main').maybeSingle(),S.be.sb.from('visit_chats').select('id,name,phone,src,msgs,ai,unread,updated_at').order('updated_at',{ascending:false}).limit(150)]);
+    if(a.error||b.error)throw a.error||b.error;S.conc.cfg=a.data?.data||{};S.conc.chats=b.data||[];S.conc.err=''}catch(_){S.conc.cfg={};S.conc.chats=[];S.conc.err='setup'}}
+function concRefresh(){concLoad().then(()=>{const el=$('#admConc');if(el)el.innerHTML=admConcHtml()})}
+const concLast=x=>{const m=(x.msgs||[]);return m[m.length-1]||{}};
+function admConcHtml(){const C=S.conc;if(C.cfg===null){setTimeout(concRefresh,0);return '<p class="hint" style="padding:8px 2px 0">Chargement…</p>'}
+  if(C.err==='demo')return '<p class="hint" style="padding:8px 2px 0">Disponible sur le vrai site.</p>';
+  if(C.err)return `<div class="warn">Pour activer la messagerie, exécute une seule fois « koris-accueil.sql » dans Supabase (SQL Editor), puis installe la fonction « accueil » (voir les explications de Claude).</div>`;
+  const c=C.cfg||{},chats=C.chats||[],un=chats.filter(x=>x.unread).length;
+  return `<div class="cc-link"><b>${esc(CONC_URL.replace('https://',''))}</b><div class="pl-acts"><button type="button" class="mini" data-copy="${esc(CONC_URL+'?src=facebook')}">Copier le lien</button><a class="mini" href="${esc(CONC_URL)}" target="_blank" rel="noopener">Ouvrir</a></div>
+   <small class="hint" style="padding:0">Mets ce lien dans tes publications Facebook : les visiteurs arrivent directement dans la discussion, sans compte Koris.</small></div>
+  <form id="fConc" novalidate class="cc-form">
+   <label class="sw" style="padding:0"><span class="ic">🤖</span><div><b>Réponses automatiques par l'IA</b><small>Désactive-les pour répondre toi-même à tous les messages</small></div><input type="checkbox" id="ccOn" ${c.on!==false?'checked':''}></label>
+   <label class="field"><span>Nom affiché</span><input id="ccName" maxlength="40" value="${esc(c.name||'Koris')}"></label>
+   <label class="field"><span>Message d'accueil</span><input id="ccWel" maxlength="200" value="${esc(c.welcome||'Bonjour 👋 Comment puis-je vous aider ?')}"></label>
+   <label class="field"><span>WhatsApp de l'équipe (ex. 243812345678)</span><input id="ccWa" type="tel" maxlength="20" value="${esc(c.wa||'')}"></label>
+   <label class="field"><span>Informations pour l'IA</span><textarea id="ccInfo" maxlength="12000" style="min-height:190px" placeholder="Écris tout ce que l'IA doit savoir : qui vous êtes, ce que vous proposez, les prix, comment s'inscrire ou payer, les horaires, les questions fréquentes et leurs réponses…">${esc(c.info||'')}</textarea></label>
+   <p class="err" id="ccErr"></p><button class="btn btn-primary" id="ccSave" style="width:100%;flex:none">Enregistrer</button></form>
+  <div class="cc-hd"><b>Conversations</b><span>${chats.length}${un?` · <i>${un} non lue${un>1?'s':''}</i>`:''}</span><button type="button" class="mini" data-concref="1">Actualiser</button></div>
+  ${chats.length?chats.map(x=>{const l=concLast(x);return `<button type="button" class="cc-row${x.unread?' un':''}" data-conc="${esc(x.id)}"><span class="av0">${esc((x.name||'V')[0].toUpperCase())}</span><span class="mid"><b>${esc(x.name||'Visiteur')}${x.phone?' · '+esc(x.phone):''}</b><small>${l.role==='user'?'':l.role==='admin'?'Toi : ':'IA : '}${esc(String(l.text||'').slice(0,70))}</small></span><span class="tm">${ago(Date.parse(x.updated_at))}${x.src?`<br>${esc(x.src)}`:''}</span></button>`}).join(''):'<p class="hint" style="padding:8px 2px 0">Aucune conversation pour l\'instant.</p>'}`}
+async function concSave(){const er=$('#ccErr'),b=$('#ccSave');const data={on:$('#ccOn').checked,name:$('#ccName').value.trim().slice(0,40)||'Koris',welcome:$('#ccWel').value.trim().slice(0,200),wa:$('#ccWa').value.replace(/\D/g,'').slice(0,15),info:$('#ccInfo').value.trim().slice(0,12000)};
+  b.disabled=true;er.textContent='';try{const {error}=await S.be.sb.from('concierge_cfg').upsert({id:'main',data,updated_at:new Date().toISOString()});if(error)throw error;S.conc.cfg=data;toast('Messagerie enregistrée ✓')}catch(_){er.textContent="L'enregistrement a échoué. As-tu exécuté koris-accueil.sql ?"}b.disabled=false}
+document.addEventListener('submit',e=>{if(e.target&&e.target.id==='fConc'){e.preventDefault();concSave()}},true);
+function openConc(id){const x=(S.conc.chats||[]).find(y=>y.id===id);if(!x)return;const L=$('#layer');
+  const draw=()=>{const box=$('#ccMsgs');if(!box)return;box.innerHTML=(x.msgs||[]).map(m=>`<div class="ccb ${m.role}">${m.role==='admin'?'<em>Toi</em>':m.role==='ai'?'<em>IA</em>':''}${esc(m.text)}<small>${new Date(m.at).toLocaleString('fr-FR',{dateStyle:'short',timeStyle:'short'})}</small></div>`).join('');box.scrollTop=box.scrollHeight};
+  const wa=String(x.phone||'').replace(/\D/g,'').replace(/^0/,'243');
+  L.innerHTML=`<div class="sheet-bg" id="sbg"><div class="sheet" role="dialog" aria-label="Conversation"><span class="grab"></span>
+  <h2 style="font-size:19px">${esc(x.name||'Visiteur')}</h2><p class="hint" style="margin:-6px 0 4px">${x.phone?esc(x.phone)+' · ':''}${esc(x.src||'')}</p>
+  ${wa?`<a class="mini solid" href="https://wa.me/${esc(wa)}" target="_blank" rel="noopener" style="align-self:flex-start">${I.wa}Écrire sur WhatsApp</a>`:''}
+  <div class="cc-msgs" id="ccMsgs"></div>
+  <label class="sw" style="padding:0"><span class="ic">🤖</span><div><b>L'IA répond dans cette conversation</b><small>Désactive pour continuer toi-même</small></div><input type="checkbox" id="ccAi" ${x.ai!==false?'checked':''}></label>
+  <div class="cc-rep"><input id="ccTxt" maxlength="1200" placeholder="Répondre au visiteur…"><button class="btn btn-primary" id="ccSend" style="flex:none;height:46px;padding:0 16px">${I.send}</button></div></div></div>`;
+  draw();$('#sbg').onclick=e=>{if(e.target.id==='sbg')L.innerHTML=''};
+  const upd=async patch=>{const {error}=await S.be.sb.from('visit_chats').update(patch).eq('id',id);if(error)throw error;Object.assign(x,patch);const el=$('#admConc');if(el)el.innerHTML=admConcHtml()};
+  if(x.unread)upd({unread:false}).catch(()=>{});
+  $('#ccAi').onchange=e=>upd({ai:e.target.checked}).then(()=>toast(e.target.checked?'IA activée pour ce visiteur':'Tu réponds toi-même à ce visiteur')).catch(()=>toast('Impossible pour le moment'));
+  $('#ccSend').onclick=async()=>{const t=$('#ccTxt').value.trim();if(!t)return;const b=$('#ccSend');b.disabled=true;
+    try{const {data,error}=await S.be.sb.from('visit_chats').select('msgs').eq('id',id).maybeSingle();if(error)throw error;const msgs=[...((data&&data.msgs)||x.msgs||[]),{role:'admin',text:t,at:Date.now()}].slice(-200);
+      await upd({msgs,unread:false,updated_at:new Date().toISOString()});$('#ccTxt').value='';draw()}catch(_){toast("Le message n'est pas parti")}b.disabled=false}}
 
 /* =================== Activité : commentaires, disponibilités, publications (bannière + son + vibreur) =================== */
 const ACT={list:ls.get('acts',[]),q:[],busy:false,snap:{po:null,cm:null}};
