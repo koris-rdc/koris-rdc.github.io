@@ -1604,6 +1604,14 @@ header.top{margin-inline:-16px;padding-inline:16px;top:0;padding-top:calc(18px +
 .vs .vs-sg{margin:6px 0 0 33px}
 .vs .vs-day,.wa-chat .wa-day{margin:12px 0 4px!important}
 .wa .wa-arch .n:empty{display:none!important}
+.wa-selbar{gap:10px}.wa-selbar b{flex:1;font-size:17px;font-weight:800}
+.wa-row{position:relative;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.wa-ck{position:absolute;left:40px;top:44px;z-index:2;width:22px;height:22px;border-radius:50%;border:2px solid rgba(255,255,255,.55);background:#0B0B0C;display:grid;place-items:center;font-size:12px;font-weight:900;color:#fff}
+.wa-row.ck{background:rgba(255,255,255,.07)}.wa-row.ck .wa-ck{background:var(--wg,#C8F04A);border-color:var(--wg,#C8F04A);color:#03100E}
+.wa.selm{padding-bottom:110px}
+.wa-selact{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(14px + env(safe-area-inset-bottom,0px));width:min(428px,calc(100% - 32px));display:flex;gap:10px;z-index:30}
+.wa-selact button{flex:1;height:52px;border-radius:16px;font:inherit;font-weight:800;font-size:15px;background:#F4ECEE;color:#140609;box-shadow:0 12px 30px rgba(0,0,0,.45)}
+.wa-selact button.del{background:#C8264A;color:#fff}.wa-selact button:disabled{opacity:.4}
 </style>
 
 <div class="app" id="app"><div class="loading"><div class="spin" aria-label="Chargement"></div></div></div>
@@ -2913,10 +2921,11 @@ document.addEventListener('click',async e=>{const t=e.target.closest('button,[da
   if(d.shopitem){return go('shopitem',d.shopitem)}
   if(d.shopbuy){return openShopBuy(d.shopbuy)}
   if(d.shoptoggle){return shopToggle()}
-  if(d.conc){if(!S.owner)return;return openConc(d.conc)}
+  if(d.conc){if(!S.owner)return;if(S.conc.lp){S.conc.lp=0;return}if(S.conc.sel){S.conc.sel.has(d.conc)?S.conc.sel.delete(d.conc):S.conc.sel.add(d.conc);return render()}return openConc(d.conc)}
+  if(d.ibsel){return ibSel(d.ibsel)}
   if(d.concref){toast('Actualisation…');return concRefresh()}
   if(d.ibtab){if(S.conc.tab==='faq')faqSync();S.conc.tab=d.ibtab;return render()}
-  if(d.ibf){S.conc.flt=d.ibf;return render()}
+  if(d.ibf){S.conc.flt=d.ibf;S.conc.sel=null;return render()}
   if(d.iblink){return ibLinkSheet()}
   if(d.faqadd){faqSync();S.conc.faq.push({q:'',a:''});$('#faqList').insertAdjacentHTML('beforeend',faqRow(S.conc.faq[S.conc.faq.length-1],S.conc.faq.length-1));const r=$('#faqList').lastElementChild;r&&r.querySelector('.fq').focus();return}
   if(d.faqdel!==undefined){faqSync();S.conc.faq.splice(+d.faqdel,1);$('#faqList').innerHTML=S.conc.faq.map((x,i)=>faqRow(x,i)).join('');return}
@@ -3539,21 +3548,43 @@ function ibRows(){const C=S.conc,q=(C.q||'').toLowerCase().trim(),f=C.flt||'all'
   if(q)L=L.filter(x=>[x.name,x.phone,x.src,...(x.msgs||[]).map(m=>m.text)].join(' ').toLowerCase().includes(q));
   if(f==='all'||f==='unread')L.sort((a,b)=>(ibIs('fav',b.id)-ibIs('fav',a.id))||(Date.parse(b.updated_at)-Date.parse(a.updated_at)));
   if(!L.length)return `<div class="wa-empty">${f==='arch'?'Aucune discussion archivée':f==='fav'?'Aucun favori. Ouvre une discussion puis touche ⭐.':f==='unread'?'Tout est lu ✓':q?'Aucun résultat':'Aucune discussion pour l\'instant. Partage ton lien 🔗 pour recevoir des messages.'}</div>`;
-  return L.map(x=>{const un=ibUnread(x),last=concLast(x);return `<button type="button" class="wa-row" data-conc="${esc(x.id)}">${ibAv(x)}
+  S.conc.visible=L.map(x=>x.id);
+  return L.map(x=>{const un=ibUnread(x),last=concLast(x),ck=S.conc.sel&&S.conc.sel.has(x.id);return `<button type="button" class="wa-row${ck?' ck':''}" data-conc="${esc(x.id)}">${S.conc.sel?`<span class="wa-ck">${ck?'✓':''}</span>`:''}${ibAv(x)}
     <span class="wa-mid"><b>${esc(x.name||x.phone||'Visiteur')}${ibIs('fav',x.id)?' <em class="st">★</em>':''}</b><small>${ibPrev(x)}</small></span>
     <span class="wa-end"><span class="tm${un?' g':''}">${ibTime(last.at||Date.parse(x.updated_at))}</span>${un?`<span class="bd">${un}</span>`:`<span class="md">${x.ai===false?'👤':'🤖'}</span>`}</span></button>`}).join('')}
 function vInbox(){if(S.conc.cfg===null)setTimeout(concRefresh,0);clearInterval(S.conc.iv);S.conc.iv=setInterval(()=>{if(S.route.v!=='inbox'){clearInterval(S.conc.iv);return}if(!document.hidden)concLoad().then(ibLive)},15000);
   const C=S.conc;
   if(C.tab==='faq')return `<section class="wa wa-faq"><div class="wa-top"><button class="wa-ib" data-ibtab="conv" aria-label="Retour">${I.back}</button><h1>🧠 Nourrir l'IA</h1><span></span></div><div id="ibBody">${C.cfg===null?'<div class="loading" style="min-height:40vh"><div class="spin"></div></div>':inboxBody()}</div></section>`;
   const arch=(C.chats||[]).filter(x=>ibIs('arch',x.id)),nArch=arch.length,unArch=arch.filter(x=>x.unread).length,f=C.flt||'all';
-  return `<section class="wa${meshOn()?' fx':''}">${meshHtml()}<div class="wa-top"><button class="wa-ib" data-go="feed" aria-label="Retour">${I.back}</button><span></span>
-    <div class="wa-acts"><button class="wa-ib" data-iblink="1" aria-label="Mon lien">🔗</button><button class="wa-ib" data-ibtab="faq" aria-label="Nourrir l'IA">🧠</button><button class="wa-ib" data-concref="1" aria-label="Actualiser">↻</button></div></div>
+  const SEL=C.sel;
+  return `<section class="wa${meshOn()?' fx':''}${SEL?' selm':''}">${meshHtml()}${SEL?`<div class="wa-top wa-selbar"><button class="wa-ib" data-ibsel="off" aria-label="Annuler la sélection">✕</button><b>${SEL.size} sélectionnée${SEL.size>1?'s':''}</b>
+    <div class="wa-acts"><button class="wa-ib" data-ibsel="all" aria-label="Tout sélectionner" title="Tout sélectionner">☑</button></div></div>`:`<div class="wa-top"><button class="wa-ib" data-go="feed" aria-label="Retour">${I.back}</button><span></span>
+    <div class="wa-acts"><button class="wa-ib" data-ibsel="on" aria-label="Sélectionner plusieurs discussions" title="Sélectionner">☑</button><button class="wa-ib" data-iblink="1" aria-label="Mon lien">🔗</button><button class="wa-ib" data-ibtab="faq" aria-label="Nourrir l'IA">🧠</button><button class="wa-ib" data-concref="1" aria-label="Actualiser">↻</button></div></div>`}
    <h1 class="wa-h">${f==='arch'?'Archivées':'Discussions'}</h1>
    ${f==='arch'?`<button class="wa-back" data-ibf="all">${I.back} Retour aux discussions</button>`:`<label class="wa-q">${I.search}<input id="ibQ" placeholder="Rechercher" value="${esc(C.q||'')}" autocomplete="off"></label>
    <div class="wa-chips">${[['all','Toutes'],['unread','Non lues'],['fav','Favoris']].map(([k,l])=>`<button type="button" class="${f===k?'on':''}" data-ibf="${k}">${l}</button>`).join('')}</div>
    <button type="button" class="wa-arch" data-ibf="arch"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="5" rx="1.5"/><path d="M5 9v9a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V9M10 13h4"/></svg></span><b>Archivées</b><span class="n">${unArch?unArch:nArch||''}</span></button>`}
    ${C.chatErr?`<div class="warn" style="margin:10px 0">Pour recevoir les conversations, exécute « koris-messagerie.sql » dans Supabase.</div>`:''}
-   <div id="ibList" class="wa-list">${C.chats===null?'<div class="loading" style="min-height:30vh"><div class="spin"></div></div>':ibRows()}</div></section>`}
+   <div id="ibList" class="wa-list">${C.chats===null?'<div class="loading" style="min-height:30vh"><div class="spin"></div></div>':ibRows()}</div>
+   ${SEL?`<div class="wa-selact"><button type="button" data-ibsel="arch" ${SEL.size?'':'disabled'}>🗄️ ${f==='arch'?'Désarchiver':'Archiver'}</button><button type="button" class="del" data-ibsel="del" ${SEL.size?'':'disabled'}>🗑️ Supprimer${SEL.size?' ('+SEL.size+')':''}</button></div>`:''}</section>`}
+async function ibSel(k){const C=S.conc;
+  if(k==='on'){C.sel=new Set();return render()}
+  if(k==='off'){C.sel=null;return render()}
+  if(k==='all'){const v=C.visible||[];C.sel=C.sel&&C.sel.size===v.length?new Set():new Set(v);return render()}
+  const ids=[...(C.sel||[])];if(!ids.length)return;
+  if(k==='arch'){const un=C.flt==='arch';for(const id of ids)await ibMetaSet('arch',id,!un);toast(un?`${ids.length} discussion${ids.length>1?'s':''} désarchivée${ids.length>1?'s':''}`:`${ids.length} discussion${ids.length>1?'s':''} archivée${ids.length>1?'s':''} 🗄️`);C.sel=null;return render()}
+  if(k==='del'){if(!confirm(`Supprimer définitivement ${ids.length} discussion${ids.length>1?'s':''} ? Cette action ne peut pas être annulée.`))return;
+    try{for(let i=0;i<ids.length;i+=100){const {error}=await S.be.sb.from('visit_chats').delete().in('id',ids.slice(i,i+100));if(error)throw error}
+      C.chats=(C.chats||[]).filter(x=>!ids.includes(x.id));const m=ibMeta();m.fav=(m.fav||[]).filter(x=>!ids.includes(x));m.arch=(m.arch||[]).filter(x=>!ids.includes(x));
+      S.be.sb.from('settings').upsert({id:'inbox',data:{fav:m.fav,arch:m.arch}}).then(()=>{},()=>{});
+      toast(`${ids.length} discussion${ids.length>1?'s':''} supprimée${ids.length>1?'s':''}`);C.sel=null;render()}catch(_){toast('Suppression impossible pour le moment. Réessaie.')}}}
+/* appui long sur une discussion : passe en mode sélection */
+(function(){let t=0,sx=0,sy=0;const clr=()=>{clearTimeout(t);t=0};
+  document.addEventListener('pointerdown',e=>{const r=e.target.closest&&e.target.closest('.wa .wa-row');if(!r||S.route.v!=='inbox')return;sx=e.clientX;sy=e.clientY;clr();
+    t=setTimeout(()=>{t=0;const id=r.dataset.conc;if(!S.conc.sel)S.conc.sel=new Set();S.conc.sel.add(id);S.conc.lp=1;try{navigator.vibrate&&navigator.vibrate(18)}catch(_){}render()},480)},{passive:true});
+  document.addEventListener('pointermove',e=>{if(t&&(Math.abs(e.clientX-sx)>10||Math.abs(e.clientY-sy)>10))clr()},{passive:true});
+  ['pointerup','pointercancel'].forEach(ev=>document.addEventListener(ev,()=>{clr();if(S.conc&&S.conc.lp)setTimeout(()=>{S.conc.lp=0},60)},{passive:true}));
+  document.addEventListener('contextmenu',e=>{if(e.target.closest&&e.target.closest('.wa .wa-row'))e.preventDefault()})})();
 function ibLive(){if(S.route.v!=='inbox')return;const l=$('#ibList');if(l)l.innerHTML=ibRows();if(S.conc.open&&typeof S.conc.open.draw==='function')S.conc.open.draw()}
 function ibLinkSheet(){const u=CONC_URL+'=whatsapp',L=$('#layer');
   L.innerHTML=`<div class="sheet-bg" id="sbg"><div class="sheet wa-sheet" role="dialog" aria-label="Mon lien"><span class="grab"></span><h2 style="font-size:19px">🔗 Ton lien de discussion</h2>
