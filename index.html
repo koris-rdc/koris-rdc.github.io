@@ -1332,6 +1332,14 @@ header.top{margin-inline:-16px;padding-inline:16px;top:0;padding-top:calc(18px +
 .vs-dot{width:10px;height:10px;border-radius:50%;background:#FF4D5E;animation:recB 1s ease-in-out infinite;flex:none}@keyframes recB{50%{opacity:.25}}
 .vs-rl{font-size:12.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}#vsRecT{font-variant-numeric:tabular-nums;font-size:15px}
 .vs-aud{display:block;width:230px;max-width:100%;height:40px;margin-bottom:4px}.cc-aud{display:block;margin:4px 0;font-size:12px;color:var(--muted)}.cc-aud audio{width:230px;max-width:100%;height:40px}
+.ft2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0 4px}
+.ft{position:relative;aspect-ratio:1/.82;border-radius:24px;padding:16px;display:flex;flex-direction:column;justify-content:flex-end;align-items:flex-start;gap:2px;text-align:left;overflow:hidden;border:1px solid rgba(255,255,255,.1);box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 10px 24px rgba(0,0,0,.25);transition:transform .15s}
+.ft:active{transform:scale(.97)}
+.ft::after{content:"";position:absolute;width:140px;height:140px;border-radius:50%;right:-50px;top:-60px;opacity:.5;filter:blur(8px)}
+.ft-pay{background:linear-gradient(160deg,#123a33,#0a211d)}.ft-pay::after{background:radial-gradient(circle,#2EE0B0,transparent 70%)}
+.ft-msg{background:linear-gradient(160deg,#2c3a10,#14200a);border-color:rgba(200,240,74,.35)}.ft-msg::after{background:radial-gradient(circle,#C8F04A,transparent 70%)}
+.ft-ic{position:absolute;top:14px;left:14px;width:46px;height:46px;border-radius:15px;display:grid;place-items:center;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.14);color:#fff;z-index:1}.ft-ic svg{width:24px;height:24px}
+.ft b{font-size:17px;font-weight:800;z-index:1}.ft small{font-size:12.5px;color:var(--muted);z-index:1}.ft .cnt-b{top:12px;right:12px;min-width:22px;height:22px;font-size:11.5px;z-index:2}
 </style>
 
 <div class="app" id="app"><div class="loading"><div class="spin" aria-label="Chargement"></div></div></div>
@@ -2006,15 +2014,16 @@ function admCertHtml(){const l=Object.entries(S.profiles).filter(([,x])=>x.cert?
 function admDoneHtml(){const l=Object.values(S.profiles).filter(x=>x.paid&&!x.owner&&x.pay?.status==='ok').sort((a,b)=>(b.paidAt||0)-(a.paidAt||0)).slice(0,30);
   return l.length?`<p class="hint" style="padding:0 2px 8px">${l.length} membre${l.length>1?'s':''} · ${l.filter(isActive).length} ${SUBSCRIPTION?'abonnement':'accès'}${SUBSCRIPTION&&l.filter(isActive).length>1?'s':''} actif${l.filter(isActive).length>1?'s':''}</p>`+l.map(x=>`<div class="call" style="padding:6px 0">${av(x,36)}<div class="mid"><b>${esc(fullName(x))}</b><small>${esc(opById(x.pay.op).name)} · réf. ${esc(x.pay.ref)}${x.paidUntil?` · ${isActive(x)?'jusqu\'au':'expiré le'} ${untilTxt(x.paidUntil)}`:''}</small></div></div>`).join(''):`<p class="hint" style="padding:0 2px">Rien pour l'instant.</p>`}
 
-function vFeed(){const p=me();const others=Object.entries(S.profiles).filter(([id,x])=>id!==S.be.uid&&x.paid).sort((a,b)=>(b[1].at||0)-(a[1].at||0)).slice(0,12);
+function feedTiles(){const pend=Object.values(S.profiles).filter(x=>x.pay?.status==='pending'||x.cert?.status==='pending').length,un=concUnread();
+  return `<div class="ft2"><button type="button" class="ft ft-pay" data-go="admin"><span class="ft-ic">${PB.wallet}</span>${pend?`<span class="cnt-b">${pend}</span>`:''}<b>Paiements</b><small>${pend?pend+' à vérifier':'Tout est à jour'}</small></button>
+   <button type="button" class="ft ft-msg" id="ftChat" data-go="inbox"><span class="ft-ic">${PB.chat}</span>${un?`<span class="cnt-b">${un}</span>`:''}<b>Messagerie</b><small>${un?un+' non lu'+(un>1?'s':''):'Visiteurs & IA'}</small></button></div>`}
+function vFeed(){const p=me();
   const today=S.posts.filter(x=>Date.now()-x.at<86400e3).length;
   return `<header class="top"><div class="wordmark" data-go="about" role="button" tabindex="0" aria-label="À propos de Koris"><i></i>KORIS</div><div class="hd-r"><button class="kori-btn" data-act="guide" aria-label="Gucko, ton assistant" title="Gucko">${I.spark}<span>Gucko</span></button>${bellHtml()}</div></header>
-  <div class="hello"><h1>Salut ${esc(p.firstName)}</h1><p>${today} nouvelle${today>1?'s':''} publication${today>1?'s':''} aujourd'hui · <span class="mc-line">👥 <b class="mcount" data-n="${memberCount()}">${memberCount().toLocaleString('fr-FR')}</b> membres</span></p>${demoBanner()}${shopBanner()}</div>
+  <div class="hello"><h1>Salut ${esc(p.firstName)}</h1><p>${today} nouvelle${today>1?'s':''} publication${today>1?'s':''} aujourd'hui · <span class="mc-line">👥 <b class="mcount" data-n="${memberCount()}">${memberCount().toLocaleString('fr-FR')}</b> membres</span></p>${demoBanner()}</div>${S.owner?feedTiles():''}
   <div class="glow qc"><label class="me-av" for="qPhoto" aria-label="${p.photo?'Changer ma photo de profil':'Ajouter une photo de profil'}">${av(p,48)}<span class="cam">${I.plus}</span></label><input id="qPhoto" type="file" accept="image/*" class="fpick">
   <button class="ask" data-act="compose">Quoi de neuf, ${esc(p.firstName)} ?</button><button class="ph-btn" data-act="compose" data-withpic="1" aria-label="Publier une photo">${I.image}</button></div>
   ${p.photo?'':`<p class="hint" style="margin-top:8px">Touche ton rond pour ajouter ta photo de profil.</p>`}
-  ${others.length?`<div class="sec-head"><h2>Nouveaux membres</h2><span class="count">${others.length}</span></div>
-  <div class="strip">${others.map(([id,x])=>`<button data-profile="${esc(id)}"><span class="ring ${availOf(x)!=='off'?'avl':''}">${av(x,60)}</span><span>${esc(x.firstName)}</span></button>`).join('')}</div>`:''}
   <div class="sec-head"><h2>Fil d'actualité</h2><span class="count">${S.posts.length} publication${S.posts.length>1?'s':''}</span></div>
   ${S.posts.length?`<div class="feed">${S.posts.map(postHtml).join('')}</div>`:`<div class="empty glow">${I.image}<b>Rien pour l'instant</b><p>Publie le premier message ou la première photo : ils apparaîtront ici pour tous les membres.</p><button class="btn btn-primary" data-act="compose" style="flex:none">Publier</button></div>`}
   ${navHtml('feed')}`}
@@ -2092,7 +2101,7 @@ function vProfile(id,self){const x=S.profiles[id];if(!x)return `<div class="empt
   return `<section class="pf">
   <div class="pf-cover"><img src="${coverFor(id,x)}" alt="Image de couverture de ${esc(x.firstName)}">
    <div class="pf-bar pb2"><button class="icon-btn" data-go="feed" aria-label="Retour à l'accueil" title="Accueil">${PB.home}</button>
-   <div class="grp">${self?`<label class="icon-btn" for="cvPhoto" aria-label="Changer l'image de couverture" title="Changer l'image de couverture">${PB.image}</label><input id="cvPhoto" type="file" accept="image/*" class="fpick">${S.owner?`<button class="icon-btn" data-go="admin" aria-label="Paiements" title="Paiements" style="position:relative">${PB.wallet}${(()=>{const n=Object.values(S.profiles).filter(x=>x.pay?.status==='pending'||x.cert?.status==='pending').length;return n?`<span class="cnt-b">${n}</span>`:''})()}</button><button class="icon-btn" id="pbChat" data-go="inbox" aria-label="Messagerie" title="Messagerie" style="position:relative">${PB.chat}${concUnread()?`<span class="cnt-b">${concUnread()}</span>`:''}</button>`:''}<button class="icon-btn" data-go="signup" data-param="fresh" aria-label="Recommencer mon inscription" title="Recommencer mon inscription">${PB.edit}</button><button class="icon-btn" data-act="settings" aria-label="Réglages" title="Réglages">${PB.gear}</button>`:''}<button class="icon-btn" data-act="help" aria-label="Aide : contacter le service Koris" title="Aide">${PB.help}</button></div></div>
+   <div class="grp">${self?`<label class="icon-btn" for="cvPhoto" aria-label="Changer l'image de couverture" title="Changer l'image de couverture">${PB.image}</label><input id="cvPhoto" type="file" accept="image/*" class="fpick">${S.owner?`<button class="icon-btn" data-go="admin" aria-label="Paiements" title="Paiements" style="position:relative">${PB.wallet}${(()=>{const n=Object.values(S.profiles).filter(x=>x.pay?.status==='pending'||x.cert?.status==='pending').length;return n?`<span class="cnt-b">${n}</span>`:''})()}</button>`:''}<button class="icon-btn" data-go="signup" data-param="fresh" aria-label="Recommencer mon inscription" title="Recommencer mon inscription">${PB.edit}</button><button class="icon-btn" data-act="settings" aria-label="Réglages" title="Réglages">${PB.gear}</button>`:''}<button class="icon-btn" data-act="help" aria-label="Aide : contacter le service Koris" title="Aide">${PB.help}</button></div></div>
   </div>
   <div class="pf-card">
    <div class="pf-head">
@@ -2196,7 +2205,7 @@ function render(){const app=$('#app');const r=S.route;
   else if(r.v==='admin')app.innerHTML=vAdmin();
   else if(r.v==='certif'){app.innerHTML=vCertif();checkHandle()}
   else if(r.v==='about')app.innerHTML=vAbout();
-  else if(r.v==='feed')app.innerHTML=vFeed();
+  else if(r.v==='feed'){app.innerHTML=vFeed();if(S.owner&&S.be?.sb&&S.conc.chats===null){S.conc.chats=[];concRefresh()}}
   else if(r.v==='discover'){app.innerHTML=vDiscover();const q=$('#q');if(r.focus){q.focus();q.setSelectionRange(q.value.length,q.value.length)}}
   else if(r.v==='profile')app.innerHTML=vProfile(r.param,r.param===S.be.uid);
   else if(r.v==='me'){app.innerHTML=vProfile(S.be.uid,true);if(S.owner&&S.be?.sb&&S.conc.chats===null){S.conc.chats=[];concRefresh()}}
@@ -3139,12 +3148,16 @@ function vsBind(){vsDraw(true);const T=$('#vsT'),B=$('#vsB'),F=$('#vsF');if(!T)r
   T.onkeydown=e=>{if(e.key==='Enter'&&!e.shiftKey&&window.innerWidth>700){e.preventDefault();vsSend(T.value)}};F.onsubmit=e=>{e.preventDefault();T.value.trim()?vsSend(T.value):vsRecStart()};
   const P=$('#vsP');if(P)P.onchange=()=>{const f=P.files&&P.files[0];P.value='';if(f)vsPhoto(f)};
   clearInterval(VS.iv);VS.iv=setInterval(vsPoll,6000)}
-async function vsSend(text,extra,img){text=String(text||'').trim();if(!text||VS.busy)return;VS.msgs.push({role:'user',text,at:Date.now(),...(img?{img}:{})});ls.set('vsMsgs',VS.msgs.slice(-150));
-  const T=$('#vsT');if(T){T.value='';T.style.height='auto'}vsBtn();VS.busy=true;vsDraw();
+async function vsSend(text,extra,img){text=String(text||'').trim();if(!text)return;VS.msgs.push({role:'user',text,at:Date.now(),...(img?{img}:{})});ls.set('vsMsgs',VS.msgs.slice(-150));
+  const T=$('#vsT');if(T){T.value='';T.style.height='auto'}vsBtn();
+  if(VS.busy){(VS.pending=VS.pending||[]).push(text);vsDraw();return}vsPost(text,extra)}
+/* Plusieurs messages envoyés pendant que l'IA écrit : elle y répond ensemble, en une seule réponse */
+async function vsPost(text,extra){VS.busy=true;vsDraw();
   try{const r=await vsCall({action:'send',vid:VS.vid,text,src:VISIT_LINK.src||(me()?'membre':'direct'),...(extra||{})});if(r.reply){VS.msgs.push({role:'ai',text:r.reply,at:r.at||Date.now()});VS.last=Math.max(VS.last,r.at||0)}}
   catch(_){const L=VS.local||{},m=faqMatch(text,L.faq||[]),wa=String(L.wa||'').replace(/\D/g,'');
     VS.msgs.push({role:'ai',text:m?m.a:navigator.onLine===false?"Oups, le message n'est pas passé. Vérifiez votre connexion et réessayez.":`Merci pour votre message ! Je n'ai pas encore la réponse à cette question.${wa?' Écrivez directement à l\'équipe sur WhatsApp : +'+wa:' L\'équipe vous répondra bientôt.'}`,at:Date.now(),local:1})}
-  VS.busy=false;ls.set('vsMsgs',VS.msgs.slice(-150));ls.set('vsLast',VS.last);vsDraw()}
+  VS.busy=false;ls.set('vsMsgs',VS.msgs.slice(-150));ls.set('vsLast',VS.last);vsDraw();
+  if(VS.pending&&VS.pending.length){const t=VS.pending.join('\n');VS.pending=[];vsPost(t)}}
 const IMG_RE=/\n?\[img:([\w\-\/.]+)\]/,AUD_RE=/\n?\[aud:([\w\-\/.]+)\]/;
 const imgStrip=t=>String(t||'').replace(IMG_RE,'').replace(AUD_RE,'');
 function vsBtn(){const T=$('#vsT'),B=$('#vsB');if(!T||!B)return;const t=!!T.value.trim();B.innerHTML=t?I.send:GKI.mic;B.setAttribute('aria-label',t?'Envoyer':'Enregistrer un vocal');B.classList.toggle('mic',!t)}
@@ -3177,7 +3190,7 @@ async function vsVoice(raw,dur){const sb=sbClient&&sbClient();if(!sb){toast("Env
     const path=`${VS.vid}/${Date.now()}.${ext}`;const {error}=await sb.storage.from('visites').upload(path,blob,{contentType:ct,upsert:false});if(error)throw error;
     VS.auds[path]=URL.createObjectURL(blob);VS.msgs.splice(VS.msgs.indexOf(ph),1);await vsSend(`🎤 Message vocal (${dur} s)\n[aud:${path}]`)}
   catch(e){VS.msgs.splice(VS.msgs.indexOf(ph),1);vsDraw();toast("Le vocal n'est pas passé. Vérifie ta connexion et réessaie.")}}
-async function vsPhoto(f){if(VS.busy)return;if(!/^image\//.test(f.type||'')){toast('Choisis une photo (capture d\'écran ou image).');return}
+async function vsPhoto(f){if(!/^image\//.test(f.type||'')){toast('Choisis une photo (capture d\'écran ou image).');return}
   const sb=sbClient&&sbClient();if(!sb){toast("Envoi de photo impossible pour l'instant.");return}
   const ph={role:'user',text:'',at:Date.now(),up:1};VS.msgs.push(ph);vsDraw();
   try{const big=await compress(f,1600,900000),thumb=await compress(f,420,60000);
@@ -3200,9 +3213,9 @@ function faqMatch(q,faq){const qt=new Set(faqTok(q));if(!qt.size)return null;let
 /* ---------- côté administrateur (route « inbox ») ---------- */
 async function concLoad(){if(!S.owner)return;if(!S.be?.sb){S.conc.cfg={};S.conc.chats=[];S.conc.err='demo';return}
   try{const {data,error}=await S.be.sb.from('settings').select('data').eq('id','concierge').maybeSingle();if(error)throw error;S.conc.cfg=data?.data||{};S.conc.err=''}catch(_){S.conc.cfg={};S.conc.err='cfg'}
-  try{const {data,error}=await S.be.sb.from('visit_chats').select('id,name,phone,src,msgs,ai,unread,updated_at').order('updated_at',{ascending:false}).limit(150);if(error)throw error;S.conc.chats=data||[];S.conc.chatErr=''}catch(_){S.conc.chats=[];S.conc.chatErr='setup'}
+  try{const {data,error}=await S.be.sb.from('visit_chats').select('id,name,phone,src,msgs,ai,unread,updated_at').order('updated_at',{ascending:false}).limit(1000);if(error)throw error;S.conc.chats=data||[];S.conc.chatErr=''}catch(_){S.conc.chats=[];S.conc.chatErr='setup'}
   if(S.conc.faq===null)S.conc.faq=Array.isArray(S.conc.cfg.faq)?S.conc.cfg.faq.map(x=>({q:x.q||'',a:x.a||''})):[]}
-function concRefresh(){concLoad().then(()=>{if(S.route.v==='inbox'&&!$('#layer').innerHTML.trim()){const el=$('#ibBody');if(el){el.innerHTML=inboxBody();inboxBind()}}const b=$('#admInboxBtn');if(b)b.outerHTML=inboxBtn();const c=$('#pbChat');if(c){const n=concUnread(),o=c.querySelector('.cnt-b');if(o)o.remove();if(n)c.insertAdjacentHTML('beforeend',`<span class="cnt-b">${n}</span>`)}})}
+function concRefresh(){concLoad().then(()=>{if(S.route.v==='inbox'&&!$('#layer').innerHTML.trim()){const el=$('#ibBody');if(el){el.innerHTML=inboxBody();inboxBind()}}const b=$('#admInboxBtn');if(b)b.outerHTML=inboxBtn();const ft=$('#ftChat');if(ft&&S.owner){const t=document.createElement('div');t.innerHTML=feedTiles();const nw=t.querySelector('#ftChat');if(nw)ft.replaceWith(nw)}const c=$('#pbChat');if(c){const n=concUnread(),o=c.querySelector('.cnt-b');if(o)o.remove();if(n)c.insertAdjacentHTML('beforeend',`<span class="cnt-b">${n}</span>`)}})}
 const concUnread=()=>(S.conc.chats||[]).filter(x=>x.unread).length;
 const inboxBtn=()=>`<button class="btn btn-primary" id="admInboxBtn" data-go="inbox" style="width:100%;flex:none;height:50px">💬 Ouvrir la messagerie${concUnread()?` · ${concUnread()} non lue${concUnread()>1?'s':''}`:''}</button>`;
 const concLast=x=>{const m=(x.msgs||[]);return m[m.length-1]||{}};
