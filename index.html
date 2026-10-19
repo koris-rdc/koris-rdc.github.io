@@ -1316,6 +1316,13 @@ header.top{margin-inline:-16px;padding-inline:16px;top:0;padding-top:calc(18px +
 .thm button{display:flex;align-items:center;justify-content:center;gap:8px;height:46px;border-radius:14px;background:var(--panel-2);border:1.5px solid var(--line);font-weight:600;font-size:14px;color:var(--text)}
 .thm button svg{width:17px;height:17px}
 .thm button.on{border-color:var(--orange);background:color-mix(in srgb,var(--orange) 16%,var(--panel-2))}
+.pf-bar.pb2 .icon-btn{width:44px;height:44px;border-radius:15px;background:linear-gradient(160deg,rgba(255,255,255,.16),rgba(255,255,255,.04)) ,rgba(3,16,14,.42);border:1px solid rgba(255,255,255,.16);box-shadow:inset 0 1px 0 rgba(255,255,255,.14),0 6px 16px rgba(0,0,0,.25);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);transition:transform .15s}
+.pf-bar.pb2 .icon-btn:active{transform:scale(.92)}
+.pf-bar.pb2 .icon-btn svg{width:22px;height:22px}
+.pf-bar.pb2 .grp{gap:7px}
+.pb-f{fill:var(--orange);stroke:none}.pb-s{stroke:var(--orange)}
+#pbChat{background:linear-gradient(160deg,rgba(200,240,74,.32),rgba(200,240,74,.1)),rgba(3,16,14,.42)!important;border-color:rgba(200,240,74,.45)!important}
+@media (max-width:380px){.pf-bar.pb2 .icon-btn{width:40px;height:40px;border-radius:13px}.pf-bar.pb2 .icon-btn svg{width:20px;height:20px}.pf-bar.pb2 .grp{gap:5px}}
 </style>
 
 <div class="app" id="app"><div class="loading"><div class="spin" aria-label="Chargement"></div></div></div>
@@ -1324,6 +1331,7 @@ header.top{margin-inline:-16px;padding-inline:16px;top:0;padding-top:calc(18px +
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 /* =================== Icônes =================== */
+const PB={home:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10.2 12 4l8 6.2V19a1.5 1.5 0 0 1-1.5 1.5H15V15H9v5.5H5.5A1.5 1.5 0 0 1 4 19z" fill="currentColor" fill-opacity=".2"/><path class="pb-s" d="M10.5 15h3"/></svg>',image:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="4.5" fill="currentColor" fill-opacity=".2"/><circle class="pb-f" cx="9" cy="9.5" r="1.9"/><path d="m3.5 17 4.6-4.6a1.6 1.6 0 0 1 2.2 0L15 17"/><path d="m13.6 15.6 1.8-1.8a1.6 1.6 0 0 1 2.2 0l2.6 2.6"/></svg>',wallet:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 7.5V7a2 2 0 0 1 2-2h9.5a2 2 0 0 1 2 2v.5"/><rect x="3" y="7.5" width="18" height="12.5" rx="3.5" fill="currentColor" fill-opacity=".2"/><path d="M21 11.5h-4.2a2.2 2.2 0 0 0 0 4.4H21"/><circle class="pb-f" cx="16.9" cy="13.7" r="1.1"/></svg>',chat:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 11.6c0 4.1-3.8 7.4-8.5 7.4-1.2 0-2.3-.2-3.3-.6L4 20l1.4-3.8a7 7 0 0 1-1.9-4.6C3.5 7.4 7.3 4 12 4s8.5 3.4 8.5 7.6z" fill="currentColor" fill-opacity=".2"/><circle class="pb-f" cx="8.3" cy="11.6" r="1.15"/><circle class="pb-f" cx="12" cy="11.6" r="1.15"/><circle class="pb-f" cx="15.7" cy="11.6" r="1.15"/></svg>',edit:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M15 4.6a2.1 2.1 0 0 1 3 0l1.4 1.4a2.1 2.1 0 0 1 0 3L9.6 18.8 4.5 19.5l.7-5.1z" fill="currentColor" fill-opacity=".2"/><path d="m13.5 6.2 4.3 4.3"/><path class="pb-s" d="M13 20h7"/></svg>',gear:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h8.5M18.5 7H20M4 17h2.5M12.5 17H20"/><circle cx="15.5" cy="7" r="2.6" fill="currentColor" fill-opacity=".2"/><circle class="pb-f" cx="15.5" cy="7" r="1"/><circle cx="9.5" cy="17" r="2.6" fill="currentColor" fill-opacity=".2"/></svg>',help:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9" fill="currentColor" fill-opacity=".2"/><path d="M9.6 9.4a2.5 2.5 0 0 1 4.8.9c0 1.7-2.4 2.1-2.4 3.7"/><circle class="pb-f" cx="12" cy="17.2" r="1.15"/></svg>'};
 const I={
 bell:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 8 3 8H3s3-1 3-8"/><path d="M10.3 20a1.9 1.9 0 0 0 3.4 0"/></svg>',
  home:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/></svg>',
@@ -2074,8 +2082,8 @@ function vProfile(id,self){const x=S.profiles[id];if(!x)return `<div class="empt
   const row=(ic,l,v,extra='')=>v?`<div class="info-row"><span class="ic">${I[ic]}</span><div><small>${l}</small><b>${esc(v)}</b></div>${extra}</div>`:'';
   return `<section class="pf">
   <div class="pf-cover"><img src="${coverFor(id,x)}" alt="Image de couverture de ${esc(x.firstName)}">
-   <div class="pf-bar"><button class="icon-btn" data-go="feed" aria-label="Retour à l'accueil" title="Accueil">${I.home}</button>
-   <div class="grp">${self?`<label class="icon-btn" for="cvPhoto" aria-label="Changer l'image de couverture" title="Changer l'image de couverture">${I.image}</label><input id="cvPhoto" type="file" accept="image/*" class="fpick">${S.owner?`<button class="icon-btn" data-go="admin" aria-label="Paiements" title="Paiements" style="position:relative">${I.wallet}${(()=>{const n=Object.values(S.profiles).filter(x=>x.pay?.status==='pending'||x.cert?.status==='pending').length;return n?`<span class="cnt-b">${n}</span>`:''})()}</button>`:''}<button class="icon-btn" data-go="signup" data-param="fresh" aria-label="Recommencer mon inscription" title="Recommencer mon inscription">${I.edit}</button><button class="icon-btn" data-act="settings" aria-label="Réglages" title="Réglages">${I.gear}</button>`:''}<button class="icon-btn" data-act="help" aria-label="Aide : contacter le service Koris" title="Aide">${I.help}</button></div></div>
+   <div class="pf-bar pb2"><button class="icon-btn" data-go="feed" aria-label="Retour à l'accueil" title="Accueil">${PB.home}</button>
+   <div class="grp">${self?`<label class="icon-btn" for="cvPhoto" aria-label="Changer l'image de couverture" title="Changer l'image de couverture">${PB.image}</label><input id="cvPhoto" type="file" accept="image/*" class="fpick">${S.owner?`<button class="icon-btn" data-go="admin" aria-label="Paiements" title="Paiements" style="position:relative">${PB.wallet}${(()=>{const n=Object.values(S.profiles).filter(x=>x.pay?.status==='pending'||x.cert?.status==='pending').length;return n?`<span class="cnt-b">${n}</span>`:''})()}</button><button class="icon-btn" id="pbChat" data-go="inbox" aria-label="Messagerie" title="Messagerie" style="position:relative">${PB.chat}${concUnread()?`<span class="cnt-b">${concUnread()}</span>`:''}</button>`:''}<button class="icon-btn" data-go="signup" data-param="fresh" aria-label="Recommencer mon inscription" title="Recommencer mon inscription">${PB.edit}</button><button class="icon-btn" data-act="settings" aria-label="Réglages" title="Réglages">${PB.gear}</button>`:''}<button class="icon-btn" data-act="help" aria-label="Aide : contacter le service Koris" title="Aide">${PB.help}</button></div></div>
   </div>
   <div class="pf-card">
    <div class="pf-head">
@@ -2182,7 +2190,7 @@ function render(){const app=$('#app');const r=S.route;
   else if(r.v==='feed')app.innerHTML=vFeed();
   else if(r.v==='discover'){app.innerHTML=vDiscover();const q=$('#q');if(r.focus){q.focus();q.setSelectionRange(q.value.length,q.value.length)}}
   else if(r.v==='profile')app.innerHTML=vProfile(r.param,r.param===S.be.uid);
-  else if(r.v==='me')app.innerHTML=vProfile(S.be.uid,true);
+  else if(r.v==='me'){app.innerHTML=vProfile(S.be.uid,true);if(S.owner&&S.be?.sb&&S.conc.chats===null){S.conc.chats=[];concRefresh()}}
   else if(r.v==='messages'){app.innerHTML=vMessages();initPager()}
   else if(r.v==='chat'){app.innerHTML=vChat(r.param);const cid=chatId(S.be.uid,r.param);S.sub.msgs=S.be.onMsgs(cid,l=>renderMsgs(l,cid))}
 }
@@ -3132,12 +3140,12 @@ async function concLoad(){if(!S.owner)return;if(!S.be?.sb){S.conc.cfg={};S.conc.
   try{const {data,error}=await S.be.sb.from('settings').select('data').eq('id','concierge').maybeSingle();if(error)throw error;S.conc.cfg=data?.data||{};S.conc.err=''}catch(_){S.conc.cfg={};S.conc.err='cfg'}
   try{const {data,error}=await S.be.sb.from('visit_chats').select('id,name,phone,src,msgs,ai,unread,updated_at').order('updated_at',{ascending:false}).limit(150);if(error)throw error;S.conc.chats=data||[];S.conc.chatErr=''}catch(_){S.conc.chats=[];S.conc.chatErr='setup'}
   if(S.conc.faq===null)S.conc.faq=Array.isArray(S.conc.cfg.faq)?S.conc.cfg.faq.map(x=>({q:x.q||'',a:x.a||''})):[]}
-function concRefresh(){concLoad().then(()=>{if(S.route.v==='inbox'&&!$('#layer').innerHTML.trim()){const el=$('#ibBody');if(el){el.innerHTML=inboxBody();inboxBind()}}const b=$('#admInboxBtn');if(b)b.outerHTML=inboxBtn()})}
+function concRefresh(){concLoad().then(()=>{if(S.route.v==='inbox'&&!$('#layer').innerHTML.trim()){const el=$('#ibBody');if(el){el.innerHTML=inboxBody();inboxBind()}}const b=$('#admInboxBtn');if(b)b.outerHTML=inboxBtn();const c=$('#pbChat');if(c){const n=concUnread(),o=c.querySelector('.cnt-b');if(o)o.remove();if(n)c.insertAdjacentHTML('beforeend',`<span class="cnt-b">${n}</span>`)}})}
 const concUnread=()=>(S.conc.chats||[]).filter(x=>x.unread).length;
 const inboxBtn=()=>`<button class="btn btn-primary" id="admInboxBtn" data-go="inbox" style="width:100%;flex:none;height:50px">💬 Ouvrir la messagerie${concUnread()?` · ${concUnread()} non lue${concUnread()>1?'s':''}`:''}</button>`;
 const concLast=x=>{const m=(x.msgs||[]);return m[m.length-1]||{}};
 function vInbox(){if(S.conc.cfg===null)setTimeout(concRefresh,0);
-  return `<section class="adm ib"><div class="top" style="padding-inline:0"><button class="icon-btn" data-go="admin" aria-label="Retour">${I.back}</button><h1 style="font-size:22px;flex:1;text-align:center">Messagerie</h1><button class="icon-btn" data-concref="1" aria-label="Actualiser">↻</button></div>
+  return `<section class="adm ib"><div class="top" style="padding-inline:0"><button class="icon-btn" data-go="me" aria-label="Retour">${I.back}</button><h1 style="font-size:22px;flex:1;text-align:center">Messagerie</h1><button class="icon-btn" data-concref="1" aria-label="Actualiser">↻</button></div>
   <div class="ib-tabs"><button type="button" class="${S.conc.tab==='conv'?'on':''}" data-ibtab="conv">Conversations</button><button type="button" class="${S.conc.tab==='faq'?'on':''}" data-ibtab="faq">🧠 Nourrir l'IA</button></div>
   <div id="ibBody">${S.conc.cfg===null?'<div class="loading" style="min-height:40vh"><div class="spin"></div></div>':inboxBody()}</div></section>`}
 function inboxBody(){const C=S.conc;
