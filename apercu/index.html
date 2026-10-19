@@ -157,6 +157,30 @@ body.shop-mode .top{background:linear-gradient(rgba(27,9,4,.0),rgba(27,9,4,0))}
 .ccb.ai,.ccb.admin{align-self:flex-end;border-radius:14px 14px 4px 14px;background:rgba(200,240,74,.14)}.ccb.admin{background:rgba(46,224,176,.2)}
 .ccb em{display:block;font-style:normal;font-size:10px;font-weight:800;color:#C8F04A}.ccb small{display:block;font-size:9.5px;color:var(--muted);margin-top:3px}
 .cc-rep{display:flex;gap:8px}.cc-rep input{flex:1;min-width:0;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:12px 14px;color:var(--text);outline:none}
+.ib-tabs{display:flex;gap:6px;margin:0 0 12px}.ib-tabs button{flex:1;height:40px;border-radius:999px;background:var(--panel);border:1px solid var(--line);color:var(--text);font-weight:700;font-size:13px}.ib-tabs button.on{background:#C8F04A;color:#03100E;border-color:transparent}
+.ib-lbl{font-weight:800;font-size:15px;margin:8px 0 0}.ib-lbl small{font-weight:500;font-size:12px;color:var(--muted);margin-left:6px}
+.faq-r{display:flex;flex-direction:column;gap:6px;padding:10px;border-radius:16px;background:var(--panel);border:1px solid var(--line);margin-bottom:8px}
+.faq-r .h{display:flex;align-items:center;justify-content:space-between}.faq-r .h span{width:24px;height:24px;border-radius:50%;background:rgba(200,240,74,.15);color:#C8F04A;font-size:12px;font-weight:800;display:grid;place-items:center}
+.faq-r .h button{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;color:var(--muted)}.faq-r .h button svg{width:16px;height:16px}
+.faq-r input,.faq-r textarea{background:var(--panel-2);border:1px solid var(--line);border-radius:12px;padding:10px 12px;color:var(--text);outline:none;font:inherit;font-size:14px}.faq-r input{font-weight:700}.faq-r textarea{min-height:64px;resize:vertical}
+.cc-row .mn{font-style:normal;color:#2EE0B0}
+.vs{display:flex;flex-direction:column;height:100svh;margin:0 -16px;background:radial-gradient(120% 50% at 50% -10%,rgba(46,224,176,.16),transparent 60%)}
+.vs-hd{display:flex;align-items:center;gap:10px;padding:calc(10px + env(safe-area-inset-top,0px)) 14px 10px;border-bottom:1px solid var(--line);background:rgba(3,16,14,.85);backdrop-filter:blur(12px)}
+.vs-av{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#E9FF8A,#C8F04A 50%,#2EE0B0);display:grid;place-items:center;font-weight:800;color:#03100E;font-size:18px;position:relative;flex:none}.vs-av::after{content:"";position:absolute;right:1px;bottom:1px;width:10px;height:10px;border-radius:50%;background:#3BE07A;border:2px solid var(--ink)}
+.vs-hd .mid{flex:1;min-width:0}.vs-hd b{display:block;font-size:16px}.vs-hd small{font-size:11.5px;color:var(--muted)}.vs-tag{flex:none;font-size:10.5px;font-weight:700;padding:5px 9px;border-radius:999px;background:rgba(200,240,74,.12);color:#C8F04A;border:1px solid rgba(200,240,74,.3)}
+.vs-m{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:8px}
+.vs-day{align-self:center;font-size:11px;color:var(--muted);padding:4px 10px;border-radius:999px;background:var(--panel)}
+.vb{max-width:82%;padding:10px 14px;border-radius:18px 18px 18px 6px;background:var(--panel-2);font-size:14.5px;line-height:1.45;white-space:pre-wrap;word-wrap:break-word;animation:vbIn .28s cubic-bezier(.2,.9,.3,1.2) both}
+.vb.me{align-self:flex-end;border-radius:18px 18px 6px 18px;background:linear-gradient(135deg,#E9FF8A,#C8F04A 50%,#2EE0B0);color:#03100E;font-weight:500}.vb.adm{border:1px solid rgba(200,240,74,.35)}
+.vb em{display:block;font-style:normal;font-size:10.5px;font-weight:700;color:#C8F04A;margin-bottom:2px}.vb small{display:block;font-size:10px;opacity:.6;margin-top:4px;text-align:right}@keyframes vbIn{from{opacity:0;transform:translateY(8px) scale(.96)}}
+.vs-typ{display:inline-flex;gap:5px;padding:14px 16px}.vs-typ i{width:7px;height:7px;border-radius:50%;background:var(--muted);animation:vsBl 1s infinite}.vs-typ i:nth-child(2){animation-delay:.15s}.vs-typ i:nth-child(3){animation-delay:.3s}@keyframes vsBl{0%,100%{opacity:.25}50%{opacity:1;transform:translateY(-3px)}}
+.vs-sg{display:flex;gap:6px;flex-wrap:wrap}.vs-sg button{font-size:12.5px;font-weight:600;color:var(--text);background:var(--panel);border:1px solid var(--line);padding:8px 12px;border-radius:999px}
+.vs-ct{padding:12px;border-radius:16px;background:var(--panel);border:1px solid var(--line);font-size:13px;display:flex;flex-direction:column;gap:8px}.vs-ct .r{display:flex;gap:8px}.vs-ct input{flex:1;min-width:0;background:var(--panel-2);border:1px solid var(--line);border-radius:12px;padding:10px 12px;color:var(--text);outline:none}
+.vs-note{font-size:10.5px;color:var(--muted);text-align:center;padding:0 16px 6px}
+.vs-f{display:flex;gap:8px;align-items:flex-end;padding:8px 12px calc(10px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--line);background:rgba(3,16,14,.92)}
+.vs-f textarea{flex:1;resize:none;max-height:120px;min-height:46px;font:inherit;font-size:15px;color:var(--text);background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:12px 16px;outline:none}
+.vs-f button{flex:none;width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,#E9FF8A,#C8F04A 50%,#2EE0B0);color:#03100E;display:grid;place-items:center}.vs-f button:disabled{opacity:.45}.vs-f button svg{width:20px;height:20px}
+
 </style></head><body><div id="ksplash" class="wait" role="img" aria-label="Koris" title="Touchez pour passer">
 <style>
 #ksplash{position:fixed;inset:0;z-index:99999;background:#03100E;display:grid;place-items:center;overflow:hidden;cursor:pointer;animation:ksOut .7s cubic-bezier(.7,0,.3,1) 10.4s forwards}
@@ -1937,8 +1961,8 @@ function vAdmin(){
    <label class="pill">${I.user}<input data-cf="${o.id}.holder" placeholder="Nom affiché du titulaire" value="${esc(c.holder)}"></label>
    <label class="pill">${I.hash}<input data-cf="${o.id}.ussd" placeholder="Code du menu (${o.ussd})" value="${esc(c.ussd)}"></label></div>`}).join('')}
    <p class="err" id="cfgErr"></p><button class="btn btn-primary" id="cfgBtn" style="width:100%;flex:none">Enregistrer mes numéros</button></form>
-  <h2>Messagerie d'accueil 💬</h2><p class="hint" style="padding:0 2px 8px">Une page de discussion séparée de l'application. Les visiteurs de tes publicités y écrivent, et l'IA répond automatiquement avec les informations que tu lui donnes.</p>
-  <div class="opbox" id="admConc">${admConcHtml()}</div>
+  <h2>Messagerie 💬</h2><p class="hint" style="padding:0 2px 8px">Les visiteurs (par exemple depuis tes publicités Facebook) t'écrivent dans Koris, sans compte. L'IA répond avec tes questions-réponses, et toi tu peux répondre à tout moment.</p>
+  ${inboxBtn()}
   <h2>Contacts de l'aide</h2>
   <form id="fHelp" novalidate><div class="opbox">
    <label class="pill">${I.wa}<input data-hc="wa" type="tel" placeholder="Numéro WhatsApp (ex. 243812345678)" value="${esc((S.helpCfg||{}).wa||'')}"></label>
@@ -2127,18 +2151,19 @@ function render(){const app=$('#app');const r=S.route;
   if(sphereStop){sphereStop();sphereStop=null}
   const p=me();
   if(r.v==='loading'){app.innerHTML=`<div class="loading"><div class="spin"></div></div>`;return}
-  const KNOWN=['auth','onboard','signup','pay','admin','certif','about','feed','discover','profile','me','messages','chat','shop','shopitem'];
+  const KNOWN=['auth','onboard','signup','pay','admin','certif','about','feed','discover','profile','me','messages','chat','shop','shopitem','visit','inbox'];
+  if(r.v==='inbox'&&!S.owner){S.route={v:'feed'};return render()}
   if(!KNOWN.includes(r.v)){S.route={v:p?(isActive(p)?'feed':'pay'):'onboard'};return render()}
   // garde-fous : pas de profil → onboarding ; profil non payé → paiement
-  const open=['onboard','signup','pay','about','auth','shop','shopitem'];
+  const open=['onboard','signup','pay','about','auth','shop','shopitem','visit'];
   shopTick();
   if(r.v==='auth'&&S.be.uid&&!S.pendingProf){S.route=p?(isActive(p)?{v:'feed'}:{v:'pay'}):{v:'signup'};return render()}
   if(r.v==='admin'&&!S.owner){S.route={v:'feed'};return render()}
   if(!p&&!open.includes(r.v)){S.route={v:'onboard'};return render()}
-  if(p&&!isActive(p)&&!['signup','pay','about','onboard','admin','shop','shopitem'].includes(r.v)){S.route={v:'pay'};return render()}
+  if(p&&!isActive(p)&&!['signup','pay','about','onboard','admin','shop','shopitem','visit'].includes(r.v)){S.route={v:'pay'};return render()}
   if(render.last!==r.v){render.last=r.v;app.classList.remove('enter');void app.offsetWidth;app.classList.add('enter');clearTimeout(render.t);render.t=setTimeout(()=>app.classList.remove('enter'),400)}
   if(['feed','discover','messages','me','chat','profile','about','admin','certif','shop','shopitem'].includes(r.v)&&me())ls.set('lastRoute',{v:r.v,param:r.param||null});
-  app.classList.toggle('no-nav',['auth','onboard','signup','pay','chat','profile','about','admin','certif','shop','shopitem'].includes(r.v));
+  app.classList.toggle('no-nav',['auth','onboard','signup','pay','chat','profile','about','admin','certif','shop','shopitem','visit','inbox'].includes(r.v));
   loveMusic(r.v==='signup');
   document.body.classList.toggle('shop-mode',['shop','shopitem'].includes(r.v));
   if(r.v==='auth'){if(r.param)S.authMode=r.param;app.innerHTML=vAuth()}
@@ -2146,6 +2171,8 @@ function render(){const app=$('#app');const r=S.route;
   else if(r.v==='signup')app.innerHTML=vSignup();
   else if(r.v==='pay')app.innerHTML=vPay();
   else if(r.v==='shop'){app.innerHTML=vShop();const q=$('#shopQ');if(q){if(render.shopQ){q.focus();q.setSelectionRange(q.value.length,q.value.length)}q.oninput=()=>{S.shop.q=q.value;render.shopQ=true;render();render.shopQ=false}}}
+  else if(r.v==='visit'){app.innerHTML=vVisit();vsBind()}
+  else if(r.v==='inbox'){app.innerHTML=vInbox();if(S.conc.cfg===null||S.conc.chats===null)concRefresh()}
   else if(r.v==='shopitem'){if(render.sdId!==r.param){render.sdId=r.param;S.shop.img=0}app.innerHTML=vShopItem(r.param);sdBind();if(S.shop.items&&S.shop.items.some(x=>x.id===r.param))shopView(r.param)}
   else if(r.v==='admin')app.innerHTML=vAdmin();
   else if(r.v==='certif'){app.innerHTML=vCertif();checkHandle()}
@@ -2595,7 +2622,12 @@ document.addEventListener('click',async e=>{const t=e.target.closest('button,[da
   if(d.shopbuy){return openShopBuy(d.shopbuy)}
   if(d.shoptoggle){return shopToggle()}
   if(d.conc){if(!S.owner)return;return openConc(d.conc)}
-  if(d.concref){return concRefresh()}
+  if(d.concref){toast('Actualisation…');return concRefresh()}
+  if(d.ibtab){if(S.conc.tab==='faq')faqSync();S.conc.tab=d.ibtab;return render()}
+  if(d.faqadd){faqSync();S.conc.faq.push({q:'',a:''});$('#faqList').insertAdjacentHTML('beforeend',faqRow(S.conc.faq[S.conc.faq.length-1],S.conc.faq.length-1));const r=$('#faqList').lastElementChild;r&&r.querySelector('.fq').focus();return}
+  if(d.faqdel!==undefined){faqSync();S.conc.faq.splice(+d.faqdel,1);$('#faqList').innerHTML=S.conc.faq.map((x,i)=>faqRow(x,i)).join('');return}
+  if(d.vsq){return vsSend(d.vsq)}
+  if(d.vsct){if(d.vsct==='skip'){ls.set('vsContact',{skip:1});return vsDraw()}const n=($('#vsCn')||{}).value?.trim()||'',ph=($('#vsCp')||{}).value?.trim()||'';if(!n&&!ph)return;ls.set('vsContact',{n,ph});return vsSend(`Je m'appelle ${n||'—'}${ph?', mon numéro : '+ph:''}`,{name:n,phone:ph})}
   if(d.shopview){S.shop.view=S.shop.view==='list'?'grid':'list';ls.set('shopView',S.shop.view);return render()}
   if(d.want){return shopWant(d.want)}
   if(d.shoprec){const L=ls.get('shopRecs',[]),on=L.includes(d.shoprec);ls.set('shopRecs',on?L.filter(x=>x!==d.shoprec):[...L,d.shoprec]);if(!on){try{fx.like&&fx.like()}catch(_){}toast('Merci pour ta recommandation ❤')}await shopBump(d.shoprec,on?'unrec':'rec');return render()}
@@ -3049,32 +3081,78 @@ async function shopShare(){const n=(S.shop.items||[]).filter(x=>x.active!==false
   try{if(navigator.share){await navigator.share({title:'Les Pépites Koris',text,url});return}}catch(e){if(e?.name==='AbortError')return}
   try{await navigator.clipboard.writeText(text);toast('Lien du catalogue copié ✓')}catch(_){window.open('https://wa.me/?text='+encodeURIComponent(text),'_blank')}}
 
-/* =================== Messagerie d'accueil (page /discuter) avec réponses IA =================== */
-const CONC_URL=APP_URL.replace(/\/?$/,'/')+'discuter/';
-S.conc={cfg:null,chats:null,err:''};
+/* =================== Messagerie d'accueil : visiteurs ↔ IA + administrateur =================== */
+const VISIT_LINK=(()=>{try{const q=new URLSearchParams(location.search);return {on:q.has('discuter'),src:(q.get('src')||q.get('discuter')||'').slice(0,60),used:false}}catch(_){return {on:false,src:'',used:false}}})();
+const CONC_URL=APP_URL.replace(/\/?$/,'/')+'?discuter';
+const ACC_FN=SB_URL+'/functions/v1/accueil';
+S.conc={cfg:null,chats:null,err:'',tab:'conv',faq:null};
+/* ---------- côté visiteur (route « visit », sans compte) ---------- */
+const VS={vid:null,msgs:null,last:0,cfg:{name:'Koris',welcome:'Bonjour 👋 Comment puis-je vous aider ?'},busy:false,iv:0,cfgDone:false};
+const vsUuid=()=>crypto.randomUUID?crypto.randomUUID():'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,c=>{const r=Math.random()*16|0;return(c==='x'?r:r&3|8).toString(16)});
+function vsInit(){if(VS.msgs)return;VS.vid=ls.get('vsVid','')||vsUuid();ls.set('vsVid',VS.vid);VS.msgs=ls.get('vsMsgs',[]);VS.last=ls.get('vsLast',0);
+  if(!VS.cfgDone){VS.cfgDone=true;vsCall({action:'config'}).then(c=>{VS.cfg={...VS.cfg,...c};if(S.route.v==='visit')vsDraw(true)}).catch(()=>{})}}
+async function vsCall(body){const r=await fetch(ACC_FN,{method:'POST',headers:{'Content-Type':'application/json',apikey:SB_KEY,Authorization:'Bearer '+SB_KEY},body:JSON.stringify(body)});if(!r.ok)throw new Error(r.status);return r.json()}
+const vsHm=t=>new Date(t).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
+function vVisit(){vsInit();const p=me();
+  return `<section class="vs"><header class="vs-hd"><button class="icon-btn" data-go="${p?(isActive(p)?'feed':'pay'):'onboard'}" aria-label="Retour">${I.back}</button><span class="vs-av" id="vsAv">${esc((VS.cfg.name||'K')[0].toUpperCase())}</span><div class="mid"><b id="vsNm">${esc(VS.cfg.name)}</b><small>En ligne · répond en quelques secondes</small></div><span class="vs-tag">Assistant IA</span></header>
+  <div class="vs-m" id="vsM" aria-live="polite"></div><p class="vs-note">Vous discutez avec un assistant virtuel. L'équipe peut aussi vous répondre ici.</p>
+  <form class="vs-f" id="vsF"><textarea id="vsT" rows="1" maxlength="1200" placeholder="Écrivez votre message…" aria-label="Votre message"></textarea><button id="vsB" aria-label="Envoyer" disabled>${I.send}</button></form></section>`}
+function vsDraw(head){const M=$('#vsM');if(!M)return;if(head){const n=$('#vsNm'),a=$('#vsAv');if(n)n.textContent=VS.cfg.name;if(a)a.textContent=(VS.cfg.name||'K').trim()[0].toUpperCase()}
+  const ct=ls.get('vsContact',null);
+  M.innerHTML=`<span class="vs-day">Aujourd'hui</span><div class="vb">${esc(VS.cfg.welcome)}</div>`+
+   (VS.msgs.length?'':`<div class="vs-sg">${['Comment ça marche ?','Quels sont vos prix ?',"Je veux m'inscrire"].map(s=>`<button type="button" data-vsq="${esc(s)}">${esc(s)}</button>`).join('')}</div>`)+
+   VS.msgs.map(m=>`<div class="vb ${m.role==='user'?'me':m.role==='admin'?'adm':''}">${m.role==='admin'?`<em>${esc(VS.cfg.name)} · équipe</em>`:''}${esc(m.text)}<small>${vsHm(m.at)}</small></div>`).join('')+
+   (VS.msgs.filter(m=>m.role==='user').length>=2&&!ct?`<div class="vs-ct"><b>Pour qu'on puisse vous recontacter (facultatif)</b><div class="r"><input id="vsCn" placeholder="Prénom" maxlength="60" value="${esc(me()?.firstName||'')}"><input id="vsCp" type="tel" placeholder="Numéro WhatsApp" maxlength="20" inputmode="tel"></div><div class="r" style="justify-content:flex-end"><button type="button" class="mini" data-vsct="skip">Plus tard</button><button type="button" class="mini solid" data-vsct="send">Envoyer</button></div></div>`:'')+
+   (VS.busy?'<div class="vb vs-typ"><i></i><i></i><i></i></div>':'');
+  requestAnimationFrame(()=>{M.scrollTop=M.scrollHeight})}
+function vsBind(){vsDraw(true);const T=$('#vsT'),B=$('#vsB'),F=$('#vsF');if(!T)return;
+  const fit=()=>{T.style.height='auto';T.style.height=Math.min(120,T.scrollHeight)+'px';B.disabled=!T.value.trim()};T.oninput=fit;
+  T.onkeydown=e=>{if(e.key==='Enter'&&!e.shiftKey&&window.innerWidth>700){e.preventDefault();vsSend(T.value)}};F.onsubmit=e=>{e.preventDefault();vsSend(T.value)};
+  clearInterval(VS.iv);VS.iv=setInterval(vsPoll,6000)}
+async function vsSend(text,extra){text=String(text||'').trim();if(!text||VS.busy)return;VS.msgs.push({role:'user',text,at:Date.now()});ls.set('vsMsgs',VS.msgs.slice(-150));
+  const T=$('#vsT');if(T){T.value='';T.style.height='auto'}const B=$('#vsB');if(B)B.disabled=true;VS.busy=true;vsDraw();
+  try{const r=await vsCall({action:'send',vid:VS.vid,text,src:VISIT_LINK.src||(me()?'membre':'direct'),...(extra||{})});if(r.reply){VS.msgs.push({role:'ai',text:r.reply,at:r.at||Date.now()});VS.last=Math.max(VS.last,r.at||0)}}
+  catch(_){VS.msgs.push({role:'ai',text:"Oups, le message n'est pas passé. Vérifiez votre connexion et réessayez.",at:Date.now(),err:1})}
+  VS.busy=false;ls.set('vsMsgs',VS.msgs.slice(-150));ls.set('vsLast',VS.last);vsDraw()}
+async function vsPoll(){if(S.route.v!=='visit'){clearInterval(VS.iv);return}if(document.hidden||VS.busy)return;
+  try{const r=await vsCall({action:'poll',vid:VS.vid,since:VS.last});let n=0;(r.msgs||[]).forEach(m=>{if(!VS.msgs.some(x=>x.at===m.at&&x.text===m.text)){VS.msgs.push(m);n++}VS.last=Math.max(VS.last,m.at)});if(n){ls.set('vsMsgs',VS.msgs.slice(-150));ls.set('vsLast',VS.last);vsDraw()}}catch(_){}}
+/* ---------- côté administrateur (route « inbox ») ---------- */
 async function concLoad(){if(!S.owner)return;if(!S.be?.sb){S.conc.cfg={};S.conc.chats=[];S.conc.err='demo';return}
   try{const [a,b]=await Promise.all([S.be.sb.from('concierge_cfg').select('data').eq('id','main').maybeSingle(),S.be.sb.from('visit_chats').select('id,name,phone,src,msgs,ai,unread,updated_at').order('updated_at',{ascending:false}).limit(150)]);
-    if(a.error||b.error)throw a.error||b.error;S.conc.cfg=a.data?.data||{};S.conc.chats=b.data||[];S.conc.err=''}catch(_){S.conc.cfg={};S.conc.chats=[];S.conc.err='setup'}}
-function concRefresh(){concLoad().then(()=>{const el=$('#admConc');if(el)el.innerHTML=admConcHtml()})}
+    if(a.error||b.error)throw a.error||b.error;S.conc.cfg=a.data?.data||{};S.conc.chats=b.data||[];S.conc.err=''}catch(_){S.conc.cfg={};S.conc.chats=[];S.conc.err='setup'}
+  if(S.conc.faq===null)S.conc.faq=Array.isArray(S.conc.cfg.faq)?S.conc.cfg.faq.map(x=>({q:x.q||'',a:x.a||''})):[]}
+function concRefresh(){concLoad().then(()=>{if(S.route.v==='inbox'&&!$('#layer').innerHTML.trim()){const el=$('#ibBody');if(el){el.innerHTML=inboxBody();inboxBind()}}const b=$('#admInboxBtn');if(b)b.outerHTML=inboxBtn()})}
+const concUnread=()=>(S.conc.chats||[]).filter(x=>x.unread).length;
+const inboxBtn=()=>`<button class="btn btn-primary" id="admInboxBtn" data-go="inbox" style="width:100%;flex:none;height:50px">💬 Ouvrir la messagerie${concUnread()?` · ${concUnread()} non lue${concUnread()>1?'s':''}`:''}</button>`;
 const concLast=x=>{const m=(x.msgs||[]);return m[m.length-1]||{}};
-function admConcHtml(){const C=S.conc;if(C.cfg===null){setTimeout(concRefresh,0);return '<p class="hint" style="padding:8px 2px 0">Chargement…</p>'}
+function vInbox(){if(S.conc.cfg===null)setTimeout(concRefresh,0);
+  return `<section class="adm ib"><div class="top" style="padding-inline:0"><button class="icon-btn" data-go="admin" aria-label="Retour">${I.back}</button><h1 style="font-size:22px;flex:1;text-align:center">Messagerie</h1><button class="icon-btn" data-concref="1" aria-label="Actualiser">↻</button></div>
+  <div class="ib-tabs"><button type="button" class="${S.conc.tab==='conv'?'on':''}" data-ibtab="conv">Conversations</button><button type="button" class="${S.conc.tab==='faq'?'on':''}" data-ibtab="faq">Questions-réponses de l'IA</button></div>
+  <div id="ibBody">${S.conc.cfg===null?'<div class="loading" style="min-height:40vh"><div class="spin"></div></div>':inboxBody()}</div></section>`}
+function inboxBody(){const C=S.conc;
   if(C.err==='demo')return '<p class="hint" style="padding:8px 2px 0">Disponible sur le vrai site.</p>';
-  if(C.err)return `<div class="warn">Pour activer la messagerie, exécute une seule fois « koris-accueil.sql » dans Supabase (SQL Editor), puis installe la fonction « accueil » (voir les explications de Claude).</div>`;
-  const c=C.cfg||{},chats=C.chats||[],un=chats.filter(x=>x.unread).length;
-  return `<div class="cc-link"><b>${esc(CONC_URL.replace('https://',''))}</b><div class="pl-acts"><button type="button" class="mini" data-copy="${esc(CONC_URL+'?src=facebook')}">Copier le lien</button><a class="mini" href="${esc(CONC_URL)}" target="_blank" rel="noopener">Ouvrir</a></div>
-   <small class="hint" style="padding:0">Mets ce lien dans tes publications Facebook : les visiteurs arrivent directement dans la discussion, sans compte Koris.</small></div>
-  <form id="fConc" novalidate class="cc-form">
+  if(C.err)return `<div class="warn">Pour activer la messagerie, exécute une seule fois « koris-accueil.sql » dans Supabase (SQL Editor), puis installe la fonction « accueil ».</div>`;
+  const c=C.cfg||{};
+  if(C.tab==='faq')return `<form id="fConc" novalidate class="cc-form">
    <label class="sw" style="padding:0"><span class="ic">🤖</span><div><b>Réponses automatiques par l'IA</b><small>Désactive-les pour répondre toi-même à tous les messages</small></div><input type="checkbox" id="ccOn" ${c.on!==false?'checked':''}></label>
-   <label class="field"><span>Nom affiché</span><input id="ccName" maxlength="40" value="${esc(c.name||'Koris')}"></label>
+   <div style="display:flex;gap:10px"><label class="field" style="flex:1"><span>Nom affiché</span><input id="ccName" maxlength="40" value="${esc(c.name||'Koris')}"></label><label class="field" style="flex:1"><span>WhatsApp de l'équipe</span><input id="ccWa" type="tel" maxlength="20" value="${esc(c.wa||'')}" placeholder="243812345678"></label></div>
    <label class="field"><span>Message d'accueil</span><input id="ccWel" maxlength="200" value="${esc(c.welcome||'Bonjour 👋 Comment puis-je vous aider ?')}"></label>
-   <label class="field"><span>WhatsApp de l'équipe (ex. 243812345678)</span><input id="ccWa" type="tel" maxlength="20" value="${esc(c.wa||'')}"></label>
-   <label class="field"><span>Informations pour l'IA</span><textarea id="ccInfo" maxlength="12000" style="min-height:190px" placeholder="Écris tout ce que l'IA doit savoir : qui vous êtes, ce que vous proposez, les prix, comment s'inscrire ou payer, les horaires, les questions fréquentes et leurs réponses…">${esc(c.info||'')}</textarea></label>
-   <p class="err" id="ccErr"></p><button class="btn btn-primary" id="ccSave" style="width:100%;flex:none">Enregistrer</button></form>
-  <div class="cc-hd"><b>Conversations</b><span>${chats.length}${un?` · <i>${un} non lue${un>1?'s':''}</i>`:''}</span><button type="button" class="mini" data-concref="1">Actualiser</button></div>
-  ${chats.length?chats.map(x=>{const l=concLast(x);return `<button type="button" class="cc-row${x.unread?' un':''}" data-conc="${esc(x.id)}"><span class="av0">${esc((x.name||'V')[0].toUpperCase())}</span><span class="mid"><b>${esc(x.name||'Visiteur')}${x.phone?' · '+esc(x.phone):''}</b><small>${l.role==='user'?'':l.role==='admin'?'Toi : ':'IA : '}${esc(String(l.text||'').slice(0,70))}</small></span><span class="tm">${ago(Date.parse(x.updated_at))}${x.src?`<br>${esc(x.src)}`:''}</span></button>`}).join(''):'<p class="hint" style="padding:8px 2px 0">Aucune conversation pour l\'instant.</p>'}`}
-async function concSave(){const er=$('#ccErr'),b=$('#ccSave');const data={on:$('#ccOn').checked,name:$('#ccName').value.trim().slice(0,40)||'Koris',welcome:$('#ccWel').value.trim().slice(0,200),wa:$('#ccWa').value.replace(/\D/g,'').slice(0,15),info:$('#ccInfo').value.trim().slice(0,12000)};
-  b.disabled=true;er.textContent='';try{const {error}=await S.be.sb.from('concierge_cfg').upsert({id:'main',data,updated_at:new Date().toISOString()});if(error)throw error;S.conc.cfg=data;toast('Messagerie enregistrée ✓')}catch(_){er.textContent="L'enregistrement a échoué. As-tu exécuté koris-accueil.sql ?"}b.disabled=false}
-document.addEventListener('submit',e=>{if(e.target&&e.target.id==='fConc'){e.preventDefault();concSave()}},true);
+   <p class="ib-lbl">Questions-réponses <small>${C.faq.length} · l'IA s'en sert pour répondre</small></p>
+   <div id="faqList">${C.faq.map((x,i)=>faqRow(x,i)).join('')}</div>
+   <button type="button" class="btn btn-ghost" data-faqadd="1" style="width:100%;flex:none;height:46px">${I.plus}Ajouter une question</button>
+   <label class="field"><span>Informations générales (facultatif)</span><textarea id="ccInfo" maxlength="8000" style="min-height:120px" placeholder="Qui vous êtes, ce que vous proposez, horaires, moyens de paiement…">${esc(c.info||'')}</textarea></label>
+   <p class="err" id="ccErr"></p><button class="btn btn-primary" id="ccSave" style="width:100%;flex:none">Enregistrer</button></form>`;
+  const chats=C.chats||[];
+  return `<div class="cc-link"><b>${esc(CONC_URL.replace('https://',''))}</b><div class="pl-acts"><button type="button" class="mini" data-copy="${esc(CONC_URL+'=facebook')}">Copier le lien</button><a class="mini" href="${esc(CONC_URL)}" target="_blank" rel="noopener">Tester</a></div>
+   <small class="hint" style="padding:0">Mets ce lien dans tes publications Facebook : les visiteurs écrivent directement, sans compte Koris. L'IA et toi leur répondez ici.</small></div>
+   ${chats.length?chats.map(x=>{const l=concLast(x);return `<button type="button" class="cc-row${x.unread?' un':''}" data-conc="${esc(x.id)}"><span class="av0">${esc((x.name||'V')[0].toUpperCase())}</span><span class="mid"><b>${esc(x.name||'Visiteur')}${x.phone?' · '+esc(x.phone):''}${x.ai===false?' · <i class="mn">Toi</i>':''}</b><small>${l.role==='user'?'':l.role==='admin'?'Toi : ':'IA : '}${esc(String(l.text||'').slice(0,70))}</small></span><span class="tm">${ago(Date.parse(x.updated_at))}${x.src?`<br>${esc(x.src)}`:''}</span></button>`}).join(''):'<div class="shp-empty" style="margin-top:14px"><span>💬</span><b>Aucune conversation pour l\'instant</b><small>Partage le lien ci-dessus dans tes publications.</small></div>'}`}
+const faqRow=(x,i)=>`<div class="faq-r" data-fi="${i}"><div class="h"><span>${i+1}</span><button type="button" data-faqdel="${i}" aria-label="Supprimer">${I.trash}</button></div><input class="fq" maxlength="300" placeholder="Question (ex. Combien coûte l'inscription ?)" value="${esc(x.q)}"><textarea class="fa" maxlength="1200" placeholder="Réponse que l'IA doit donner">${esc(x.a)}</textarea></div>`;
+function faqSync(){document.querySelectorAll('#faqList .faq-r').forEach(r=>{const i=+r.dataset.fi;if(S.conc.faq[i]){S.conc.faq[i].q=r.querySelector('.fq').value;S.conc.faq[i].a=r.querySelector('.fa').value}})}
+function inboxBind(){}
+async function concSave(){faqSync();const er=$('#ccErr'),b=$('#ccSave');const faq=S.conc.faq.map(x=>({q:x.q.trim().slice(0,300),a:x.a.trim().slice(0,1200)})).filter(x=>x.q&&x.a).slice(0,120);
+  const data={on:$('#ccOn').checked,name:$('#ccName').value.trim().slice(0,40)||'Koris',welcome:$('#ccWel').value.trim().slice(0,200),wa:$('#ccWa').value.replace(/\D/g,'').slice(0,15),info:$('#ccInfo').value.trim().slice(0,8000),faq};
+  b.disabled=true;er.textContent='';try{const {error}=await S.be.sb.from('concierge_cfg').upsert({id:'main',data,updated_at:new Date().toISOString()});if(error)throw error;S.conc.cfg=data;S.conc.faq=faq.map(x=>({...x}));toast(`Enregistré ✓ · ${faq.length} question${faq.length>1?'s':''}-réponse${faq.length>1?'s':''}`);$('#ibBody').innerHTML=inboxBody()}catch(_){er.textContent="L'enregistrement a échoué. As-tu exécuté koris-accueil.sql ?"}b.disabled=false}
+document.addEventListener('submit',e=>{if(e.target&&e.target.id==='fConc'){e.preventDefault();concSave()}else if(e.target&&e.target.id==='vsF'){e.preventDefault()}},true);
 function openConc(id){const x=(S.conc.chats||[]).find(y=>y.id===id);if(!x)return;const L=$('#layer');
   const draw=()=>{const box=$('#ccMsgs');if(!box)return;box.innerHTML=(x.msgs||[]).map(m=>`<div class="ccb ${m.role}">${m.role==='admin'?'<em>Toi</em>':m.role==='ai'?'<em>IA</em>':''}${esc(m.text)}<small>${new Date(m.at).toLocaleString('fr-FR',{dateStyle:'short',timeStyle:'short'})}</small></div>`).join('');box.scrollTop=box.scrollHeight};
   const wa=String(x.phone||'').replace(/\D/g,'').replace(/^0/,'243');
@@ -3084,8 +3162,8 @@ function openConc(id){const x=(S.conc.chats||[]).find(y=>y.id===id);if(!x)return
   <div class="cc-msgs" id="ccMsgs"></div>
   <label class="sw" style="padding:0"><span class="ic">🤖</span><div><b>L'IA répond dans cette conversation</b><small>Désactive pour continuer toi-même</small></div><input type="checkbox" id="ccAi" ${x.ai!==false?'checked':''}></label>
   <div class="cc-rep"><input id="ccTxt" maxlength="1200" placeholder="Répondre au visiteur…"><button class="btn btn-primary" id="ccSend" style="flex:none;height:46px;padding:0 16px">${I.send}</button></div></div></div>`;
-  draw();$('#sbg').onclick=e=>{if(e.target.id==='sbg')L.innerHTML=''};
-  const upd=async patch=>{const {error}=await S.be.sb.from('visit_chats').update(patch).eq('id',id);if(error)throw error;Object.assign(x,patch);const el=$('#admConc');if(el)el.innerHTML=admConcHtml()};
+  draw();$('#sbg').onclick=e=>{if(e.target.id==='sbg'){L.innerHTML='';if(S.route.v==='inbox')render()}};
+  const upd=async patch=>{const {error}=await S.be.sb.from('visit_chats').update(patch).eq('id',id);if(error)throw error;Object.assign(x,patch)};
   if(x.unread)upd({unread:false}).catch(()=>{});
   $('#ccAi').onchange=e=>upd({ai:e.target.checked}).then(()=>toast(e.target.checked?'IA activée pour ce visiteur':'Tu réponds toi-même à ce visiteur')).catch(()=>toast('Impossible pour le moment'));
   $('#ccSend').onclick=async()=>{const t=$('#ccTxt').value.trim();if(!t)return;const b=$('#ccSend');b.disabled=true;
@@ -3190,7 +3268,7 @@ function actFollow(prev,m){const uid=S.be?.uid;if(!prev||!uid||!me())return;
   Object.entries(m).forEach(([id,x])=>{if(id===uid||!x||!prev[id])return;if(followingOf(x).includes(uid)&&!followingOf(prev[id]).includes(uid))actPush({key:'fo'+id+'-'+Date.now(),t:'fo',uid:id,at:Date.now()})})}
 /* =================== Démarrage =================== */
 let UNSUBS=[];
-function restoreRoute(){if(SHOP_LINK.on&&!SHOP_LINK.used){SHOP_LINK.used=true;return SHOP_LINK.item?{v:'shopitem',param:SHOP_LINK.item}:{v:'shop'}}const p=me();if(!p||!p.firstName)return {v:'onboard'};if(!isActive(p))return {v:'pay'};
+function restoreRoute(){if(VISIT_LINK.on&&!VISIT_LINK.used){VISIT_LINK.used=true;return {v:'visit'}}if(SHOP_LINK.on&&!SHOP_LINK.used){SHOP_LINK.used=true;return SHOP_LINK.item?{v:'shopitem',param:SHOP_LINK.item}:{v:'shop'}}const p=me();if(!p||!p.firstName)return {v:'onboard'};if(!isActive(p))return {v:'pay'};
   const lr=ls.get('lastRoute',null);if(lr&&lr.v&&['feed','discover','messages','me','chat','profile','about','admin','certif','shop','shopitem'].includes(lr.v)&&(!['chat','profile'].includes(lr.v)||S.profiles[lr.param]))return lr.param?{v:lr.v,param:lr.param}:{v:lr.v};return {v:'feed'}}
 function attachBe(firstRoute){UNSUBS.forEach(f=>{try{f()}catch(_){}});UNSUBS=[];const add=f=>{if(typeof f==='function')UNSUBS.push(f)};
   add(S.be.onHelpCfg(c=>{S.helpCfg=c}));
