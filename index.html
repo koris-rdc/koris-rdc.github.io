@@ -1490,35 +1490,10 @@ header.top{margin-inline:-16px;padding-inline:16px;top:0;padding-top:calc(18px +
 .vs-av.lg,.vg-logo.lg{padding:0;overflow:visible;background:#0B1E1B!important}
 .vs-av.lg img,.vg-logo.lg img{width:100%;height:100%;object-fit:cover;border-radius:inherit;display:block}
 /* ===== Thème animé : maille bordeaux en mouvement ===== */
-.mesh{position:absolute;inset:0;overflow:hidden;z-index:0;pointer-events:none;background:#050102}
-.wa.fx>.mesh{position:fixed;top:0;bottom:0;left:50%;width:min(460px,100%);transform:translateX(-50%)}
-.mesh i{position:absolute;border-radius:50%;will-change:transform;mix-blend-mode:screen;opacity:.8}
-.mesh .m1{width:95%;height:55%;left:-25%;top:-8%;background:radial-gradient(closest-side,rgba(226,82,109,.95),rgba(158,27,54,.55) 45%,transparent 72%);animation:mz1 17s ease-in-out infinite alternate}
-.mesh .m2{width:90%;height:50%;right:-30%;top:28%;background:radial-gradient(closest-side,rgba(255,120,140,.85),rgba(170,24,52,.5) 45%,transparent 72%);animation:mz2 21s ease-in-out infinite alternate}
-.mesh .m3{width:85%;height:48%;left:-20%;bottom:-6%;background:radial-gradient(closest-side,rgba(190,30,62,.9),rgba(110,15,34,.45) 50%,transparent 72%);animation:mz3 19s ease-in-out infinite alternate}
-.mesh .m4{width:60%;height:34%;right:-10%;bottom:12%;background:radial-gradient(closest-side,rgba(255,160,175,.55),transparent 70%);animation:mz4 13s ease-in-out infinite alternate}
-.mesh b{position:absolute;inset:0;background-image:radial-gradient(rgba(0,0,0,.8) 1.15px,transparent 1.55px),radial-gradient(rgba(255,255,255,.05) .7px,transparent 1px),linear-gradient(rgba(5,1,2,.42),rgba(5,1,2,.52));background-size:5px 5px,5px 5px,100% 100%;background-position:0 0,2.5px 2.5px,0 0;box-shadow:inset 0 0 120px 40px rgba(5,1,2,.85)}
-@keyframes mz1{0%{transform:translate(0,0) scale(1)}50%{transform:translate(35%,18%) scale(1.15)}100%{transform:translate(10%,45%) scale(.9)}}
-@keyframes mz2{0%{transform:translate(0,0) scale(1.05)}50%{transform:translate(-40%,-25%) scale(.9)}100%{transform:translate(-15%,30%) scale(1.2)}}
-@keyframes mz3{0%{transform:translate(0,0) scale(1)}50%{transform:translate(45%,-30%) scale(1.2)}100%{transform:translate(20%,-55%) scale(.95)}}
-@keyframes mz4{0%{transform:translate(0,0) scale(.9)}100%{transform:translate(-60%,-80%) scale(1.25)}}
-@media (prefers-reduced-motion:reduce){.mesh i{animation:none}}
-.fx>:not(.mesh):not(.wa-menu-bg){position:relative;z-index:1}
-.vs.fx,.vs-gate.fx,.wa.fx,.wa-chat.fx{background:#050102!important}
-.vs-gate.fx .vg-glow{display:none}
-.vs-gate.fx .vg-card{background:rgba(18,8,11,.78);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
-.vs.fx .vs-hd,.vs.fx .vs-f,.wa-chat.fx .wa-ch,.wa-chat.fx .wa-in{background:rgba(8,3,5,.62);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
-.wa-chat.fx .wa-mode-note{background:rgba(8,3,5,.5)}
-.wa-chat.fx .wa-msgs{background:transparent}
-.vs.fx .vb:not(.me),.wa-chat.fx .wb.in{background:rgba(20,10,13,.88)}
-.wa.fx .wa-q,.wa.fx .wa-ib{background:rgba(26,12,16,.75)}
-.wa.fx .wa-row,.wa.fx .wa-arch{border-color:rgba(255,255,255,.07)}
-.vs.fx .vs-day,.wa-chat.fx .wa-day{background:rgba(20,10,13,.8)}
 .vg-card label i{font-style:normal;font-weight:500;color:#8E747A}
 .vg-err{min-height:16px;font-size:12.5px;color:#FF8A9E;margin:-2px 2px 4px}
 .vg-hint{font-size:11.5px;color:#8E747A;margin:-2px 2px 4px}
 .vg-card form label[for=vsGp]{margin-top:4px}
-.wa.fx .wa-mid b,.wa.fx .wa-h,.wa.fx .wa-arch b{text-shadow:0 1px 8px rgba(0,0,0,.6)}.wa.fx .wa-mid small{color:#B9A2A8}
 /* ===== Messagerie aux couleurs de l'application Koris (vert nuit, citron, turquoise) ===== */
 .vs,.vs-gate,.wa,.wa-chat{--kg:#A4C833;--kt:#34A486;--kbg:#020907;--ksf:#091815;--kln:#122722;--kmu:#74938B;--kin:#081412}
 .vs{background:#020907 radial-gradient(130% 55% at 50% -12%,rgba(52,164,134,.10),transparent 62%)!important}
@@ -1569,17 +1544,6 @@ header.top{margin-inline:-16px;padding-inline:16px;top:0;padding-top:calc(18px +
 .wa-chat .wa-in input{background:#0C211C!important}.wa-chat .wa-in button{background:#A4C833!important;color:#020C0B!important}
 .wa-chat .wa-menu{background:#0C211C!important}.wa-chat .wa-menu button,.wa-chat .wa-menu a{border-color:#162D28!important}
 /* thème animé aux couleurs Koris, plus sombre */
-.mesh{background:#020806!important}
-.mesh .m1{background:radial-gradient(closest-side,rgba(52,164,134,.85),rgba(22,98,81,.45) 45%,transparent 72%)!important}
-.mesh .m2{background:radial-gradient(closest-side,rgba(164,200,51,.7),rgba(57,116,40,.35) 45%,transparent 72%)!important}
-.mesh .m3{background:radial-gradient(closest-side,rgba(32,142,117,.85),rgba(8,55,47,.4) 50%,transparent 72%)!important}
-.mesh .m4{background:radial-gradient(closest-side,rgba(200,226,89,.45),transparent 70%)!important}
-.mesh i{opacity:.62!important}
-.mesh b{background-image:radial-gradient(rgba(0,0,0,.82) 1.15px,transparent 1.55px),radial-gradient(rgba(255,255,255,.04) .7px,transparent 1px),linear-gradient(rgba(2,8,6,.66),rgba(2,8,6,.74))!important;box-shadow:inset 0 0 120px 40px rgba(2,8,6,.9)!important}
-.vs.fx,.vs-gate.fx,.wa.fx,.wa-chat.fx{background:#020806!important}
-.vs.fx .vs-hd,.vs.fx .vs-f,.wa-chat.fx .wa-ch,.wa-chat.fx .wa-in{background:rgba(2,8,6,.7)!important}
-.vs.fx .vb:not(.me),.wa-chat.fx .wb.in{background:rgba(9,24,21,.92)!important}
-.vs-gate.fx .vg-card{background:rgba(8,23,20,.82)!important}
 /* ===== Police (proche de Batica) et disposition des conversations ===== */
 .vs,.vs-gate,.wa,.wa-chat{font-family:'Sora','DM Sans',system-ui,sans-serif!important;letter-spacing:-.01em}
 .vs-gate h1,.wa-h,.vs .vs-hd b,.wa-who b,.wa-faq .wa-top h1,.vg-brand b{font-family:'Sora',sans-serif!important;font-weight:800;letter-spacing:-.035em}
@@ -3392,10 +3356,7 @@ async function shopShare(){const n=(S.shop.items||[]).filter(x=>x.active!==false
   try{await navigator.clipboard.writeText(text);toast('Lien du catalogue copié ✓')}catch(_){window.open('https://wa.me/?text='+encodeURIComponent(text),'_blank')}}
 
 /* =================== Messagerie d'accueil : visiteurs ↔ IA + administrateur =================== */
-/* Thème animé « maille bordeaux » : en aperçu seulement (?theme=anime pour l'activer sur ce téléphone, ?theme=normal pour l'enlever) */
-const MESH=(()=>{try{localStorage.removeItem('koris:mesh');return new URLSearchParams(location.search).get('theme')==='anime'}catch(_){return false}})();
-const meshOn=()=>MESH||!!(S.conc&&S.conc.cfg&&S.conc.cfg.mesh)||!!(typeof VS!=='undefined'&&VS.cfg&&VS.cfg.mesh);
-const meshHtml=()=>meshOn()?'<div class="mesh" aria-hidden="true"><i class="m1"></i><i class="m2"></i><i class="m3"></i><i class="m4"></i><b></b></div>':'';
+const meshOn=()=>false,meshHtml=()=>'';
 const VISIT_LINK=(()=>{try{const q=new URLSearchParams(location.search);return {on:q.has('discuter'),src:(q.get('src')||q.get('discuter')||'').slice(0,60),used:false,fresh:q.has('nouveau')}}catch(_){return {on:false,src:'',used:false}}})();
 const CONC_URL=APP_URL.replace(/\/?$/,'/')+'?discuter';
 const ACC_FN=SB_URL+'/functions/v1/accueil';
@@ -3422,7 +3383,7 @@ async function vsCall(body,ms){let err;for(let i=accIx;i<ACC_FNS.length;i++){
   throw err||new Error('fn')}
 const vsHm=t=>new Date(t).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
 function vVisit(){vsInit();const p=me();
-  if(!vsNameOk(VS.name))return `<section class="vs-gate${meshOn()?' fx':''}">${meshHtml()}<div class="vg-glow"></div><div class="vg-card">
+  if(!vsNameOk(VS.name))return `<section class="vs-gate"><div class="vg-glow"></div><div class="vg-card">
     <div class="vg-brand"><span class="vg-logo lg"><img src="/icon-192-v2.png" alt="Koris"></span><div><b>${esc(VS.cfg.name||'Koris')}</b><small><i></i>En ligne · répond en quelques secondes</small></div></div>
     <div class="vg-step"><span>Avant de commencer</span><em><b></b></em></div>
     <h1>Qui êtes-vous ?</h1><p>Écrivez votre nom suivi de <b>2 chiffres</b> de votre choix. Retenez-les : avec le même nom et les mêmes chiffres, vous retrouvez votre discussion, même sur un autre téléphone.</p>
@@ -3432,7 +3393,7 @@ function vVisit(){vsInit();const p=me();
     <small class="vg-hint">Pour qu'on puisse vous écrire sur WhatsApp en cas de besoin.</small>
     <button id="vsGb" ${vsNameOk(VS.name)?'':'disabled'}>Accéder à la messagerie</button></form>
     <small class="vg-foot">🔒 Pas besoin de compte · votre nom reste entre vous et l'équipe</small></div></section>`;
-  return `<section class="vs${meshOn()?' fx':''}">${meshHtml()}<header class="vs-hd"><button class="icon-btn" data-go="${p?(isActive(p)?'feed':'pay'):'onboard'}" aria-label="Retour">${I.back}</button><span class="vs-av lg" id="vsAv"><img src="/icon-192-v2.png" alt="Koris"></span><div class="mid"><b id="vsNm">${esc(VS.cfg.name)}</b><small>En ligne · répond en quelques secondes</small></div><span class="vs-tag">Assistant IA</span></header>
+  return `<section class="vs"><header class="vs-hd"><button class="icon-btn" data-go="${p?(isActive(p)?'feed':'pay'):'onboard'}" aria-label="Retour">${I.back}</button><span class="vs-av lg" id="vsAv"><img src="/icon-192-v2.png" alt="Koris"></span><div class="mid"><b id="vsNm">${esc(VS.cfg.name)}</b><small>En ligne · répond en quelques secondes</small></div><span class="vs-tag">Assistant IA</span></header>
   <div class="vs-m" id="vsM" aria-live="polite"></div><p class="vs-note">Vous discutez avec un assistant virtuel. L'équipe peut aussi vous répondre ici.</p>
   <form class="vs-f" id="vsF"><label class="vs-ph" for="vsP" aria-label="Envoyer une photo" title="Envoyer une photo">${I.camera}</label><input type="file" id="vsP" accept="image/*" class="fpick"><textarea id="vsT" rows="1" maxlength="1200" placeholder="Écrivez votre message…" aria-label="Votre message"></textarea><button id="vsB" aria-label="Enregistrer un vocal">${GKI.mic}</button><div class="vs-rec"><button type="button" class="vs-rx" data-vsrec="cancel" aria-label="Annuler le vocal">✕</button><span class="vs-dot"></span><b id="vsRecT">0:00</b><span class="vs-rl">Parlez… (1 min max)</span><button type="button" class="vs-rs" data-vsrec="send" aria-label="Envoyer le vocal">${I.send}</button></div></form></section>`}
 function vsDraw(head){const M=$('#vsM');if(!M)return;if(head){const n=$('#vsNm'),a=$('#vsAv');if(n)n.textContent=VS.cfg.name;}
@@ -3562,7 +3523,7 @@ function vInbox(){if(S.conc.cfg===null)setTimeout(concRefresh,0);clearInterval(S
   if(C.tab==='faq')return `<section class="wa wa-faq"><div class="wa-top"><button class="wa-ib" data-ibtab="conv" aria-label="Retour">${I.back}</button><h1>🧠 Nourrir l'IA</h1><span></span></div><div id="ibBody">${C.cfg===null?'<div class="loading" style="min-height:40vh"><div class="spin"></div></div>':inboxBody()}</div></section>`;
   const arch=(C.chats||[]).filter(x=>ibIs('arch',x.id)),nArch=arch.length,unArch=arch.filter(x=>x.unread).length,f=C.flt||'all';
   const SEL=C.sel;
-  return `<section class="wa${meshOn()?' fx':''}${SEL?' selm':''}">${meshHtml()}${SEL?`<div class="wa-top wa-selbar"><button class="wa-ib" data-ibsel="off" aria-label="Annuler la sélection">✕</button><b>${SEL.size} sélectionnée${SEL.size>1?'s':''}</b>
+  return `<section class="wa${SEL?' selm':''}">${SEL?`<div class="wa-top wa-selbar"><button class="wa-ib" data-ibsel="off" aria-label="Annuler la sélection">✕</button><b>${SEL.size} sélectionnée${SEL.size>1?'s':''}</b>
     <div class="wa-acts"><button class="wa-ib" data-ibsel="all" aria-label="Tout sélectionner" title="Tout sélectionner">☑</button></div></div>`:`<div class="wa-top"><button class="wa-ib" data-go="feed" aria-label="Retour">${I.back}</button><span></span>
     <div class="wa-acts"><button class="wa-ib" data-ibsel="on" aria-label="Sélectionner plusieurs discussions" title="Sélectionner">☑</button><button class="wa-ib" data-iblink="1" aria-label="Mon lien">🔗</button><button class="wa-ib" data-ibtab="faq" aria-label="Nourrir l'IA">🧠</button><button class="wa-ib" data-concref="1" aria-label="Actualiser">↻</button></div></div>`}
    <h1 class="wa-h">${f==='arch'?'Archivées':'Discussions'}</h1>
@@ -3637,7 +3598,7 @@ function openConc(id){const x=(S.conc.chats||[]).find(y=>y.id===id);if(!x)return
     <div class="wa-who"><b>${esc(X.name||X.phone||'Visiteur')}</b><small>${esc([X.phone,X.src&&('via '+X.src)].filter(Boolean).join(' · ')||'Visiteur sans compte')}</small></div>
     <div class="wa-mode" role="group" aria-label="Qui répond ?"><button type="button" class="${ai?'on':''}" data-wx="ai">🤖 IA</button><button type="button" class="${ai?'':'on me'}" data-wx="me">👤 Moi</button></div>
     <button class="wa-ib" data-wx="menu" aria-label="Plus d'options">⋮</button>`};
-  L.innerHTML=`<div class="wa-chat${meshOn()?' fx':''}" role="dialog" aria-label="Conversation">${meshHtml()}<header class="wa-ch" id="waH">${head()}</header>
+  L.innerHTML=`<div class="wa-chat" role="dialog" aria-label="Conversation"><header class="wa-ch" id="waH">${head()}</header>
    <div class="wa-mode-note" id="waN"></div><div class="wa-msgs" id="ccMsgs"></div>
    <form class="wa-in" id="waF"><input id="ccTxt" maxlength="1200" placeholder="Écrire un message" autocomplete="off"><button id="ccSend" aria-label="Envoyer">${I.send}</button></form></div>`;
   const note=()=>{const n=$('#waN');if(n)n.innerHTML=fresh().ai!==false?"🤖 L'IA répond automatiquement. Touche <b>Moi</b> pour prendre la main.":"👤 Tu réponds toi-même. L'IA ne répond plus à cette personne."};
