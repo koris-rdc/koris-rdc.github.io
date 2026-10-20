@@ -111,13 +111,14 @@ Deno.serve(async (req) => {
 
 // --- Google Gemini (disponible en RDC) ---
 async function askGemini(key: string, system: string, msgs: any[], audio: { mime: string; data: string } | null = null): Promise<string> {
-  const models = [Deno.env.get("GEMINI_MODEL"), "gemini-flash-lite-latest", "gemini-flash-latest"].filter(Boolean) as string[];
-  const deadline = Date.now() + 9000; // réponse en moins de 10 secondes
+  // Plusieurs modèles : si l'un est saturé (limite gratuite) ou indisponible, on passe au suivant
+  const models = [Deno.env.get("GEMINI_MODEL"), "gemini-3.5-flash-lite", "gemini-3.1-flash-lite", "gemini-3.6-flash", "gemini-flash-lite-latest", "gemini-flash-latest", "gemini-3.8-flash"].filter(Boolean) as string[];
+  const deadline = Date.now() + 12000;
   const contents: any[] = msgs.map((m) => ({ role: m.role === "assistant" ? "model" : "user", parts: [{ text: m.content }] }));
   if (audio && contents.length) contents[contents.length - 1].parts.push({ inline_data: { mime_type: audio.mime, data: audio.data } });
   for (const model of models) {
     const left = deadline - Date.now();
-    if (left < 1500) break;
+    if (left < 1200) break;
     const ac = new AbortController();
     const to = setTimeout(() => ac.abort(), left);
     try {
