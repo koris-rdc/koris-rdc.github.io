@@ -2489,7 +2489,10 @@ function softRender(){
   if(S.route.v==='pay'){const p=me();if(isActive(p)&&S.route.param!=='preview'&&(S.lastPaySt==='pending'||p.pay?.status!=='pending')){toast('Paiement confirmé · Bienvenue sur Koris !');return go('feed')}const st=p?.pay?.status||'';if(st!==S.lastPaySt){S.lastPaySt=st;if(!S.route.repay)render()}return}
   if(S.route.v==='certif'){const st=(me()?.certified?'ok':me()?.cert?.status)||'';if(st!==S.lastCertSt){S.lastCertSt=st;if(!S.route.repay||st==='ok'){if(st==='ok'&&S.lastCertSt){fx.ok();toast('Tu es certifié !')}render()}}else checkHandle();return}
   if(S.route.v==='admin'){const a=$('#admList'),b=$('#admDone'),cc=$('#admCert');if(cc)cc.innerHTML=admCertHtml();if(a)a.innerHTML=admListHtml();if(b)b.innerHTML=admDoneHtml();return}
-if([...document.querySelectorAll('#app video')].some(v=>!v.paused&&!v.ended)){softRender.later=true;return}softRender.later=false;if(['signup','pay','chat'].includes(S.route.v)){if(S.route.v==='chat'){}return}render()}
+if(['inbox','visit','shop','shopitem'].includes(S.route.v))return; /* ces pages ne dépendent pas des mises à jour des membres : pas de rechargement intempestif */
+const ae=document.activeElement;if(ae&&/^(INPUT|TEXTAREA|SELECT)$/.test(ae.tagName)&&document.getElementById('app').contains(ae)){softRender.later=true;return}
+if($('#layer').innerHTML.trim()){softRender.later=true;return}
+if([...document.querySelectorAll('#app video')].some(v=>!v.paused&&!v.ended)){softRender.later=true;return}softRender.later=false;if(['signup','pay','chat'].includes(S.route.v)){if(S.route.v==='chat'){}return}const y=window.scrollY;render();if(y)window.scrollTo(0,y)}
 
 /* Orbe pulsant + ondes (écran d'accueil) */
 function sphere(cv){if(!cv)return null;const x=cv.getContext('2d'),W=cv.width,H=cv.height,cx=W/2,cy=H/2;let t=0,raf=0;const still=matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -2970,6 +2973,7 @@ document.addEventListener('click',async e=>{const t=e.target.closest('button,[da
     catch(_){t.disabled=false;t.textContent="J'ai payé · Envoyer";err.textContent="L'envoi a échoué. Vérifie ta connexion et réessaie."}}
 });
 document.addEventListener('ended',()=>{if(softRender.later)softRender()},true);
+document.addEventListener('focusout',()=>{setTimeout(()=>{if(softRender.later)softRender()},400)},true);
 document.addEventListener('keydown',e=>{const t=e.target;if((e.key==='Enter'||e.key===' ')&&t.matches?.('[role=button][data-go]')){e.preventDefault();t.click()}});
 document.addEventListener('input',e=>{if(e.target.id==='q'){S.route.q=e.target.value;S.route.focus=true;render()}});
 let pendingPhoto=null;
@@ -3203,7 +3207,8 @@ async function shopLoad(){const H=S.shop;
 function shopRefresh(){shopLoad().then(()=>{shopBadge();if(['shop','shopitem','feed'].includes(S.route.v)&&!$('#layer').innerHTML.trim())render()})}
 let shopBoot=false;function shopTick(){if(!S.be)return;if(!shopBoot){shopBoot=true;shopRefresh()}if(S.owner&&!shopTick.poll){shopTick.poll=setInterval(shopPoll,60000);if(S.shop.orders===null)setTimeout(shopRefresh,0)}}
 function shopBadge(){const o=S.shop.orders||[],seen=ls.get('shopSeen',0);S.shop.newN=o.filter(x=>x.status==='new'&&Date.parse(x.created_at)>seen).length}
-async function shopPoll(){if(!S.owner||document.hidden)return;const before=(S.shop.orders||[]).length?Date.parse(S.shop.orders[0].created_at):0;await shopLoad();
+async function shopPoll(){if(!S.owner||document.hidden)return;const before=(S.shop.orders||[]).length?Date.parse(S.shop.orders[0].created_at):0;
+  const sgOf=()=>JSON.stringify([(S.shop.orders||[]).map(x=>x.id+x.status),(S.shop.items||[]).map(x=>x.id+(x.updated_at||'')+(x.active!==false))]);const sg0=sgOf();await shopLoad();if(sgOf()===sg0){shopBadge();return}
   const o=S.shop.orders||[];const fresh=o.filter(x=>Date.parse(x.created_at)>before&&x.status==='new');shopBadge();
   if(fresh.length&&before){toast(`🛍️ Nouvelle commande : ${fresh[0].item_name}`);try{actSound('po');buzz&&buzz(30)}catch(_){}}
   if(S.route.v==='shop'&&!$('#layer').innerHTML.trim())render()}
@@ -3388,7 +3393,7 @@ async function shopShare(){const n=(S.shop.items||[]).filter(x=>x.active!==false
 
 /* =================== Messagerie d'accueil : visiteurs ↔ IA + administrateur =================== */
 /* Thème animé « maille bordeaux » : en aperçu seulement (?theme=anime pour l'activer sur ce téléphone, ?theme=normal pour l'enlever) */
-const MESH=(()=>{try{const q=new URLSearchParams(location.search).get('theme');if(q==='anime')localStorage.setItem('koris:mesh','1');if(q==='normal')localStorage.removeItem('koris:mesh');return localStorage.getItem('koris:mesh')==='1'}catch(_){return false}})();
+const MESH=(()=>{try{localStorage.removeItem('koris:mesh');return new URLSearchParams(location.search).get('theme')==='anime'}catch(_){return false}})();
 const meshOn=()=>MESH||!!(S.conc&&S.conc.cfg&&S.conc.cfg.mesh)||!!(typeof VS!=='undefined'&&VS.cfg&&VS.cfg.mesh);
 const meshHtml=()=>meshOn()?'<div class="mesh" aria-hidden="true"><i class="m1"></i><i class="m2"></i><i class="m3"></i><i class="m4"></i><b></b></div>':'';
 const VISIT_LINK=(()=>{try{const q=new URLSearchParams(location.search);return {on:q.has('discuter'),src:(q.get('src')||q.get('discuter')||'').slice(0,60),used:false,fresh:q.has('nouveau')}}catch(_){return {on:false,src:'',used:false}}})();
@@ -3585,7 +3590,10 @@ async function ibSel(k){const C=S.conc;
   document.addEventListener('pointermove',e=>{if(t&&(Math.abs(e.clientX-sx)>10||Math.abs(e.clientY-sy)>10))clr()},{passive:true});
   ['pointerup','pointercancel'].forEach(ev=>document.addEventListener(ev,()=>{clr();if(S.conc&&S.conc.lp)setTimeout(()=>{S.conc.lp=0},60)},{passive:true}));
   document.addEventListener('contextmenu',e=>{if(e.target.closest&&e.target.closest('.wa .wa-row'))e.preventDefault()})})();
-function ibLive(){if(S.route.v!=='inbox')return;const l=$('#ibList');if(l)l.innerHTML=ibRows();if(S.conc.open&&typeof S.conc.open.draw==='function')S.conc.open.draw()}
+function ibLive(){if(S.route.v!=='inbox')return;const l=$('#ibList');
+  const sig=(S.conc.chats||[]).map(x=>x.id+':'+x.updated_at+':'+(x.unread?1:0)+':'+(x.msgs||[]).length).join('|')+'#'+JSON.stringify(S.conc.meta||{});
+  if(l&&sig!==ibLive.sig){ibLive.sig=sig;const y=window.scrollY;l.innerHTML=ibRows();window.scrollTo(0,y)}
+  if(S.conc.open&&typeof S.conc.open.draw==='function')S.conc.open.draw()}
 function ibLinkSheet(){const u=CONC_URL+'=whatsapp',L=$('#layer');
   L.innerHTML=`<div class="sheet-bg" id="sbg"><div class="sheet wa-sheet" role="dialog" aria-label="Mon lien"><span class="grab"></span><h2 style="font-size:19px">🔗 Ton lien de discussion</h2>
    <div class="cc-link"><b>${esc(u.replace('https://',''))}</b><div class="pl-acts"><button type="button" class="mini" data-copy="${esc(u)}">Copier</button><a class="mini solid" href="https://wa.me/?text=${encodeURIComponent('💬 Une question ? Écris-nous ici, on te répond tout de suite 👉 '+u)}" target="_blank" rel="noopener">${I.wa}WhatsApp</a><a class="mini" href="${esc(CONC_URL+'=test')}" target="_blank" rel="noopener">Tester</a></div>
@@ -3617,7 +3625,7 @@ document.addEventListener('submit',e=>{if(e.target&&e.target.id==='fConc'){e.pre
 function openConc(id){const x=(S.conc.chats||[]).find(y=>y.id===id);if(!x)return;const L=$('#layer');
   const upd=async patch=>{const {error}=await S.be.sb.from('visit_chats').update(patch).eq('id',id);if(error)throw error;Object.assign(x,patch)};
   const fresh=()=>(S.conc.chats||[]).find(y=>y.id===id)||x;
-  const draw=()=>{const box=$('#ccMsgs');if(!box)return;const X=fresh();const near=box.scrollHeight-box.scrollTop-box.clientHeight<120;let lastDay='';
+  const draw=(force)=>{const box=$('#ccMsgs');if(!box)return;const X=fresh();const sg=(X.msgs||[]).map(m=>m.at+':'+String(m.text||'').length).join(',');if(!force&&draw.done&&sg===draw.sg)return;draw.sg=sg;const near=box.scrollHeight-box.scrollTop-box.clientHeight<120;let lastDay='';
     box.innerHTML=(X.msgs||[]).map((m,i)=>{const d=new Date(m.at),dk=d.toDateString();const sep=dk!==lastDay?`<span class="wa-day">${ibTime(m.at).includes(':')?"Aujourd'hui":ibTime(m.at)}</span>`:'';lastDay=dk;
       const ip=(String(m.text||'').match(IMG_RE)||[])[1],ap=(String(m.text||'').match(AUD_RE)||[])[1],tx=imgStrip(m.text).replace(/^📷 Photo envoyée$|^🎤 Message vocal \(\d+ s\)$/,'');
       const sideA=z=>z.role==='user'?'in':'out',g=grpPos(X.msgs,i,sideA),sd=sideA(m),f=g.f||!!sep;
