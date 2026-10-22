@@ -1,5 +1,5 @@
 /* Koris — fonctionnement hors ligne + notifications sur le téléphone */
-const CACHE='koris-v6';
+const CACHE='koris-v7';
 const SHELL=['/','/index.html','/manifest.webmanifest','/icon-192-v2.png','/icon-512-v2.png'];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(SHELL)).then(()=>self.skipWaiting()))});
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim()))});
@@ -14,7 +14,7 @@ self.addEventListener('push',e=>{let d={};try{d=e.data?e.data.json():{}}catch(_)
   e.waitUntil(self.clients.matchAll({type:'window',includeUncontrolled:true}).then(list=>{
     const visible=list.some(c=>c.visibilityState==='visible'&&c.focused);
     if(visible)return; /* Koris est déjà ouvert à l'écran : la notification apparaît dans l'app */
-    return self.registration.showNotification(title,{body:d.body||'',tag:d.tag||'koris',renotify:true,icon:'/icon-192-v2.png',badge:'/icon-192-v2.png',vibrate:[80,40,80],data:{url:d.url||'/'}})}))});
+    return self.registration.showNotification(title,{body:d.body||'',tag:d.tag||'koris',renotify:true,icon:'/icon-192-v2.png',badge:'/badge-96.png',vibrate:[80,40,80],data:{url:d.url||'/'}})}))});
 
 /* Toucher la notification : ouvre Koris sur la bonne conversation */
 self.addEventListener('notificationclick',e=>{e.notification.close();const url=(e.notification.data&&e.notification.data.url)||'/';

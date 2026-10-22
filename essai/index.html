@@ -3103,11 +3103,11 @@ async function pushSave(){try{if(!PUSH.ok()||Notification.permission!=='granted'
 async function pushEnable(){if(!PUSH.ok())return toast("Ce téléphone ne permet pas les notifications. Installe Koris sur l'écran d'accueil avec Chrome.");
   let perm=Notification.permission;if(perm==='default')perm=await Notification.requestPermission();
   if(perm!=='granted'){toast('Notifications bloquées : autorise-les dans les réglages de Chrome pour koris-rdc.github.io');return false}
-  ls.set('push',1);await pushSave();toast('Notifications activées ✓');try{const r=await navigator.serviceWorker.ready;r.showNotification('Koris',{body:'Les notifications sont activées 💚 Tu seras prévenu de tes nouveaux messages.',icon:'/icon-192-v2.png',badge:'/icon-192-v2.png',tag:'koris-hello'})}catch(_){}return true}
+  ls.set('push',1);await pushSave();toast('Notifications activées ✓');try{const r=await navigator.serviceWorker.ready;r.showNotification('Koris',{body:'Les notifications sont activées 💚 Tu seras prévenu de tes nouveaux messages.',icon:'/icon-192-v2.png',badge:'/badge-96.png',tag:'koris-hello'})}catch(_){}return true}
 function pushOff(){ls.set('push',0);(async()=>{try{const reg=await navigator.serviceWorker.ready,sub=await reg.pushManager.getSubscription();if(sub){try{await S.be.sb.from('push_subs').delete().eq('endpoint',sub.endpoint)}catch(_){}await sub.unsubscribe()}}catch(_){}})()}
 /* message reçu pendant que Koris est en arrière-plan : notification locale (même étiquette que celle du serveur, pas de doublon) */
 async function localNotify(title,body,tag,url){try{if(!PUSH.on()||document.visibilityState==='visible')return;const r=await navigator.serviceWorker.ready;
-  r.showNotification(title,{body,tag,renotify:true,icon:'/icon-192-v2.png',badge:'/icon-192-v2.png',data:{url},vibrate:[80,40,80]})}catch(_){}}
+  r.showNotification(title,{body,tag,renotify:true,icon:'/icon-192-v2.png',badge:'/badge-96.png',data:{url},vibrate:[80,40,80]})}catch(_){}}
 let NT_LAST=null;function chatWatch(a){try{const me_=S.be?.uid;if(!me_)return;const prev=NT_LAST;NT_LAST={};a.forEach(c=>NT_LAST[c.id]=c.lastAt||0);if(!prev)return;
   a.forEach(c=>{if(c.lastFrom&&c.lastFrom!==me_&&(c.lastAt||0)>(prev[c.id]||0)){const o=S.profiles[c.lastFrom]||{};localNotify('💬 '+(o.firstName||'Nouveau message'),String(c.lastText||'').slice(0,140),'chat-'+c.id,'/?chat='+c.lastFrom)}})}catch(_){}}
 /* ouvrir Koris depuis une notification */
