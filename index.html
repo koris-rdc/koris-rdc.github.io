@@ -3096,12 +3096,13 @@ window.addEventListener('popstate',e=>{const st=e.state||{};
     else if(hidAt&&Date.now()-hidAt>15000&&!document.querySelector('#layer .gk')){window.__kReload=1;try{localStorage.setItem('koris:seen','0')}catch(_){}location.reload()}else mark()})})();
 
 /* =================== Notifications sur le téléphone (barre du haut) =================== */
-const VAPID_PUB='BJXT2pmmq2lX5DXfyRxcylM_pTOhU1kyK467zdqcObgpoNXpmfmbpGFXo-K1xBnypCya24zn3lHKq3IGuV9Cu4w';
+const VAPID_PUB='BFmx3dffMmCYCaOZj2Biwe32Dxg8pIUPhCFOJD85cj5VU7DD4Jo6v--eK2P6lK1e0ub2rOC-JNMIiK90a2PoEb4';
 const PUSH={ok:()=>'serviceWorker' in navigator&&'PushManager' in window&&'Notification' in window,
   on:()=>PUSH.ok()&&Notification.permission==='granted'&&!!ls.get('push',0)};
 function b64u(s){const p='='.repeat((4-s.length%4)%4),b=atob((s+p).replace(/-/g,'+').replace(/_/g,'/'));return Uint8Array.from(b,c=>c.charCodeAt(0))}
 async function pushSave(){try{if(!PUSH.ok()||Notification.permission!=='granted'||!S.be?.sb||!S.be.uid)return;const reg=await navigator.serviceWorker.ready;
-  let sub=await reg.pushManager.getSubscription();if(!sub)sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:b64u(VAPID_PUB)});
+  let sub=await reg.pushManager.getSubscription();if(sub){try{const k=sub.options&&sub.options.applicationServerKey,a=k?new Uint8Array(k):null,b=b64u(VAPID_PUB);if(!a||a.length!==b.length||a.some((v,i)=>v!==b[i])){try{await S.be.sb.from('push_subs').delete().eq('endpoint',sub.endpoint)}catch(_){}await sub.unsubscribe();sub=null}}catch(_){}}
+  if(!sub)sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:b64u(VAPID_PUB)});
   await S.be.sb.from('push_subs').upsert({endpoint:sub.endpoint,uid:S.be.uid,sub:sub.toJSON(),at:Date.now()})}catch(e){console.warn('push',e)}}
 async function pushEnable(){if(!PUSH.ok())return toast("Ce téléphone ne permet pas les notifications. Installe Koris sur l'écran d'accueil avec Chrome.");
   let perm=Notification.permission;if(perm==='default')perm=await Notification.requestPermission();
@@ -3114,8 +3115,9 @@ async function localNotify(title,body,tag,url){try{if(!PUSH.on()||document.visib
 let NT_LAST=null;function chatWatch(a){try{const me_=S.be?.uid;if(!me_)return;const prev=NT_LAST;NT_LAST={};a.forEach(c=>NT_LAST[c.id]=c.lastAt||0);if(!prev)return;
   a.forEach(c=>{if(c.lastFrom&&c.lastFrom!==me_&&(c.lastAt||0)>(prev[c.id]||0)){const o=S.profiles[c.lastFrom]||{};localNotify('💬 '+(o.firstName||'Nouveau message'),String(c.lastText||'').slice(0,140),'chat-'+c.id,'/?chat='+c.lastFrom)}})}catch(_){}}
 /* ouvrir Koris depuis une notification */
-function openFromUrl(){try{const q=new URLSearchParams(location.search),c=q.get('chat');if(c&&S.profiles[c]){history.replaceState(history.state,'',location.pathname);S.route={v:'chat',param:c};render()}}catch(_){}}
-if('serviceWorker' in navigator)navigator.serviceWorker.addEventListener('message',e=>{const u=e.data&&e.data.open;if(!u)return;try{const c=new URL(u,location.origin).searchParams.get('chat');if(c){if(S.sub.msgs){S.sub.msgs();S.sub.msgs=null}S.route={v:'chat',param:c};render()}}catch(_){}});
+function openInbox(id){if(!S.owner)return;if(S.sub.msgs){S.sub.msgs();S.sub.msgs=null}$('#layer').innerHTML='';S.route={v:'inbox'};render();if(id)concLoad().then(()=>{if(S.route.v==='inbox')openConc(id)}).catch(()=>{})}
+function openFromUrl(){try{const q=new URLSearchParams(location.search),c=q.get('chat');if(q.has('inbox')&&S.owner){history.replaceState(history.state,'',location.pathname);return openInbox(q.get('inbox'))}if(c&&S.profiles[c]){history.replaceState(history.state,'',location.pathname);S.route={v:'chat',param:c};render()}}catch(_){}}
+if('serviceWorker' in navigator)navigator.serviceWorker.addEventListener('message',e=>{const u=e.data&&e.data.open;if(!u)return;try{const sp=new URL(u,location.origin).searchParams;if(sp.has('inbox'))return openInbox(sp.get('inbox'));const c=sp.get('chat');if(c){if(S.sub.msgs){S.sub.msgs();S.sub.msgs=null}S.route={v:'chat',param:c};render()}}catch(_){}});
 function pushInvite(){try{if(!PUSH.ok()||!S.be?.sb||!S.be.uid||!me()||!isActive(me()))return;if(Notification.permission==='granted'){if(ls.get('push',1)){ls.set('push',1);pushSave()}return}
   if(Notification.permission==='denied'||sessionStorage.getItem('koris:pushAsk'))return;sessionStorage.setItem('koris:pushAsk','1');
   setTimeout(()=>{if(document.querySelector('.ntb'))return setTimeout(pushInvite2,6000);pushInvite2()},4000)}catch(_){}}

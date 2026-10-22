@@ -2,9 +2,11 @@
 // Page : https://koris-rdc.github.io/?discuter
 // Secret nécessaire : GEMINI_API_KEY (Google AI Studio, disponible en RDC) — ou ANTHROPIC_API_KEY.
 // Facultatif : GEMINI_MODEL pour choisir un autre modèle Gemini.
+// Notifications sur le téléphone de l'admin : VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY, VAPID_SUBJECT.
 // (SUPABASE_URL et SUPABASE_SERVICE_ROLE_KEY sont fournis automatiquement.)
 // À déployer SANS vérification JWT (les visiteurs n'ont pas de compte) : option « Verify JWT » désactivée.
 import { createClient } from "npm:@supabase/supabase-js@2";
+import webpush from "npm:web-push@3.6.7";
 
 const cors = {
   "Access-Control-Allow-Origin": "*",
@@ -69,6 +71,7 @@ Deno.serve(async (req) => {
     if (body.phone) chat.phone = String(body.phone).replace(/[^\d+ ]/g, "").slice(0, 20);
     chat.msgs = [...(chat.msgs || []), { role: "user", text, at: now }].slice(-200);
     chat.n_today = (chat.n_today || 0) + 1;
+    const notif = notifyAdmins(sb, chat.id, chat.name, text); // prévient l'admin pendant que l'IA réfléchit
 
     let reply = "";
     const GKEY = Deno.env.get("GEMINI_API_KEY"), AKEY = Deno.env.get("ANTHROPIC_API_KEY");
@@ -102,12 +105,35 @@ Deno.serve(async (req) => {
     chat.unread = true;
     chat.updated_at = new Date().toISOString();
     const { error } = await sb.from("visit_chats").upsert(chat);
+    await notif;
     if (error) return json({ error: "enregistrement impossible" }, 500);
     return json({ reply, at: rAt });
   } catch (e) {
     return json({ error: String(e) }, 500);
   }
 });
+
+// --- Notification sur le téléphone des administrateurs (nouveau message d'un visiteur) ---
+async function notifyAdmins(sb: any, vid: string, name: string, text: string) {
+  const pub = Deno.env.get("VAPID_PUBLIC_KEY"), priv = Deno.env.get("VAPID_PRIVATE_KEY");
+  if (!pub || !priv) { console.log("push : clés VAPID absentes"); return; }
+  try {
+    webpush.setVapidDetails(Deno.env.get("VAPID_SUBJECT") || "mailto:aide@koris.cd", pub, priv);
+    const { data: ad } = await sb.from("admins").select("uid");
+    const ids = (ad || []).map((a: any) => a.uid);
+    if (!ids.length) return;
+    const { data: subs } = await sb.from("push_subs").select("endpoint,sub").in("uid", ids);
+    const payload = JSON.stringify({ title: "💬 " + (name || "Visiteur") + " · Messagerie Koris", body: media(text).slice(0, 140), url: "/?inbox=" + vid, tag: "visit-" + vid });
+    await Promise.all((subs || []).map(async (s: any) => {
+      try { await webpush.sendNotification(s.sub, payload, { TTL: 86400, urgency: "high" }); }
+      catch (e) {
+        const c = (e as any).statusCode;
+        if (c === 404 || c === 410) await sb.from("push_subs").delete().eq("endpoint", s.endpoint);
+        else console.log("push", c, String(e).slice(0, 200));
+      }
+    }));
+  } catch (e) { console.log("push", String(e)); }
+}
 
 // --- Google Gemini (disponible en RDC) ---
 async function askGemini(key: string, system: string, msgs: any[], audio: { mime: string; data: string } | null = null): Promise<string> {
