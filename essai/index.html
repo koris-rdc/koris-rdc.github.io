@@ -3396,15 +3396,16 @@ async function vsCall(body,ms){let err;for(let i=accIx;i<ACC_FNS.length;i++){
   throw err||new Error('fn')}
 /* Notifications pour le visiteur : prévenu quand l'équipe répond (Chrome uniquement, pas dans WhatsApp) */
 const vsInApp=()=>/; wv\)|FBAN|FBAV|Instagram|WhatsApp/i.test(navigator.userAgent||'');
-let ACC_V=null;async function accV2(){if(ACC_V===null){try{const c=await vsAcc({action:'config'});ACC_V=!!(c&&c.v>=2)}catch(_){return false}}return ACC_V}
+let ACC_V=false;async function accV2(){if(!ACC_V){try{const c=await vsAcc({action:'config'});ACC_V=!!(c&&c.v>=2)}catch(_){return false}}return ACC_V}
 async function vsAcc(body,tok){const r=await fetch(ACC_FN,{method:'POST',headers:{'Content-Type':'application/json',apikey:SB_KEY,Authorization:'Bearer '+(tok||SB_KEY)},body:JSON.stringify(body)});if(!r.ok)throw new Error(r.status);return r.json()}
-function vsPushDraw(){const el=$('#vsPush');if(!el)return;const on=ls.get('vsPush',0)&&'Notification' in window&&Notification.permission==='granted';
+function vsPushDraw(){const el=$('#vsPush');if(!el)return;const granted='Notification' in window&&Notification.permission==='granted';const on=granted&&ls.get('vsPush','')===VS.vid;
+  if(!on&&granted&&ls.get('vsPush','')&&VS.msgs&&VS.msgs.some(m=>m.role==='user')&&!VS.pushAuto){VS.pushAuto=1;vsPushOn(true)}
   if(on){el.innerHTML='<span class="vp-ok">🔔 Vous serez prévenu(e) dès que l\'équipe répond</span>';return}
   if(!VS.msgs||!VS.msgs.some(m=>m.role==='user')){el.innerHTML='';return}
   if(VS.pushHint){el.innerHTML='<span class="vp-hint">Ce navigateur ne permet pas les notifications. Pour être prévenu(e), ouvrez cette page dans <b>Chrome</b> (ou Samsung Internet, Firefox) : touchez <b>⋮</b> puis « <b>Ouvrir dans Chrome</b> », ou copiez le lien.</span>';return}
   el.innerHTML='<div class="vp-bar"><span>🔔 Être prévenu(e) quand l\'équipe répond</span><button type="button" id="vsPushB">Activer</button></div>';
   const b=$('#vsPushB');if(b)b.onclick=vsPushOn}
-async function vsPushOn(){const b=$('#vsPushB');
+async function vsPushOn(quiet){const b=$('#vsPushB');
   if(!PUSH.ok()||vsInApp()){VS.pushHint=true;vsPushDraw();return}
   if(b){b.disabled=true;b.textContent='…'}
   try{if(!await accV2()){toast('Bientôt disponible : réessayez un peu plus tard.');vsPushDraw();return}let perm=Notification.permission;if(perm==='default')perm=await Notification.requestPermission();
@@ -3413,7 +3414,7 @@ async function vsPushOn(){const b=$('#vsPushB');
     let sub=await reg.pushManager.getSubscription();
     if(sub){const k=sub.options&&sub.options.applicationServerKey,a=k?new Uint8Array(k):null,c=b64u(VAPID_PUB);if(!a||a.length!==c.length||a.some((v,i)=>v!==c[i])){await sub.unsubscribe();sub=null}}
     if(!sub)sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:b64u(VAPID_PUB)});
-    await vsAcc({action:'sub',vid:VS.vid,sub:sub.toJSON()});ls.set('vsPush',1);toast("C'est noté ✓ Vous serez prévenu(e) des réponses");vsPushDraw()}
+    await vsAcc({action:'sub',vid:VS.vid,sub:sub.toJSON()});ls.set('vsPush',VS.vid);if(!quiet)toast("C'est noté ✓ Vous serez prévenu(e) des réponses");vsPushDraw()}
   catch(_){toast("L'activation n'a pas abouti. Réessayez dans un instant.");vsPushDraw()}}
 /* l'admin répond : on prévient le visiteur sur son téléphone */
 async function concPushVisitor(vid,text){try{if(!await accV2())return;const {data}=await S.be.sb.auth.getSession();const tok=data&&data.session&&data.session.access_token;if(!tok)return;await vsAcc({action:'notify',vid,text},tok)}catch(_){}}
