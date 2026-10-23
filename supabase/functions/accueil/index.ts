@@ -44,11 +44,32 @@ Deno.serve(async (req) => {
     const cfg: any = setRow?.data || {};
     const pub = { on: cfg.on !== false, name: String(cfg.name || "Koris"), welcome: String(cfg.welcome || "Bonjour 👋 Comment puis-je vous aider ?"), color: String(cfg.color || "") };
 
-    if (action === "config") return json(pub);
+    if (action === "config") return json({ ...pub, v: 2 });
 
     const vid = String(body.vid || "");
     if (!UUID.test(vid)) return json({ error: "visiteur invalide" }, 400);
     const { data: row } = await sb.from("visit_chats").select("*").eq("id", vid).maybeSingle();
+
+    // Le visiteur demande à être prévenu des réponses de l'équipe
+    if (action === "sub") {
+      const sub = body.sub;
+      if (!sub || typeof sub.endpoint !== "string" || !/^https:\/\//.test(sub.endpoint) || !sub.keys) return json({ error: "abonnement invalide" }, 400);
+      const { error } = await sb.from("visit_push").upsert({ endpoint: sub.endpoint, vid, sub, at: Date.now() });
+      if (error) return json({ error: "enregistrement impossible" }, 500);
+      return json({ ok: true });
+    }
+
+    // L'administrateur vient de répondre : on prévient le visiteur sur son téléphone
+    if (action === "notify") {
+      const tok = (req.headers.get("authorization") || "").replace(/^Bearer\s+/i, "");
+      const { data: u } = await sb.auth.getUser(tok);
+      const uid = u?.user?.id;
+      if (!uid) return json({ error: "non autorisé" }, 401);
+      const { data: ad } = await sb.from("admins").select("uid").eq("uid", uid).maybeSingle();
+      if (!ad) return json({ error: "réservé à l'administrateur" }, 403);
+      await notifyVisitor(sb, vid, String(body.text || ""));
+      return json({ ok: true });
+    }
 
     if (action === "history") {
       return json({ msgs: (row?.msgs || []).slice(-150).map((m: any) => ({ role: m.role, text: m.text, at: m.at })) });
@@ -60,6 +81,7 @@ Deno.serve(async (req) => {
       return json({ msgs });
     }
 
+    if (action !== "send") return json({ error: "action inconnue" }, 400);
     // action « send »
     const text = String(body.text || "").trim().slice(0, 1200);
     if (!text) return json({ error: "message vide" }, 400);
@@ -133,6 +155,25 @@ async function notifyAdmins(sb: any, vid: string, name: string, text: string) {
       }
     }));
   } catch (e) { console.log("push", String(e)); }
+}
+
+// --- Notification sur le téléphone du visiteur (réponse de l'équipe) ---
+async function notifyVisitor(sb: any, vid: string, text: string) {
+  const pub = Deno.env.get("VAPID_PUBLIC_KEY"), priv = Deno.env.get("VAPID_PRIVATE_KEY");
+  if (!pub || !priv) return;
+  try {
+    webpush.setVapidDetails(Deno.env.get("VAPID_SUBJECT") || "mailto:aide@koris.cd", pub, priv);
+    const { data: subs } = await sb.from("visit_push").select("endpoint,sub").eq("vid", vid);
+    const payload = JSON.stringify({ title: "💬 L'équipe Koris vous a répondu", body: media(text).slice(0, 140), url: "/?discuter=notif", tag: "vrep-" + vid });
+    await Promise.all((subs || []).map(async (s: any) => {
+      try { await webpush.sendNotification(s.sub, payload, { TTL: 86400, urgency: "high" }); }
+      catch (e) {
+        const c = (e as any).statusCode;
+        if (c === 404 || c === 410) await sb.from("visit_push").delete().eq("endpoint", s.endpoint);
+        else console.log("push visiteur", c, String(e).slice(0, 200));
+      }
+    }));
+  } catch (e) { console.log("push visiteur", String(e)); }
 }
 
 // --- Google Gemini (disponible en RDC) ---

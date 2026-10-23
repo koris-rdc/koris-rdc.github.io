@@ -183,6 +183,10 @@ body.shop-mode .top{background:linear-gradient(rgba(27,9,4,.0),rgba(27,9,4,0))}
 .vs-f textarea{flex:1;resize:none;max-height:150px;min-height:46px;font:inherit;font-size:16px;line-height:1.4;color:var(--text);background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:12px 16px;outline:none}
 .vs-f button{flex:none;width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,#C8E259,#A4C833 50%,#34A486);color:#020C0B;display:grid;place-items:center}.vs-f button:disabled{opacity:.45}.vs-f button svg{width:20px;height:20px}
 
+.vs-push:empty{display:none}.vs-push{padding:0 12px 6px}
+.vp-bar{display:flex;align-items:center;gap:10px;padding:8px 8px 8px 14px;border-radius:14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);font-size:13px}
+.vp-bar span{flex:1}.vp-bar button{flex:none;height:32px;padding:0 14px;border-radius:999px;background:var(--orange,#A4C833);color:var(--on-acc,#020C0B);font-weight:700;font-size:12.5px;border:0}
+.vp-ok{display:block;text-align:center;font-size:12px;opacity:.75}.vp-hint{display:block;font-size:12.5px;line-height:1.45;padding:8px 12px;border-radius:12px;background:rgba(255,255,255,.06)}
 </style></head><body><div id="ksplash" class="wait" role="img" aria-label="Koris" title="Touchez pour passer">
 <style>
 #ksplash{position:fixed;inset:0;z-index:99999;background:#020C0B;display:grid;place-items:center;overflow:hidden;cursor:pointer;animation:ksOut .7s cubic-bezier(.7,0,.3,1) 10.4s forwards}
@@ -3117,7 +3121,7 @@ let NT_LAST=null;function chatWatch(a){try{const me_=S.be?.uid;if(!me_)return;co
 /* ouvrir Koris depuis une notification */
 function openInbox(id){if(!S.owner)return;if(S.sub.msgs){S.sub.msgs();S.sub.msgs=null}$('#layer').innerHTML='';S.route={v:'inbox'};render();if(id)concLoad().then(()=>{if(S.route.v==='inbox')openConc(id)}).catch(()=>{})}
 function openFromUrl(){try{const q=new URLSearchParams(location.search),c=q.get('chat');if(q.has('inbox')&&S.owner){history.replaceState(history.state,'',location.pathname);return openInbox(q.get('inbox'))}if(c&&S.profiles[c]){history.replaceState(history.state,'',location.pathname);S.route={v:'chat',param:c};render()}}catch(_){}}
-if('serviceWorker' in navigator)navigator.serviceWorker.addEventListener('message',e=>{const u=e.data&&e.data.open;if(!u)return;try{const sp=new URL(u,location.origin).searchParams;if(sp.has('inbox'))return openInbox(sp.get('inbox'));const c=sp.get('chat');if(c){if(S.sub.msgs){S.sub.msgs();S.sub.msgs=null}S.route={v:'chat',param:c};render()}}catch(_){}});
+if('serviceWorker' in navigator)navigator.serviceWorker.addEventListener('message',e=>{const u=e.data&&e.data.open;if(!u)return;try{const sp=new URL(u,location.origin).searchParams;if(sp.has('inbox'))return openInbox(sp.get('inbox'));if(sp.has('discuter')){$('#layer').innerHTML='';S.route={v:'visit'};return render()}const c=sp.get('chat');if(c){if(S.sub.msgs){S.sub.msgs();S.sub.msgs=null}S.route={v:'chat',param:c};render()}}catch(_){}});
 function pushInvite(){try{if(!PUSH.ok()||!S.be?.sb||!S.be.uid||!me()||!isActive(me()))return;if(Notification.permission==='granted'){if(ls.get('push',1)){ls.set('push',1);pushSave()}return}
   if(Notification.permission==='denied'||sessionStorage.getItem('koris:pushAsk'))return;sessionStorage.setItem('koris:pushAsk','1');
   setTimeout(()=>{if(document.querySelector('.ntb'))return setTimeout(pushInvite2,6000);pushInvite2()},4000)}catch(_){}}
@@ -3383,6 +3387,29 @@ async function vsCall(body,ms){let err;for(let i=accIx;i<ACC_FNS.length;i++){
       if(r.ok){accIx=i;return r.json()}err=new Error(r.status);if(![401,403,404].includes(r.status))throw err}
     catch(e){err=e;if(e&&e.name==='AbortError')throw e;if(navigator.onLine===false)break}}
   throw err||new Error('fn')}
+/* Notifications pour le visiteur : prévenu quand l'équipe répond (Chrome uniquement, pas dans WhatsApp) */
+const vsInApp=()=>/; wv\)|FBAN|FBAV|Instagram|WhatsApp/i.test(navigator.userAgent||'');
+let ACC_V=null;async function accV2(){if(ACC_V===null){try{const c=await vsAcc({action:'config'});ACC_V=!!(c&&c.v>=2)}catch(_){return false}}return ACC_V}
+async function vsAcc(body,tok){const r=await fetch(ACC_FN,{method:'POST',headers:{'Content-Type':'application/json',apikey:SB_KEY,Authorization:'Bearer '+(tok||SB_KEY)},body:JSON.stringify(body)});if(!r.ok)throw new Error(r.status);return r.json()}
+function vsPushDraw(){const el=$('#vsPush');if(!el)return;const on=ls.get('vsPush',0)&&'Notification' in window&&Notification.permission==='granted';
+  if(on){el.innerHTML='<span class="vp-ok">🔔 Vous serez prévenu(e) dès que l\'équipe répond</span>';return}
+  if(!VS.msgs||!VS.msgs.some(m=>m.role==='user')){el.innerHTML='';return}
+  if(VS.pushHint){el.innerHTML='<span class="vp-hint">Pour être prévenu(e), ouvrez cette page dans <b>Chrome</b> : touchez <b>⋮</b> en haut à droite puis « <b>Ouvrir dans Chrome</b> », et revenez ici.</span>';return}
+  el.innerHTML='<div class="vp-bar"><span>🔔 Être prévenu(e) quand l\'équipe répond</span><button type="button" id="vsPushB">Activer</button></div>';
+  const b=$('#vsPushB');if(b)b.onclick=vsPushOn}
+async function vsPushOn(){const b=$('#vsPushB');
+  if(!PUSH.ok()||vsInApp()){VS.pushHint=true;vsPushDraw();return}
+  if(b){b.disabled=true;b.textContent='…'}
+  try{if(!await accV2()){toast('Bientôt disponible : réessayez un peu plus tard.');vsPushDraw();return}let perm=Notification.permission;if(perm==='default')perm=await Notification.requestPermission();
+    if(perm!=='granted'){toast('Notifications bloquées : autorisez-les dans les réglages de Chrome');vsPushDraw();return}
+    const reg=await Promise.race([navigator.serviceWorker.ready,new Promise((_,j)=>setTimeout(()=>j(new Error('sw')),8000))]);
+    let sub=await reg.pushManager.getSubscription();
+    if(sub){const k=sub.options&&sub.options.applicationServerKey,a=k?new Uint8Array(k):null,c=b64u(VAPID_PUB);if(!a||a.length!==c.length||a.some((v,i)=>v!==c[i])){await sub.unsubscribe();sub=null}}
+    if(!sub)sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:b64u(VAPID_PUB)});
+    await vsAcc({action:'sub',vid:VS.vid,sub:sub.toJSON()});ls.set('vsPush',1);toast("C'est noté ✓ Vous serez prévenu(e) des réponses");vsPushDraw()}
+  catch(_){toast("L'activation n'a pas abouti. Réessayez dans un instant.");vsPushDraw()}}
+/* l'admin répond : on prévient le visiteur sur son téléphone */
+async function concPushVisitor(vid,text){try{if(!await accV2())return;const {data}=await S.be.sb.auth.getSession();const tok=data&&data.session&&data.session.access_token;if(!tok)return;await vsAcc({action:'notify',vid,text},tok)}catch(_){}}
 const vsHm=t=>new Date(t).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
 function vVisit(){vsInit();const p=me();
   if(!vsNameOk(VS.name))return `<section class="vs-gate"><div class="vg-glow"></div><div class="vg-card">
@@ -3396,9 +3423,9 @@ function vVisit(){vsInit();const p=me();
     <button id="vsGb" ${vsNameOk(VS.name)?'':'disabled'}>Accéder à la messagerie</button></form>
     <small class="vg-foot">🔒 Pas besoin de compte · votre nom reste entre vous et l'équipe</small></div></section>`;
   return `<section class="vs"><header class="vs-hd"><button class="icon-btn" data-go="${p?(isActive(p)?'feed':'pay'):'onboard'}" aria-label="Retour">${I.back}</button><span class="vs-av lg" id="vsAv"><img src="/icon-192-v2.png" alt="Koris"></span><div class="mid"><b id="vsNm">${esc(VS.cfg.name)}</b><small>En ligne · répond en quelques secondes</small></div><span class="vs-tag">Assistant IA</span></header>
-  <div class="vs-m" id="vsM" aria-live="polite"></div><p class="vs-note">Vous discutez avec un assistant virtuel. L'équipe peut aussi vous répondre ici.</p>
+  <div class="vs-m" id="vsM" aria-live="polite"></div><div class="vs-push" id="vsPush"></div><p class="vs-note">Vous discutez avec un assistant virtuel. L'équipe peut aussi vous répondre ici.</p>
   <form class="vs-f" id="vsF"><label class="vs-ph" for="vsP" aria-label="Envoyer une photo" title="Envoyer une photo">${I.camera}</label><input type="file" id="vsP" accept="image/*" class="fpick"><textarea id="vsT" rows="1" maxlength="1200" placeholder="Écrivez votre message…" aria-label="Votre message"></textarea><button id="vsB" aria-label="Enregistrer un vocal">${GKI.mic}</button><div class="vs-rec"><button type="button" class="vs-rx" data-vsrec="cancel" aria-label="Annuler le vocal">✕</button><span class="vs-dot"></span><b id="vsRecT">0:00</b><span class="vs-rl">Parlez… (1 min max)</span><button type="button" class="vs-rs" data-vsrec="send" aria-label="Envoyer le vocal">${I.send}</button></div></form></section>`}
-function vsDraw(head){const M=$('#vsM');if(!M)return;if(head){const n=$('#vsNm'),a=$('#vsAv');if(n)n.textContent=VS.cfg.name;}
+function vsDraw(head){const M=$('#vsM');if(!M)return;setTimeout(vsPushDraw,0);if(head){const n=$('#vsNm'),a=$('#vsAv');if(n)n.textContent=VS.cfg.name;}
   const ct=ls.get('vsContact',null)||(VS.phone?{ph:VS.phone}:null);
   const sideV=m=>m.role==='user'?'me':'in';
   M.innerHTML=`<span class="vs-day">Aujourd'hui</span><div class="vr in f l"><span class="vav"><img src="/icon-192-v2.png" alt=""></span><div class="vb">${esc(VS.name?String(VS.cfg.welcome).replace(/^(Bonjour|Salut|Hello|Mbote)\b/i,'$1 '+VS.name):VS.cfg.welcome)}</div></div>`+
@@ -3626,7 +3653,7 @@ function openConc(id){const x=(S.conc.chats||[]).find(y=>y.id===id);if(!x)return
         const msgs=cur.filter(mm=>!(tgt&&mm.at===tgt.at&&mm.text===tgt.text&&mm.role===tgt.role));await upd({msgs});draw();toast('Message supprimé')}catch(_){toast('Suppression impossible pour le moment')}}};
   $('#waF').onsubmit=async e=>{e.preventDefault();const t=$('#ccTxt').value.trim();if(!t)return;const b=$('#ccSend');b.disabled=true;
     try{const {data,error}=await S.be.sb.from('visit_chats').select('msgs').eq('id',id).maybeSingle();if(error)throw error;const msgs=[...((data&&data.msgs)||x.msgs||[]),{role:'admin',text:t,at:Date.now()}].slice(-200);
-      await upd({msgs,unread:false,updated_at:new Date().toISOString()});$('#ccTxt').value='';draw.done=0;draw()}catch(_){toast("Le message n'est pas parti")}b.disabled=false}}
+      await upd({msgs,unread:false,updated_at:new Date().toISOString()});concPushVisitor(id,t);$('#ccTxt').value='';draw.done=0;draw()}catch(_){toast("Le message n'est pas parti")}b.disabled=false}}
 /* =================== Activité : commentaires, disponibilités, publications (bannière + son + vibreur) =================== */
 const ACT={list:ls.get('acts',[]),q:[],busy:false,snap:{po:null,cm:null}};
 function actSave(){ACT.list=ACT.list.slice(0,40);ls.set('acts',ACT.list)}
