@@ -2267,6 +2267,7 @@ function clAdmin(){if(!S.owner)return '';const pend=Object.values(S.profiles).fi
   return `<button class="cl-ib" data-go="admin" aria-label="Paiements">${PB.wallet}${pend?`<span class="cnt-b">${pend}</span>`:''}</button><button class="cl-ib" data-go="inbox" aria-label="Messagerie visiteurs">${PB.chat}${un?`<span class="cnt-b">${un}</span>`:''}</button>`}
 function clUnread(){return S.chats.some(c=>c.lastFrom!==S.be.uid&&c.lastAt>(S.reads[c.id]||0)&&c.lastAt>chatHid(c.id))}
 function clHello(){const h=new Date().getHours();return h<12?'Bonjour':h<18?'Bon après-midi':'Bonsoir'}
+const GKBOT='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="8" width="16" height="12" rx="4.5"/><path d="M12 8V5"/><circle cx="12" cy="3.6" r="1.3"/><path d="M9.2 13.2v1.4M14.8 13.2v1.4"/><path d="M10 17.2c1.2.7 2.8.7 4 0"/><path d="M2 12.5v3M22 12.5v3"/></svg>';
 function clGucko(){return `<button class="cl-ib cl-gk" data-act="guide" aria-label="Gucko, ton assistant" title="Gucko">${I.spark}</button>`}
 function clHero(title,right,sub,cls){return `<header class="cl-hero${cls?' '+cls:''}"><div class="cl-row">${title}<div class="cl-acts">${right||''}</div></div>${sub?`<p class="cl-hi">${sub}</p>`:''}</header>`}
 function vFeed(){const p=me();const tab=S.route.tab==='ab'?'ab':'pt';const fol=followingOf(p);
@@ -2274,7 +2275,7 @@ function vFeed(){const p=me();const tab=S.route.tab==='ab'?'ab':'pt';const fol=f
   const empty=tab==='ab'?`<div class="cl-empty">${I.user}<b>Personne à suivre pour l'instant</b><p>Abonne-toi à des membres : leurs publications apparaîtront ici.</p><button class="cl-btn dark" data-go="discover">Découvrir des membres</button></div>`
     :`<div class="cl-empty">${I.image}<b>Rien pour l'instant</b><p>Partage le premier moment : il apparaîtra ici pour tous les membres.</p><button class="cl-btn dark" data-act="compose" data-withpic="1">Publier</button></div>`;
   setTimeout(clVideos,60);
-  return `${clHero(`<div class="wordmark cl-wm" data-go="about" role="button" tabindex="0" aria-label="À propos de Koris"><i></i>KORIS</div>`,`${clAdmin()}${clGucko()}${bellHtml()}<button class="cl-ib" data-go="messages" aria-label="Messages">${CLI.plane}${clUnread()?'<i class="cl-dot"></i>':''}</button>`,'','cl-mid')}
+  return `${clHero(`<div class="wordmark cl-wm" data-go="about" role="button" tabindex="0" aria-label="À propos de Koris"><i></i>KORIS</div>`,`${clAdmin()}${bellHtml()}<button class="cl-ib" data-go="messages" aria-label="Messages">${CLI.plane}${clUnread()?'<i class="cl-dot"></i>':''}</button>`,'','cl-mid')}
   <div class="cl-body">${demoBanner()}
    <div class="cl-box"><div class="cl-box-top"><label class="cl-cav" for="qPhoto" aria-label="${p.photo?'Changer ma photo de profil':'Ajouter une photo de profil'}">${av(p,34)}</label><input id="qPhoto" type="file" accept="image/*" class="fpick"><button class="cl-ask" data-act="compose">Partager un moment, ${esc(p.firstName||'')}…</button></div>
     <div class="cl-box-bot"><button class="cl-ic" data-act="compose" data-withpic="1" aria-label="Ajouter une photo">${CLI.img}</button><button class="cl-ic" data-act="compose" data-withpic="1" aria-label="Ajouter une vidéo">${CLI.vid}</button><button class="cl-ic" data-act="compose" aria-label="Écrire un texte">${CLI.doc}</button><span class="sp"></span><button class="gl-pill cl-send" data-act="compose" aria-label="Publier">${CLI.up}</button></div></div>
@@ -2294,7 +2295,7 @@ function postHtml(x){const a=S.profiles[x.uid]||{};const likes=Array.isArray(x.l
   <footer class="cl-pf"><button class="${liked?'on':''}" data-like="${esc(x.id)}" aria-label="J'aime">${liked?I.heart:I.heartO}<span>${likes.length}</span></button><button data-cmt="${esc(x.id)}" aria-label="Commentaires">${I.comment}<span>${cms}</span></button><button data-share="${esc(x.id)}" aria-label="Partager">${CLI.share}</button></footer></article>`}
 function navHtml(active){const un=clUnread();
   const b=(v,ic,l)=>`<button class="${active===v?'on':''}" data-go="${v}" aria-label="${l}">${I[ic]}${v==='messages'&&un?'<i class="cl-dot"></i>':''}</button>`;
-  return `<nav class="nav cln"><div class="nav-in">${b('feed','home','Accueil')}${b('discover','compass','Découvrir')}${b('messages','chat','Messages')}${b('me','user','Profil')}</div></nav>`}
+  return `<nav class="nav cln"><div class="nav-in">${b('feed','home','Accueil')}${b('discover','compass','Découvrir')}${b('messages','chat','Messages')}${b('me','user','Profil')}<button class="cl-gkn" data-act="guide" aria-label="Gucko, ton assistant" title="Gucko">${GKBOT}</button></div></nav>`}
 function vProfile(id,self){const x=S.profiles[id];if(!x)return `<div class="empty">${I.user}<b>Profil introuvable</b><button class="btn btn-ghost" data-go="feed" style="flex:none">Retour au fil</button></div>`;
   const fav=S.favs.has(id);const own=S.posts.filter(p=>p.uid===id);const fo=followersOf(id).length,fi=followingOf(x).filter(u=>S.profiles[u]).length;
   S.viewPics=[safeImg(x.photo)].filter(Boolean);const tab=S.route.tab==='info'?'info':'grid';const st=availOf(x);
@@ -2312,8 +2313,8 @@ function vProfile(id,self){const x=S.profiles[id];if(!x)return `<div class="empt
      ${row('city','Ville',[x.commune,x.city].filter(Boolean).join(', '))}${row('globe','Pays',x.country)}${row('sex','Sexe',x.sex==='F'?'Femme':x.sex==='H'?'Homme':'')}${row('cake','Âge',x.age?x.age+' ans':'')}
      ${SUBSCRIPTION&&self&&!x.owner&&x.paid?`<div class="sub-row ${isActive(x)?'':'off'}"><span class="dot"></span><span class="t">Abonnement ${isActive(x)?'actif':'expiré'}${x.paidUntil?` · ${isActive(x)?'jusqu\'au':'depuis le'} ${untilTxt(x.paidUntil)}`:''}</span><button data-go="pay" data-param="preview">Renouveler</button></div>`:''}</div></div>`;
   return `<section class="clp"><header class="cl-cover" style="background-image:linear-gradient(180deg,rgba(14,14,16,.32),rgba(14,14,16,0) 34%,rgba(14,14,16,0) 72%,rgba(14,14,16,.3)),url('${coverFor(id,x)}')">
-   ${self?`<div class="cl-cl">${clAdmin()}</div>`:`<button class="cl-ib glass" data-back aria-label="Retour">${I.back}</button>`}<span class="sp"></span>
-   ${self?`<button class="cl-ib glass" data-ccm="cover" aria-label="Changer ou recadrer l'image de couverture">${CLI.cam}</button><input id="cvPhoto" type="file" accept="image/*" class="fpick"><button class="cl-ib glass" data-act="settings" aria-label="Réglages">${PB.gear}</button>`:''}<button class="cl-ib glass" data-act="help" aria-label="Aide">${PB.help}</button></header>
+   ${self?'':`<button class="cl-ib glass" data-back aria-label="Retour">${I.back}</button>`}<span class="sp"></span>
+   <div class="cl-tools">${self?`${clAdmin()}<button class="cl-ib" data-ccm="cover" aria-label="Changer ou recadrer l'image de couverture">${CLI.cam}</button><input id="cvPhoto" type="file" accept="image/*" class="fpick"><button class="cl-ib" data-act="settings" aria-label="Réglages">${PB.gear}</button>`:''}<button class="cl-ib" data-act="help" aria-label="Aide">${PB.help}</button></div></header>
   <div class="cl-pcard">
    ${self?`<button class="cl-pav" data-ccm="photo" aria-label="Changer ou recadrer ma photo de profil">${av(x,96)}<b class="cl-pcam">${CLI.cam}</b></button><input id="qPhoto" type="file" accept="image/*" class="fpick">`:`<button class="cl-pav" ${S.viewPics.length?'data-view="0"':''} aria-label="Voir la photo de profil">${av(x,96)}</button>`}
    <h1 class="cl-nm">${esc(x.firstName||fullName(x))}${x.certified?I.badge:''}</h1>${x.test?'<span class="demo-tag">PROFIL FICTIF · TEST</span>':''}
@@ -2496,7 +2497,7 @@ function vDiscover(){const q=(S.route.q||'').toLowerCase(),city=S.route.city||''
   const cols=[[],[]];list.forEach((e,i)=>cols[i%2].push([e,i]));
   const card=([[id,x],i])=>{const img=safeImg(x.photo);const fav=S.favs.has(id);return `<div class="pcard ${i%3===1?'tall':''}">${isNewM(x)?'<span class="new-flag">Nouveau</span>':''}<button data-profile="${esc(id)}" style="display:block;width:100%" aria-label="Voir le profil de ${esc(x.firstName)}"><div class="ph">${img?`<img src="${img}" alt="">`:`<div class="initials-ph">${esc(initials(x))}</div>`}</div>${availOf(x)!=='off'?`<span class="av-flag ${availOf(x)}">${INTENTS.find(t=>t[0]===availOf(x))[2]} ${INT_LBL[availOf(x)]}</span>`:''}</button>
     <div class="ov"><div><span class="loc">${I.pin.replace('<svg','<svg width="11" height="11"')}${esc([x.commune,x.city,x.country].filter(Boolean).join(', '))}</span><span class="nm"><span>${esc(x.firstName)}${x.age?', '+esc(x.age):''}</span>${x.certified?I.badge:''}</span><span class="job">${esc(x.job)}</span></div><button class="heart-mini ${fav?'on':''}" data-fav="${esc(id)}" aria-label="Coup de cœur">${I.heart}</button></div></div>`};
-  return `${clHero('<h1>Découvrir</h1>',clGucko()+bellHtml(),'Des personnes près de chez toi')}<div class="cl-body">
+  return `${clHero('<h1>Découvrir</h1>',bellHtml(),'Des personnes près de chez toi')}<div class="cl-body">
   <div class="search"><label>${I.search.replace('<svg','<svg width="18" height="18"')}<input id="q" placeholder="Nom, métier, ville…" value="${esc(S.route.q||'')}" aria-label="Rechercher"></label></div>
   <div class="intents">${[['','Tous','✨'],...INTENTS].map(([k,l,e])=>`<button type="button" data-intent="${k}" class="${intent===k?'on '+k:''}"><span>${e}</span><b>${l}</b><small>${k?icount(k)+' dispo':all.length+' membres'}</small></button>`).join('')}</div>
   ${intent?`<div class="sec-head" style="margin:14px 0 10px"><h2>${intent==='diner'?'Disponibles pour un dîner':intent==='chill'?'Disponibles pour un flirt':'Disponibles pour une rencontre'}</h2><span class="count">${list.length}</span></div>`:''}
@@ -2550,7 +2551,7 @@ function vMessages(){const list=[...S.chats].filter(c=>(c.lastAt||0)>chatHid(c.i
   const calls=ids.length?`<p class="hint">L'appel passe par ton téléphone, au numéro indiqué sur le profil.</p>${ids.map(id=>{const x=S.profiles[id];const vis=phoneOk(x,id);const tel=vis?String(x.phone||'').replace(/[^\d+]/g,''):'';
     return `<div class="call"><button data-profile="${esc(id)}" aria-label="Profil de ${esc(x.firstName)}"><span class="ar" style="padding:2px;border-radius:50%;background:var(--grad);display:block">${av(x,48)}</span></button><div class="mid"><b>${esc(fullName(x))}</b><small>${esc([x.city,vis?x.phone:'Numéro masqué'].filter(Boolean).join(' · '))}</small></div><button class="ca" data-chat="${esc(id)}" aria-label="Écrire à ${esc(x.firstName)}">${I.chat}</button>${tel?`<a class="ca go" href="tel:${esc(tel)}" target="_top" aria-label="Appeler ${esc(x.firstName)}">${I.phone}</a>`:''}</div>`}).join('')}`
     :`<div class="empty">${I.phone}<b>Personne à appeler pour l'instant</b><p>Les membres apparaîtront ici avec leur numéro.</p></div>`;
-  return `${clHero('<h1>Messages</h1>',`${clGucko()}<button class="cl-ib" data-go="discover" aria-label="Trouver quelqu'un">${I.search}</button>`,'Tes discussions privées')}<div class="cl-body">
+  return `${clHero('<h1>Messages</h1>',`<button class="cl-ib" data-go="discover" aria-label="Trouver quelqu'un">${I.search}</button>`,'Tes discussions privées')}<div class="cl-body">
   <div class="stories"><button class="story add" data-act="compose" data-withpic="1"><span class="card"><span class="plus">${I.plus}</span>Ta story</span></button>${st.map(story).join('')}</div>
   <div class="seg" role="tablist"><i id="segI" style="transform:translateX(${pane*100}%)"></i><button role="tab" data-pane="0" class="${pane?'':'on'}">Discussions</button><button role="tab" data-pane="1" class="${pane?'on':''}">Appels</button></div>
   <div class="pager" id="pager"><section class="pane">${convs}</section><section class="pane">${calls}</section></div>
@@ -4190,6 +4191,15 @@ body.shop-mode .shp-empty{border-color:#C9C9D2!important}
 
 .cl-ib.cl-gk svg{width:21px!important;height:21px!important;fill:currentColor!important;stroke:none!important}
 .cl-ib.cl-gk svg *{fill-opacity:1!important}
+
+/* Gucko : 5e bouton de la barre de navigation */
+.nav.cln .nav-in>button.cl-gkn{color:#0E0E10!important}
+.nav.cln .nav-in>button.cl-gkn svg{width:25px;height:25px}
+.nav.cln .nav-in{padding:0 10px!important}
+/* Profil : icônes du haut regroupées dans une seule capsule */
+.cl-tools{display:flex;align-items:center;gap:2px;padding:4px;border-radius:999px;background:rgba(14,14,16,.42);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(242,242,245,.12)}
+.cl-tools .cl-ib{background:transparent!important;width:38px!important;height:38px!important;min-width:38px!important}
+.cl-tools .cl-ib svg{width:20px!important;height:20px!important}
 
 /* ===== Recadrage ===== */
 html.kc-on,html.kc-on body{overflow:hidden}
