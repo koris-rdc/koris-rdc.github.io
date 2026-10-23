@@ -2267,13 +2267,13 @@ function clAdmin(){if(!S.owner)return '';const pend=Object.values(S.profiles).fi
   return `<button class="cl-ib" data-go="admin" aria-label="Paiements">${PB.wallet}${pend?`<span class="cnt-b">${pend}</span>`:''}</button><button class="cl-ib" data-go="inbox" aria-label="Messagerie visiteurs">${PB.chat}${un?`<span class="cnt-b">${un}</span>`:''}</button>`}
 function clUnread(){return S.chats.some(c=>c.lastFrom!==S.be.uid&&c.lastAt>(S.reads[c.id]||0)&&c.lastAt>chatHid(c.id))}
 function clHello(){const h=new Date().getHours();return h<12?'Bonjour':h<18?'Bon après-midi':'Bonsoir'}
-function clHero(title,right,sub){return `<header class="cl-hero"><div class="cl-row">${title}<div class="cl-acts">${right||''}</div></div>${sub?`<p class="cl-hi">${sub}</p>`:''}</header>`}
+function clHero(title,right,sub,cls){return `<header class="cl-hero${cls?' '+cls:''}"><div class="cl-row">${title}<div class="cl-acts">${right||''}</div></div>${sub?`<p class="cl-hi">${sub}</p>`:''}</header>`}
 function vFeed(){const p=me();const tab=S.route.tab==='ab'?'ab':'pt';const fol=followingOf(p);
   const L=tab==='ab'?S.posts.filter(x=>x.uid===S.be.uid||fol.includes(x.uid)):S.posts;
   const empty=tab==='ab'?`<div class="cl-empty">${I.user}<b>Personne à suivre pour l'instant</b><p>Abonne-toi à des membres : leurs publications apparaîtront ici.</p><button class="cl-btn dark" data-go="discover">Découvrir des membres</button></div>`
     :`<div class="cl-empty">${I.image}<b>Rien pour l'instant</b><p>Partage le premier moment : il apparaîtra ici pour tous les membres.</p><button class="cl-btn dark" data-act="compose" data-withpic="1">Publier</button></div>`;
   setTimeout(clVideos,60);
-  return `${clHero(`<div class="wordmark cl-wm" data-go="about" role="button" tabindex="0" aria-label="À propos de Koris"><i></i>KORIS</div>`,`${clAdmin()}${bellHtml()}<button class="cl-ib" data-go="messages" aria-label="Messages">${CLI.plane}${clUnread()?'<i class="cl-dot"></i>':''}</button>`,`${clHello()}, <b>${esc(p.firstName||'')}</b>`)}
+  return `${clHero(`<div class="wordmark cl-wm" data-go="about" role="button" tabindex="0" aria-label="À propos de Koris"><i></i>KORIS</div>`,`${clAdmin()}${bellHtml()}<button class="cl-ib" data-go="messages" aria-label="Messages">${CLI.plane}${clUnread()?'<i class="cl-dot"></i>':''}</button>`,'','cl-mid')}
   <div class="cl-body">${demoBanner()}
    <div class="cl-box"><div class="cl-box-top"><label class="cl-cav" for="qPhoto" aria-label="${p.photo?'Changer ma photo de profil':'Ajouter une photo de profil'}">${av(p,34)}</label><input id="qPhoto" type="file" accept="image/*" class="fpick"><button class="cl-ask" data-act="compose">Partager un moment, ${esc(p.firstName||'')}…</button></div>
     <div class="cl-box-bot"><button class="cl-ic" data-act="compose" data-withpic="1" aria-label="Ajouter une photo">${CLI.img}</button><button class="cl-ic" data-act="compose" data-withpic="1" aria-label="Ajouter une vidéo">${CLI.vid}</button><button class="cl-ic" data-act="compose" aria-label="Écrire un texte">${CLI.doc}</button><span class="sp"></span><button class="gl-pill cl-send" data-act="compose" aria-label="Publier">${CLI.up}</button></div></div>
@@ -4179,6 +4179,13 @@ body.shop-mode .shp-empty{border-color:#C9C9D2!important}
 .cl-snd{position:absolute;right:10px;bottom:10px;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:rgba(14,14,16,.55);color:#F2F2F5;backdrop-filter:blur(6px);pointer-events:none;z-index:2}
 .cl-snd svg{width:18px;height:18px}
 .cl-media .post-video.paused::after{content:"";position:absolute;left:50%;top:50%;width:62px;height:62px;margin:-31px 0 0 -31px;border-radius:50%;background:rgba(14,14,16,.5) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23F2F2F5' d='M8 5.5v13l10.5-6.5z'/%3E%3C/svg%3E") center/30px no-repeat;pointer-events:none}
+
+/* Accueil : logo et icônes au milieu du bandeau noir (sans « Bonsoir ») */
+.cl-hero.cl-mid{padding-top:calc(env(safe-area-inset-top,0px) + 30px);padding-bottom:61px}
+/* Barre de navigation flottante : un vide en bas + léger dégradé noir derrière */
+.nav.cln{left:0!important;right:0!important;transform:none!important;width:100%!important;padding:0 12px calc(12px + env(safe-area-inset-bottom,0px))!important;background:none!important}
+.nav.cln::before{content:"";position:absolute;left:0;right:0;bottom:0;height:150px;background:linear-gradient(180deg,rgba(14,14,16,0),rgba(14,14,16,.28) 55%,rgba(14,14,16,.6));pointer-events:none;z-index:-1}
+.nav.cln .nav-in{max-width:540px;margin:0 auto;height:66px!important;padding:0 18px!important;border-radius:26px!important;box-shadow:0 18px 40px -12px rgba(14,14,16,.6)!important}
 
 /* ===== Recadrage ===== */
 html.kc-on,html.kc-on body{overflow:hidden}
