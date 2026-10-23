@@ -2272,6 +2272,7 @@ function vFeed(){const p=me();const tab=S.route.tab==='ab'?'ab':'pt';const fol=f
   const L=tab==='ab'?S.posts.filter(x=>x.uid===S.be.uid||fol.includes(x.uid)):S.posts;
   const empty=tab==='ab'?`<div class="cl-empty">${I.user}<b>Personne à suivre pour l'instant</b><p>Abonne-toi à des membres : leurs publications apparaîtront ici.</p><button class="cl-btn dark" data-go="discover">Découvrir des membres</button></div>`
     :`<div class="cl-empty">${I.image}<b>Rien pour l'instant</b><p>Partage le premier moment : il apparaîtra ici pour tous les membres.</p><button class="cl-btn dark" data-act="compose" data-withpic="1">Publier</button></div>`;
+  setTimeout(clVideos,60);
   return `${clHero(`<div class="wordmark cl-wm" data-go="about" role="button" tabindex="0" aria-label="À propos de Koris"><i></i>KORIS</div>`,`${clAdmin()}${bellHtml()}<button class="cl-ib" data-go="messages" aria-label="Messages">${CLI.plane}${clUnread()?'<i class="cl-dot"></i>':''}</button>`,`${clHello()}, <b>${esc(p.firstName||'')}</b>`)}
   <div class="cl-body">${demoBanner()}
    <div class="cl-box"><div class="cl-box-top"><label class="cl-cav" for="qPhoto" aria-label="${p.photo?'Changer ma photo de profil':'Ajouter une photo de profil'}">${av(p,34)}</label><input id="qPhoto" type="file" accept="image/*" class="fpick"><button class="cl-ask" data-act="compose">Partager un moment, ${esc(p.firstName||'')}…</button></div>
@@ -2283,7 +2284,7 @@ function postHtml(x){const a=S.profiles[x.uid]||{};const likes=Array.isArray(x.l
   const cms=S.comments.filter(c=>c.postId===x.id).length;const st=availOf(a);const where=[a.commune,a.city].filter(Boolean).join(', ');
   const ar=+(x&&x.ar),arS=ar>.2&&ar<5?` style="aspect-ratio:${ar}"`:'';
   const media=img?`<button class="cl-media${arS?' ar':''}"${arS} data-pimg="${esc(x.id)}" aria-label="Agrandir la photo"><img src="${img}" alt="Photo de ${esc(a.firstName||'membre')}" loading="lazy"></button>`
-    :vid?`<div class="cl-media">${vidHtml(x)}</div>`:'';
+    :vid?`<div class="cl-media" data-vpid="${esc(x.id)}">${vidHtml(x)}</div>`:'';
   return `<article class="cl-post"><header class="cl-ph"><button data-profile="${esc(x.uid)}" aria-label="Profil de ${esc(a.firstName||'membre')}">${av(a,42)}</button>
    <div class="cl-who"><button data-profile="${esc(x.uid)}"><b>${esc(a.firstName||fullName(a))}${a.age?', '+esc(a.age):''}</b>${a.certified?I.badge:''}</button><small>${esc(where||a.country||'')}${where||a.country?' · ':''}${esc(ago(x.at))}</small></div>
    ${st!=='off'?`<span class="cl-pill">${INTENTS.find(t=>t[0]===st)[2]} ${esc(INT_LBL[st])}</span>`:''}${mine?`<button class="cl-ib sm" data-del="${esc(x.id)}" aria-label="Supprimer la publication">${I.trash}</button>`:''}</header>
@@ -2337,6 +2338,29 @@ function vProfile(id,self){const x=S.profiles[id];if(!x)return `<div class="empt
     if(busy||k===last||!last||matchMedia('(prefers-reduced-motion: reduce)').matches){last=k;return _render()}
     last=k;busy=true;try{const vt=document.startViewTransition(()=>{_render()});vt.finished.finally(()=>{busy=false})}catch(_){busy=false;_render()}};
 })();
+
+/* Vidéos du fil : lecture automatique (sans le son) quand elles sont à l'écran, pause quand on les quitte */
+const CLV={io:null,snd:false};
+const CLSND={off:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9.5v5h3.5L12 18.5v-13L7.5 9.5z" fill="currentColor"/><path d="m16.5 9.5 5 5M21.5 9.5l-5 5"/></svg>',on:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9.5v5h3.5L12 18.5v-13L7.5 9.5z" fill="currentColor"/><path d="M16 8.8a4.5 4.5 0 0 1 0 6.4M18.8 6.2a8.2 8.2 0 0 1 0 11.6"/></svg>'};
+function clVideos(){const els=document.querySelectorAll('.cl-media[data-vpid]');if(!els.length||!('IntersectionObserver' in window))return;
+  if(!CLV.io)CLV.io=new IntersectionObserver(es=>es.forEach(e=>{const m=e.target;const on=e.isIntersecting&&e.intersectionRatio>=.55;m.dataset.vis=on?'1':'';const v=m.querySelector('video');
+    if(on){if(!v||!m.dataset.ld)clLoad(m);else if(!v.dataset.user)v.play().catch(()=>{})}else if(v)v.pause()}),{threshold:[0,.55,.9]});
+  els.forEach(m=>{if(m.dataset.obs)return;m.dataset.obs='1';CLV.io.observe(m)})}
+async function clLoad(m){const id=m.dataset.vpid;const x=S.posts.find(p=>p.id===id);if(!x||!isVid(x)||m.dataset.ld)return;m.dataset.ld='1';
+  try{const src=vidCache[id]||(vidCache[id]=await S.be.getVideo(x.vid));const pv=m.querySelector('.post-video');if(!pv)return;
+    let v=pv.querySelector('video');
+    if(!v){pv.removeAttribute('id');pv.innerHTML='<video playsinline loop muted preload="auto"></video>';v=pv.querySelector('video');const po=safeImg(x.vid.poster);if(po)v.poster=po;v.src=src}
+    v.removeAttribute('controls');v.loop=true;v.playsInline=true;v.setAttribute('playsinline','');v.muted=!CLV.snd;
+    let sb=pv.querySelector('.cl-snd');if(!sb){sb=document.createElement('span');sb.className='cl-snd';pv.appendChild(sb)}
+    const upd=()=>{sb.innerHTML=v.muted?CLSND.off:CLSND.on;pv.classList.toggle('paused',v.paused)};v.onvolumechange=upd;v.onplay=upd;v.onpause=upd;upd();
+    if(m.dataset.vis==='1')v.play().catch(()=>{v.muted=true;v.play().catch(()=>{})})}
+  catch(_){delete m.dataset.ld}}
+/* toucher la vidéo : active le son, puis pause / lecture */
+document.addEventListener('click',e=>{const m=e.target.closest&&e.target.closest('.cl-media[data-vpid]');if(!m)return;const v=m.querySelector('video');
+  if(!v){e.preventDefault();e.stopPropagation();m.dataset.vis='1';clLoad(m);return}
+  e.preventDefault();e.stopPropagation();
+  if(v.muted){v.muted=false;CLV.snd=true;document.querySelectorAll('.cl-media video').forEach(o=>{if(o!==v)o.muted=true});if(v.paused)v.play().catch(()=>{});return}
+  if(v.paused){delete v.dataset.user;v.play().catch(()=>{})}else{v.dataset.user='1';v.pause()}},true);
 
 function isVid(x){return !!(x&&x.vid&&(x.vid.mid||x.vid.url))}
 function vidHtml(x){const v=x.vid;const poster=safeImg(v.poster);const src=vidCache[x.id];
@@ -2482,7 +2506,7 @@ function softRender(){
 if(['inbox','visit','shop','shopitem'].includes(S.route.v))return; /* ces pages ne dépendent pas des mises à jour des membres : pas de rechargement intempestif */
 const ae=document.activeElement;if(ae&&/^(INPUT|TEXTAREA|SELECT)$/.test(ae.tagName)&&document.getElementById('app').contains(ae)){softRender.later=true;return}
 if($('#layer').innerHTML.trim()){softRender.later=true;return}
-if([...document.querySelectorAll('#app video')].some(v=>!v.paused&&!v.ended)){softRender.later=true;return}softRender.later=false;if(['signup','pay','chat'].includes(S.route.v)){if(S.route.v==='chat'){}return}const y=window.scrollY;render();if(y)window.scrollTo(0,y)}
+if([...document.querySelectorAll('#app video')].some(v=>!v.paused&&!v.ended&&!v.muted)){softRender.later=true;return}softRender.later=false;if(['signup','pay','chat'].includes(S.route.v)){if(S.route.v==='chat'){}return}const y=window.scrollY;render();if(y)window.scrollTo(0,y)}
 
 /* Orbe pulsant + ondes (écran d'accueil) */
 function sphere(cv){if(!cv)return null;const x=cv.getContext('2d'),W=cv.width,H=cv.height,cx=W/2,cy=H/2;let t=0,raf=0;const still=matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -4032,6 +4056,12 @@ body.shop-mode .shp-empty{border-color:#C9C9D2!important}
 .cl-pill{background:#F2F2F5!important;border-color:#C9C9D2!important;color:#232327!important}
 .vs .vb.me,.bub.me{background:#232327!important;color:#F2F2F5!important}
 .cl-rip{background:rgba(99,99,110,.28)!important}
+/* lecture automatique des vidéos */
+.cl-media .post-video{position:relative}
+.cl-media .post-video video{display:block}
+.cl-snd{position:absolute;right:10px;bottom:10px;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:rgba(14,14,16,.55);color:#F2F2F5;backdrop-filter:blur(6px);pointer-events:none;z-index:2}
+.cl-snd svg{width:18px;height:18px}
+.cl-media .post-video.paused::after{content:"";position:absolute;left:50%;top:50%;width:62px;height:62px;margin:-31px 0 0 -31px;border-radius:50%;background:rgba(14,14,16,.5) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23F2F2F5' d='M8 5.5v13l10.5-6.5z'/%3E%3C/svg%3E") center/30px no-repeat;pointer-events:none}
 
 </style>
 <script>if('serviceWorker' in navigator&&location.protocol==='https:'){window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js').catch(function(){})})}</script></body></html>
