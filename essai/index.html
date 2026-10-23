@@ -2275,7 +2275,7 @@ function vFeed(){const p=me();const tab=S.route.tab==='ab'?'ab':'pt';const fol=f
   const empty=tab==='ab'?`<div class="cl-empty">${I.user}<b>Personne à suivre pour l'instant</b><p>Abonne-toi à des membres : leurs publications apparaîtront ici.</p><button class="cl-btn dark" data-go="discover">Découvrir des membres</button></div>`
     :`<div class="cl-empty">${I.image}<b>Rien pour l'instant</b><p>Partage le premier moment : il apparaîtra ici pour tous les membres.</p><button class="cl-btn dark" data-act="compose" data-withpic="1">Publier</button></div>`;
   setTimeout(clVideos,60);
-  return `${clHero(`<div class="wordmark cl-wm" data-go="about" role="button" tabindex="0" aria-label="À propos de Koris"><i></i>KORIS</div>`,`${clAdmin(true)}${bellHtml()}<button class="cl-ib" data-go="messages" aria-label="Messages">${CLI.plane}${clUnread()?'<i class="cl-dot"></i>':''}</button>`,'','cl-mid')}
+  return `${clHero(`<div class="wordmark cl-wm" data-go="about" role="button" tabindex="0" aria-label="À propos de Koris"><i></i>KORIS</div>`,`${S.owner?clAdmin():bellHtml()}`,'','cl-mid')}
   <div class="cl-body">${demoBanner()}
    <div class="cl-box"><div class="cl-box-top"><label class="cl-cav" for="qPhoto" aria-label="${p.photo?'Changer ma photo de profil':'Ajouter une photo de profil'}">${av(p,34)}</label><input id="qPhoto" type="file" accept="image/*" class="fpick"><button class="cl-ask" data-act="compose">Partager un moment, ${esc(p.firstName||'')}…</button></div>
     <div class="cl-box-bot"><button class="cl-ic" data-act="compose" data-withpic="1" aria-label="Ajouter une photo">${CLI.img}</button><button class="cl-ic" data-act="compose" data-withpic="1" aria-label="Ajouter une vidéo">${CLI.vid}</button><button class="cl-ic" data-act="compose" aria-label="Écrire un texte">${CLI.doc}</button><span class="sp"></span><button class="gl-pill cl-send" data-act="compose" aria-label="Publier">${CLI.up}</button></div></div>
@@ -4185,8 +4185,8 @@ body.shop-mode .shp-empty{border-color:#C9C9D2!important}
 .nav.cln .nav-in>button.cl-pub.gl-pill{background:radial-gradient(130% 150% at 28% 18%,#EAF8FF 0%,#A9E0FF 28%,#56BCFF 66%,#2B95EE 100%)!important;box-shadow:0 12px 26px -10px rgba(43,149,238,.75),inset 0 2px 6px rgba(255,255,255,.75),inset 0 -6px 12px rgba(25,110,210,.35)!important;border:2px solid rgba(255,255,255,.9)!important}
 .cl-btn.dark,.btn-primary,.btn.btn-primary,.cl-pf .cl-write{background:radial-gradient(140% 160% at 30% 0%,#9BD8FF 0%,#4CB6FF 42%,#1F82DB 100%)!important}
 /* ===== Retouche : boutons brillants en graphite (plus de bleu) et à la taille des autres icônes ===== */
-:root{--gloss:radial-gradient(130% 150% at 28% 12%,#4FB3BF 0%,#16808F 26%,#0B4452 60%,#041E26 100%);--glossSh:0 8px 18px -10px rgba(4,30,38,.7),inset 0 1.5px 3px rgba(255,255,255,.35),inset 0 -4px 8px rgba(0,0,0,.35)}
-.gl-pill,.cl-btn.dark,.btn-primary,.btn.btn-primary,.cl-pf .cl-write,.cl-cam,.composer .send,.vs .vs-f>button#vsB,.vs #vsB,.vs .vs-f button,.vs .vs-f .vs-rs,.vp-bar button,.nav.cln .nav-in>button.cl-pub.gl-pill{background:var(--gloss)!important;color:#F2F2F5!important;border:1px solid rgba(255,255,255,.18)!important;box-shadow:var(--glossSh)!important;text-shadow:none!important}
+:root{--gloss:#0B4452;--glossSh:none}
+.gl-pill,.cl-btn.dark,.btn-primary,.btn.btn-primary,.cl-pf .cl-write,.cl-cam,.composer .send,.vs .vs-f>button#vsB,.vs #vsB,.vs .vs-f button,.vs .vs-f .vs-rs,.vp-bar button,.nav.cln .nav-in>button.cl-pub.gl-pill{background:var(--gloss)!important;color:#F2F2F5!important;border:1px solid rgba(255,255,255,.18)!important;box-shadow:var(--glossSh)!important;text-shadow:none!important;background-image:none!important}
 .gl-pill svg{filter:none}
 .vs .vs-f .vs-rx{background:transparent!important;color:#63636E!important;box-shadow:none!important;border:0!important}
 .cl-send{width:48px!important;height:40px!important}
