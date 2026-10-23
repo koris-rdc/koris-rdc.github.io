@@ -44,10 +44,7 @@ Deno.serve(async (req) => {
     const cfg: any = setRow?.data || {};
     const pub = { on: cfg.on !== false, name: String(cfg.name || "Koris"), welcome: String(cfg.welcome || "Bonjour 👋 Comment puis-je vous aider ?"), color: String(cfg.color || "") };
 
-    if (action === "config") return json({ ...pub, v: 3 });
-
-    // Vérification de la photo de profil (vraie photo, pas d'IA, même personne que le selfie)
-    if (action === "photocheck") return await photoCheck(req, sb, body);
+    if (action === "config") return json({ ...pub, v: 2 });
 
     const vid = String(body.vid || "");
     if (!UUID.test(vid)) return json({ error: "visiteur invalide" }, 400);
@@ -140,9 +137,6 @@ Deno.serve(async (req) => {
 
 // --- Notification sur le téléphone des administrateurs (nouveau message d'un visiteur) ---
 async function notifyAdmins(sb: any, vid: string, name: string, text: string) {
-  await pushAdmins(sb, { title: "💬 " + (name || "Visiteur") + " · Messagerie Koris", body: media(text).slice(0, 140), url: "/?inbox=" + vid, tag: "visit-" + vid });
-}
-async function pushAdmins(sb: any, msg: Record<string, string>) {
   const pub = Deno.env.get("VAPID_PUBLIC_KEY"), priv = Deno.env.get("VAPID_PRIVATE_KEY");
   if (!pub || !priv) { console.log("push : clés VAPID absentes"); return; }
   try {
@@ -151,7 +145,7 @@ async function pushAdmins(sb: any, msg: Record<string, string>) {
     const ids = (ad || []).map((a: any) => a.uid);
     if (!ids.length) return;
     const { data: subs } = await sb.from("push_subs").select("endpoint,sub").in("uid", ids);
-    const payload = JSON.stringify(msg);
+    const payload = JSON.stringify({ title: "💬 " + (name || "Visiteur") + " · Messagerie Koris", body: media(text).slice(0, 140), url: "/?inbox=" + vid, tag: "visit-" + vid });
     await Promise.all((subs || []).map(async (s: any) => {
       try { await webpush.sendNotification(s.sub, payload, { TTL: 86400, urgency: "high" }); }
       catch (e) {
@@ -180,103 +174,6 @@ async function notifyVisitor(sb: any, vid: string, text: string) {
       }
     }));
   } catch (e) { console.log("push visiteur", String(e)); }
-}
-
-// --- Vérification de la photo de profil ---
-// Image 1 = photo de profil enregistrée, image 2 = selfie pris à l'instant avec la caméra avant.
-// Verdict : ok (débloqué), rejected (refusée, raison donnée), review (l'équipe décide).
-const PV_PROMPT = `Tu es le modérateur des photos de profil d'une application de rencontre réservée aux adultes. Sois strict.
-Image 1 : la photo de profil que le membre veut afficher.
-Image 2 : un selfie que le membre vient de prendre en direct avec la caméra avant de son téléphone.
-Analyse et réponds UNIQUEMENT en JSON avec ces clés :
-{"profile_one_clear_face": bool (un seul visage humain réel, net, assez grand et visible),
- "profile_ai_probability": entier 0-100 (probabilité que la photo 1 soit générée ou fortement retouchée par IA : peau trop lisse, détails incohérents, mains/oreilles/dents/bijoux déformés, arrière-plan flou artificiel, symétrie parfaite, rendu « studio » irréel, style Midjourney/Stable Diffusion/FaceApp),
- "profile_drawing_or_filter": bool (dessin, avatar, dessin animé, emoji, rendu 3D, filtre qui change le visage),
- "profile_screenshot_or_photo_of_photo": bool (capture d'écran, photo d'un écran, d'une affiche ou d'une autre photo),
- "profile_famous_or_stock": bool (célébrité, mannequin connu ou photo de banque d'images),
- "nudity": bool (nudité ou contenu sexuel sur l'une des images),
- "minor_suspected": bool (la personne semble avoir moins de 18 ans),
- "selfie_real_live_person": bool (la photo 2 montre une vraie personne en direct, pas un écran, pas une photo de photo),
- "same_person": bool (la photo 1 et la photo 2 montrent la même personne),
- "same_person_confidence": entier 0-100,
- "reason_fr": "une phrase courte et polie en français, adressée au membre, qui explique le problème principal (vide si tout va bien)"}`;
-
-async function photoCheck(req: Request, sb: any, body: any) {
-  const tok = (req.headers.get("authorization") || "").replace(/^Bearer\s+/i, "");
-  const { data: u } = await sb.auth.getUser(tok);
-  const uid = u?.user?.id;
-  if (!uid) return json({ error: "non autorisé" }, 401);
-  const { data: pr } = await sb.from("profiles").select("data").eq("id", uid).maybeSingle();
-  const prof: any = pr?.data || {};
-  const photo = String(prof.photo || "");
-  const MEDIA = Deno.env.get("SUPABASE_URL") + "/storage/v1/object/public/media/";
-  const dataPhoto = /^data:image\/(jpeg|png|webp);base64,([A-Za-z0-9+/=]+)$/.exec(photo);
-  if (!dataPhoto && !photo.startsWith(MEDIA)) return json({ status: "nophoto", reason: "Ajoute d'abord une photo de profil." });
-  const sm = /^data:image\/(jpeg|png|webp);base64,([A-Za-z0-9+/=]+)$/.exec(String(body.selfie || ""));
-  if (!sm || sm[2].length > 1_500_000) return json({ error: "selfie invalide" }, 400);
-  const live = body.live === true;
-  const base = body.base === "/essai/" ? "/essai/" : "/";
-  const { data: prev } = await sb.from("photo_checks").select("status,n,day").eq("uid", uid).maybeSingle();
-  const today = new Date().toISOString().slice(0, 10);
-  const n = (prev?.day === today ? (prev?.n || 0) : 0) + 1;
-  if (n > 8) return json({ status: prev?.status || "rejected", reason: "Trop d'essais aujourd'hui. Réessaie demain ou écris à l'équipe." });
-
-  let pimg: { mime: string; data: string } | null = null;
-  if (dataPhoto) pimg = { mime: "image/" + dataPhoto[1], data: dataPhoto[2] };
-  else {
-    try {
-      const r = await fetch(photo);
-      const buf = new Uint8Array(await r.arrayBuffer());
-      if (r.ok && buf.length < 5_000_000) pimg = { mime: (r.headers.get("content-type") || "image/jpeg").split(";")[0], data: b64(buf) };
-    } catch (_) { /* photo illisible */ }
-  }
-  const GKEY = Deno.env.get("GEMINI_API_KEY");
-  let v: any = null;
-  if (pimg && GKEY) {
-    const t = await askGeminiParts(GKEY, [{ text: PV_PROMPT }, { text: "Image 1 (photo de profil) :" }, { inline_data: { mime_type: pimg.mime, data: pimg.data } }, { text: "Image 2 (selfie en direct) :" }, { inline_data: { mime_type: "image/" + sm[1], data: sm[2] } }]);
-    try { v = JSON.parse(t.replace(/^```(json)?|```$/g, "").trim()); } catch (_) { console.log("photocheck json", t.slice(0, 300)); }
-  }
-  const ai = Number(v?.profile_ai_probability ?? 50), conf = Number(v?.same_person_confidence ?? 0);
-  let status = "review", reason = "Ta photo va être vérifiée par l'équipe.";
-  const no = (r: string) => { status = "rejected"; reason = String(v?.reason_fr || "").trim() || r; };
-  if (v) {
-    if (v.nudity) no("Cette photo n'est pas acceptée sur Koris.");
-    else if (v.profile_drawing_or_filter) no("Les dessins, avatars et filtres ne sont pas acceptés : mets une vraie photo de toi.");
-    else if (ai >= 70) no("Ta photo semble créée ou modifiée par une IA. Mets une vraie photo de toi, sans retouche.");
-    else if (!v.profile_one_clear_face) no("On ne voit pas clairement ton visage (ou il y a plusieurs personnes). Mets une photo de toi seul(e), de face.");
-    else if (v.profile_screenshot_or_photo_of_photo) no("Les captures d'écran et les photos d'une autre photo ne sont pas acceptées.");
-    else if (!v.selfie_real_live_person) no("Le selfie n'est pas clair. Reprends-le face à la caméra, dans un endroit bien éclairé.");
-    else if (v.same_person === false && conf >= 70) no("Le selfie ne correspond pas à la personne de ta photo de profil. Mets une vraie photo de toi.");
-    else if (live && v.same_person && conf >= 75 && ai < 35 && !v.minor_suspected && !v.profile_famous_or_stock) { status = "ok"; reason = ""; }
-  }
-  const { error } = await sb.from("photo_checks").upsert({ uid, photo, status, reason, score: Math.round(ai), selfie: status === "review" ? body.selfie : null, by: "ia", n, day: today, detail: v, at: Date.now() });
-  if (error) { console.log("photocheck save", error.message); return json({ error: "enregistrement impossible" }, 500); }
-  if (status === "review") await pushAdmins(sb, { title: "📸 Photo à vérifier", body: ((prof.firstName || "Un membre") + " attend la validation de sa photo").slice(0, 140), url: base + "?pvadmin", tag: "pv-" + uid });
-  return json({ status, reason });
-}
-
-async function askGeminiParts(key: string, parts: any[]): Promise<string> {
-  const models = [Deno.env.get("GEMINI_MODEL"), "gemini-3.6-flash", "gemini-flash-latest", "gemini-3.5-flash-lite", "gemini-3.1-flash-lite", "gemini-flash-lite-latest", "gemini-3.8-flash"].filter(Boolean) as string[];
-  const deadline = Date.now() + 28000;
-  for (const model of models) {
-    const left = deadline - Date.now();
-    if (left < 2000) break;
-    const ac = new AbortController();
-    const to = setTimeout(() => ac.abort(), left);
-    try {
-      const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
-        signal: ac.signal, method: "POST",
-        headers: { "x-goog-api-key": key, "content-type": "application/json" },
-        body: JSON.stringify({ contents: [{ role: "user", parts }], generationConfig: { temperature: 0, maxOutputTokens: 2000, responseMimeType: "application/json" } }),
-      });
-      if (!r.ok) { console.log("gemini photo", model, r.status, (await r.text()).slice(0, 300)); continue; }
-      const out = await r.json();
-      const t = (out.candidates?.[0]?.content?.parts || []).map((p: any) => (p.thought ? "" : p.text || "")).join("").trim();
-      if (t) return t;
-    } catch (e) { console.log("gemini photo", model, String(e)); }
-    finally { clearTimeout(to); }
-  }
-  return "";
 }
 
 // --- Google Gemini (disponible en RDC) ---

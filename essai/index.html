@@ -2413,7 +2413,7 @@ const CCI={rot:'<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stro
   face:'<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2"/><circle cx="12" cy="11" r="3"/><path d="M8 17c1-1.6 2.4-2.4 4-2.4s3 .8 4 2.4"/></svg>'};
 const CC_OPT={photo:{ratio:1,round:true,outW:480,maxBytes:80000,title:'Ma photo de profil'},cover:{ratio:16/9,round:false,outW:1080,maxBytes:160000,title:'Image de couverture'}};
 async function ccSave(kind,u){if(!u)return;try{await S.be.saveProfile({...me(),[kind]:u});fx&&fx.ok&&fx.ok();
-  if(kind==='photo'){toast('Photo de profil mise à jour');if(PV.state==='ready'&&!pvOk(me()))render()}else toast('Image de couverture mise à jour')}catch(_){toast(kind==='photo'?"La photo n'a pas pu être enregistrée":"L'image n'a pas pu être enregistrée")}}
+  if(kind==='photo'){toast('Photo de profil mise à jour');if(document.querySelector('.pv'))render()}else toast('Image de couverture mise à jour')}catch(_){toast(kind==='photo'?"La photo n'a pas pu être enregistrée":"L'image n'a pas pu être enregistrée")}}
 /* Les choix de fichier passent d'abord par le recadrage */
 document.addEventListener('change',async e=>{const id=e.target.id;if(!['qPhoto','cvPhoto','fPhoto','pvPick'].includes(id))return;e.stopImmediatePropagation();
   const f=e.target.files&&e.target.files[0];e.target.value='';if(!f)return;
@@ -2434,96 +2434,30 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-ccm],[data
    <b class="ccm-t">${kind==='cover'?'Image de couverture':'Photo de profil'}</b>
    <button data-ccx="${kind}:new">${PB.image||''}<span>Choisir une nouvelle ${kind==='cover'?'image':'photo'}</span></button>
    ${has?`<button data-ccx="${kind}:crop">${CCI.face}<span>Recadrer ${kind==='cover'?"l'image":'la photo'} actuelle</span></button>`:''}
-   ${kind==='photo'?`<p class="ccm-n">Une nouvelle photo (ou un recadrage) sera vérifiée de nouveau avec un selfie.</p>`:''}
    <button class="ccm-c" data-ccx="close">Annuler</button></div>`;
   document.body.appendChild(m)},true);
 
-/* ===== Photo de profil vraie, vérifiée par selfie ===== */
-const PV={state:'idle',row:null,skip:false,adm:null,base:location.pathname.startsWith('/essai')?'/essai/':'/'};
-async function pvLoad(){if(!S.be||!S.be.sb||!S.be.uid){PV.state='off';return}
-  try{const {data,error}=await S.be.sb.from('photo_checks').select('uid,photo,status,reason,at,by').eq('uid',S.be.uid).maybeSingle();if(error)throw error;PV.row=data||null;PV.state='ready'}
-  catch(_){PV.state=PV.state==='ready'?'ready':'off'}}
-const pvOk=p=>!!p&&PV.row&&PV.row.status==='ok'&&PV.row.photo===p.photo;
-function pvNeed(p,r){if(!p||!p.firstName||!S.be||!S.be.sb||!S.be.uid||PV.state==='off')return false;
-  if(['auth','onboard','signup','about','visit','inbox','pvadmin'].includes(r.v))return false;
-  if(S.owner&&PV.skip)return false;return PV.state!=='ready'||!pvOk(p)}
-function vPvGate(p){if(PV.state!=='ready')return `<div class="loading"><div class="spin"></div></div>`;
-  const ph=safeImg(p.photo),r=PV.row,same=r&&r.photo===p.photo;let note='';
-  if(!ph)note=`<div class="pv-note pvw"><b>Tu n'as pas encore de photo de profil.</b>Ajoute une vraie photo de toi pour activer ton compte.</div>`;
-  else if(same&&r.status==='review')note=`<div class="pv-note wait"><b>Vérification par l'équipe en cours…</b>Ta photo et ton selfie ont été envoyés. Ton compte sera débloqué dès qu'ils seront validés.</div>`;
-  else if(same&&r.status==='rejected')note=`<div class="pv-note bad"><b>Photo refusée</b>${esc(r.reason||"Mets une vraie photo de toi, visage bien visible.")}</div>`;
-  else if(r&&r.status==='ok')note=`<div class="pv-note pvw"><b>Tu as changé de photo.</b>Refais la vérification pour continuer.</div>`;
-  else note=`<div class="pv-note pvw"><b>Action requise pour continuer d'utiliser ton compte.</b>Vérifie que ta photo de profil est bien une vraie photo de toi. Ça prend une minute.</div>`;
-  const wait=same&&r&&r.status==='review';
-  return `<section class="pv"><div class="pv-hero"><span class="pv-ic">${CCI.shield}</span><h1>Une vraie photo de toi</h1><p>Sur Koris, chaque membre a une vraie photo de lui. Les photos créées par IA, les dessins, les avatars, les filtres et les photos d'une autre personne ne sont pas acceptés.</p></div>
-  <div class="pv-body">${note}
-   <div class="pv-card"><span class="pv-n">1</span><div class="pv-ct"><b>Ta photo de profil</b><small>Visage de face, bien éclairé, seul(e) sur la photo.</small></div>
-    <div class="pv-ph">${ph?`<img src="${ph}" alt="">`:`<span>${I.user}</span>`}</div>
-    <div class="pv-acts"><label class="btn btn-ghost" for="pvPick">${ph?'Changer':'Ajouter ma photo'}</label>${ph?`<button class="btn btn-ghost" data-ccx="photo:crop">Recadrer</button>`:''}</div><input id="pvPick" type="file" accept="image/*" class="fpick"></div>
-   <div class="pv-card"><span class="pv-n">2</span><div class="pv-ct"><b>Un selfie maintenant</b><small>On le compare à ta photo pour vérifier que c'est bien toi. Ton selfie n'est jamais publié.</small></div>
-    <button class="btn btn-primary pv-go" data-pv="selfie" ${ph&&!wait?'':'disabled'}>${CCI.face}<span>${wait?'En attente de validation':'Prendre mon selfie'}</span></button></div>
-   <div class="pv-foot"><button class="pv-l" data-pv="help">Besoin d'aide ?</button>${S.be.signOut?`<button class="pv-l" data-pv="out">Me déconnecter</button>`:''}${S.owner?`<button class="pv-l" data-pv="skip">Plus tard (admin)</button><button class="pv-l" data-go="pvadmin">Photos à vérifier</button>`:''}</div>
+/* ===== Photo de profil obligatoire ===== */
+const PV={skip:false};
+function pvNeed(p,r){if(!p||!p.firstName||!S.be||!S.be.uid||safeImg(p.photo))return false;
+  if(['auth','onboard','signup','about','visit','inbox'].includes(r.v))return false;
+  return !(S.owner&&PV.skip)}
+function vPvGate(p){const old=!!(p.at&&Date.now()-p.at>36e5);
+  return `<section class="pv"><div class="pv-hero"><span class="pv-ic">${CCI.face}</span><h1>Ajoute ta photo de profil</h1><p>Sur Koris, chaque membre a une photo de profil. Mets une vraie photo de toi, visage bien visible : c'est ce qui donne confiance aux autres membres.</p></div>
+  <div class="pv-body">${old?`<div class="pv-note pvw"><b>Action requise pour continuer d'utiliser ton compte.</b>Ajoute une photo de profil pour retrouver l'accès à Koris.</div>`:''}
+   <div class="pv-card"><div class="pv-ph"><span>${I.user}</span></div>
+    <label class="btn btn-primary pv-go" for="pvPick">${CCI.face}<span>Ajouter ma photo</span></label><input id="pvPick" type="file" accept="image/*" class="fpick">
+    <small class="pv-tip">Tu pourras la recadrer avant de l'enregistrer.</small></div>
+   <div class="pv-foot"><button class="pv-l" data-pv="help">Besoin d'aide ?</button>${S.be.signOut?`<button class="pv-l" data-pv="out">Me déconnecter</button>`:''}${S.owner?`<button class="pv-l" data-pv="skip">Plus tard (admin)</button>`:''}</div>
   </div></section>`}
-function pvBusy(t){let o=document.querySelector('.pv-busy');if(!t){o&&o.remove();return}if(!o){o=document.createElement('div');o.className='pv-busy';document.body.appendChild(o)}o.innerHTML=`<div class="spin"></div><b>${esc(t)}</b><small>Ne ferme pas l'application</small>`}
-async function pvSend(selfie,live){pvBusy('Vérification de ta photo…');
-  try{const {data}=await S.be.sb.auth.getSession();const tok=data&&data.session&&data.session.access_token;if(!tok)throw new Error('session');
-    const r=await fetch(ACC_FN,{method:'POST',headers:{'Content-Type':'application/json',apikey:SB_KEY,Authorization:'Bearer '+tok},body:JSON.stringify({action:'photocheck',selfie,live,base:PV.base})});
-    const j=await r.json().catch(()=>({}));if(!r.ok||j.error)throw new Error(j.error||r.status);
-    await pvLoad();pvBusy();
-    if(j.status==='ok'){fx&&fx.ok&&fx.ok();toast('Photo vérifiée ✓ Bienvenue !');render()}
-    else if(j.status==='review'){toast("Merci ! L'équipe vérifie ta photo");render()}
-    else{toast(j.reason||'Photo refusée');render()}}
-  catch(e){pvBusy();toast("La vérification n'a pas pu se faire. Réessaie dans un instant.")}}
-function pvFallback(){const i=document.createElement('input');i.type='file';i.accept='image/*';i.setAttribute('capture','user');i.style.display='none';document.body.appendChild(i);
-  i.onchange=async()=>{const f=i.files[0];i.remove();if(!f)return;try{const u=await compress(f,640,180000);pvSend(u,false)}catch(_){toast("Le selfie n'a pas pu être lu")}};i.click()}
-async function pvSelfie(){if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia)return pvFallback();
-  let st;try{st=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user',width:{ideal:720},height:{ideal:960}},audio:false})}
-  catch(e){if(e&&e.name==='NotAllowedError'){toast("Autorise l'appareil photo pour faire le selfie");return}return pvFallback()}
-  const ov=document.createElement('div');ov.className='pv-cam';
-  ov.innerHTML=`<video playsinline autoplay muted></video><div class="pv-mask"></div><div class="pv-ct2"><b>Place ton visage dans l'ovale</b><small>Regarde l'écran, sans lunettes de soleil ni masque</small></div>
-   <div class="pv-cb"><button class="pv-x" data-k="no" aria-label="Annuler">✕</button><button class="pv-shot" data-k="shot" aria-label="Prendre le selfie"></button><span style="width:48px"></span></div>`;
-  document.body.appendChild(ov);const v=ov.querySelector('video');v.srcObject=st;try{await v.play()}catch(_){}
-  const stop=()=>{st.getTracks().forEach(t=>t.stop());ov.remove()};
-  ov.addEventListener('click',e=>{const k=e.target.closest('[data-k]')?.dataset.k;if(!k)return;if(k==='no')return stop();
-    if(!v.videoWidth)return;const M=720,s=Math.min(1,M/Math.max(v.videoWidth,v.videoHeight)),c=document.createElement('canvas');c.width=Math.round(v.videoWidth*s);c.height=Math.round(v.videoHeight*s);c.getContext('2d').drawImage(v,0,0,c.width,c.height);
-    const u=ccJpeg(c,220000);stop();pvSend(u,true)})}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-pv]');if(!b)return;e.preventDefault();e.stopPropagation();const k=b.dataset.pv;
-  if(k==='selfie')return pvSelfie();if(k==='out'){b.disabled=true;return S.be.signOut()}
-  if(k==='skip'){PV.skip=true;return render()}if(k==='help'){location.href=PV.base+'?discuter=photo';return}
-  const pa=b.dataset.pva;if(pa)return pvDecide(k,pa)},true);
-/* en attente de l'équipe : on regarde régulièrement si c'est validé */
-setInterval(async()=>{if(PV.state==='ready'&&PV.row&&PV.row.status==='review'&&document.querySelector('.pv')&&!document.hidden){const was=PV.row.status;await pvLoad();if(PV.row&&PV.row.status!==was){if(PV.row.status==='ok')toast('Ta photo est validée ✓');render()}}},20000);
-
-/* ===== Admin : photos à vérifier ===== */
-async function pvAdmLoad(){try{const {data,error}=await S.be.sb.from('photo_checks').select('uid,photo,status,reason,score,selfie,by,at').order('at',{ascending:false}).limit(400);if(error)throw error;PV.adm=data||[]}catch(_){PV.adm=false}
-  if(S.route.v==='pvadmin')render();else pvAdmBtn()}
-function vPvAdmin(){const rows=PV.adm;const top=`<div class="top" style="padding-inline:0"><button class="icon-btn" data-go="admin" aria-label="Retour">${I.back}</button><h1 style="font-size:22px;flex:1;text-align:center">Photos à vérifier</h1><span style="width:42px"></span></div>`;
-  if(rows==null)return `<section class="adm pv-adm">${top}<div class="loading"><div class="spin"></div></div></section>`;
-  if(rows===false)return `<section class="adm pv-adm">${top}<p class="hint">La table « photo_checks » n'existe pas encore : exécute le SQL fourni.</p></section>`;
-  const ok=new Set(rows.filter(r=>r.status==='ok'&&S.profiles[r.uid]&&r.photo===S.profiles[r.uid].photo).map(r=>r.uid));
-  const members=Object.entries(S.profiles).filter(([,x])=>x&&x.firstName);const todo=members.filter(([id])=>!ok.has(id)).length;
-  const list=rows.filter(r=>r.status!=='ok'&&S.profiles[r.uid]).sort((a,b)=>(a.status==='review'?0:1)-(b.status==='review'?0:1)||b.at-a.at);
-  const card=r=>{const x=S.profiles[r.uid]||{},ph=safeImg(x.photo),sf=/^data:image\/(jpeg|png|webp);base64,/.test(r.selfie||'')?r.selfie:'';
-    return `<div class="pv-ar"><div class="pv-pics"><figure>${ph?`<img src="${ph}" alt="">`:'<span>—</span>'}<figcaption>Profil</figcaption></figure><figure>${sf?`<img src="${sf}" alt="">`:'<span>—</span>'}<figcaption>Selfie</figcaption></figure></div>
-    <div class="pv-ai"><b>${esc((x.firstName||'')+' '+(x.lastName||''))}</b><span class="pv-chip ${r.status}">${r.status==='review'?'À vérifier':'Refusée'}${r.by==='admin'?' · équipe':''}</span><small>${esc(r.reason||'')}${r.photo!==x.photo?' · a changé de photo depuis':''}</small><small>${new Date(r.at).toLocaleString('fr-FR',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})}</small>
-    </div><div class="pv-aa"><button class="btn btn-primary" data-pv="ok" data-pva="${r.uid}">Valider la photo</button><button class="btn btn-ghost" data-pv="no" data-pva="${r.uid}">Refuser</button></div></div>`};
-  return `<section class="adm pv-adm">${top}<div class="mc-stats"><span>Membres <b>${members.length}</b></span><span>Vérifiés <b>${members.length-todo}</b></span><span>Pas encore <b>${todo}</b></span></div>
-   ${list.length?list.map(card).join(''):`<p class="hint" style="text-align:center;margin:30px 0">Aucune photo en attente 👍</p>`}</section>`}
-async function pvDecide(k,uid){const x=S.profiles[uid]||{};
-  const patch=k==='ok'?{status:'ok',reason:"Validée par l'équipe",by:'admin',photo:x.photo||'',selfie:null,at:Date.now()}:{status:'rejected',reason:"Photo refusée par l'équipe : mets une vraie photo de toi, visage bien visible.",by:'admin',selfie:null,at:Date.now()};
-  try{const {error}=await S.be.sb.from('photo_checks').update(patch).eq('uid',uid);if(error)throw error;toast(k==='ok'?'Photo validée':'Photo refusée');await pvAdmLoad()}catch(_){toast("La décision n'a pas été enregistrée")}}
-function pvAdmBtn(){if(!S.owner||!S.route||S.route.v!=='admin')return;const t=document.querySelector('#app .adm .top');if(!t||document.querySelector('.pv-admbtn'))return;
-  const n=Array.isArray(PV.adm)?PV.adm.filter(r=>r.status==='review').length:0;
-  t.insertAdjacentHTML('afterend',`<button class="pv-admbtn" data-go="pvadmin">${CCI.shield}<span>Photos à vérifier</span>${n?`<b>${n}</b>`:''}</button>`)}
-
-/* La vérification passe avant tout le reste (y compris le paiement / l'activation) */
-(function(){const _r=render;let fromUrl=false;
+  if(k==='out'){b.disabled=true;return S.be.signOut()}if(k==='skip'){PV.skip=true;return render()}
+  if(k==='help'){location.href=(location.pathname.startsWith('/essai')?'/essai/':'/')+'?discuter=photo'}},true);
+/* Pas de photo de profil : on bloque tout (y compris le paiement / l'activation) jusqu'à ce qu'elle soit ajoutée */
+(function(){const _r=render;
   render=function(){const app=$('#app'),r=S.route||{},p=S.be&&S.be.uid?me():null;
-    if(!fromUrl&&S.gotProfiles&&S.owner&&/[?&]pvadmin\b/.test(location.search)){fromUrl=true;history.replaceState(history.state,'',location.pathname);S.route={v:'pvadmin'};return render()}
-    if(r.v==='pvadmin'){if(!S.owner){S.route={v:'feed'};return render()}app.classList.add('no-nav');app.innerHTML=vPvAdmin();if(PV.adm==null&&!pvAdmLoad.busy){pvAdmLoad.busy=true;pvAdmLoad().finally(()=>pvAdmLoad.busy=false)}return}
-    if(p&&p.firstName&&PV.state==='idle'&&S.be.sb){PV.state='loading';pvLoad().then(()=>render())}
     if(pvNeed(p,r)){app.classList.add('no-nav');app.innerHTML=vPvGate(p);return}
-    _r();if(r.v==='admin'&&S.owner){if(PV.adm==null&&!pvAdmLoad.busy){pvAdmLoad.busy=true;pvAdmLoad().finally(()=>pvAdmLoad.busy=false)}else setTimeout(pvAdmBtn,80);setTimeout(pvAdmBtn,400)}};
+    _r()};
 })();
 
 function isVid(x){return !!(x&&x.vid&&(x.vid.mid||x.vid.url))}
@@ -4310,6 +4244,9 @@ button.cl-pav{border:0;padding:0;background:none;cursor:pointer;font:inherit}
 .pv-chip.rejected{background:#F6DAD8;color:#9B2C26}
 .pv-aa{display:flex;gap:8px;width:100%}
 .pv-aa .btn{flex:1;height:42px;font-size:14px}
+
+.pv-card .pv-go{width:100%;box-sizing:border-box;cursor:pointer}
+.pv-tip{text-align:center;color:#63636E;font-size:13px}
 
 </style>
 <script>if('serviceWorker' in navigator&&location.protocol==='https:'){window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js').catch(function(){})})}</script></body></html>
