@@ -2374,16 +2374,16 @@ function ccJpeg(c,maxBytes){let q=.86,u=c.toDataURL('image/jpeg',q);while(u.leng
 async function clCrop(src,o){o=Object.assign({ratio:1,round:true,outW:480,maxBytes:80000,title:'Recadrer'},o||{});
   let img;try{img=await ccLoad(src)}catch(_){toast("Cette image n'a pas pu être ouverte");return null}
   return new Promise(res=>{
-    const ov=document.createElement('div');ov.className='cc';
-    ov.innerHTML=`<div class="cc-top"><button type="button" class="cc-t" data-c="no">Annuler</button><b>${esc(o.title)}</b><button type="button" class="cc-t cc-ok" data-c="ok">Valider</button></div>
-    <div class="cc-stage"><div class="cc-frame${o.round?' round':''}"><canvas class="cc-cv"></canvas></div></div>
-    <div class="cc-bot"><button type="button" class="cc-r" data-c="rot" aria-label="Pivoter">${CCI.rot}</button><span class="cc-z">${CCI.minus}</span><input type="range" class="cc-range" min="1" max="5" step="0.01" value="1" aria-label="Zoom"><span class="cc-z">${CCI.plus}</span></div>
-    <p class="cc-hint">Fais glisser pour déplacer · pince ou utilise le curseur pour zoomer</p>`;
-    document.body.appendChild(ov);document.documentElement.classList.add('cc-on');
-    const fr=ov.querySelector('.cc-frame'),cv=ov.querySelector('.cc-cv'),rg=ov.querySelector('.cc-range'),ctx=cv.getContext('2d');
+    const ov=document.createElement('div');ov.className='kcrop';
+    ov.innerHTML=`<div class="kc-top"><button type="button" class="kc-t" data-c="no">Annuler</button><b>${esc(o.title)}</b><button type="button" class="kc-t kc-ok" data-c="ok">Valider</button></div>
+    <div class="kc-stage"><div class="kc-frame${o.round?' round':''}"><canvas class="kc-cv"></canvas></div></div>
+    <div class="kc-bot"><button type="button" class="kc-r" data-c="rot" aria-label="Pivoter">${CCI.rot}</button><span class="kc-z">${CCI.minus}</span><input type="range" class="kc-range" min="1" max="5" step="0.01" value="1" aria-label="Zoom"><span class="kc-z">${CCI.plus}</span></div>
+    <p class="kc-hint">Fais glisser pour déplacer · pince ou utilise le curseur pour zoomer</p>`;
+    document.body.appendChild(ov);document.documentElement.classList.add('kc-on');
+    const fr=ov.querySelector('.kc-frame'),cv=ov.querySelector('.kc-cv'),rg=ov.querySelector('.kc-range'),ctx=cv.getContext('2d');
     let W=0,H=0,z=1,tx=0,ty=0,dpr=Math.min(2,window.devicePixelRatio||1);
     const iw=()=>img.naturalWidth||img.width,ih=()=>img.naturalHeight||img.height;
-    function size(){const st=ov.querySelector('.cc-stage').getBoundingClientRect();W=Math.min(st.width-32,o.round?380:560);H=W/o.ratio;if(H>st.height-24){H=st.height-24;W=H*o.ratio}
+    function size(){const st=ov.querySelector('.kc-stage').getBoundingClientRect();W=Math.min(st.width-32,o.round?380:560);H=W/o.ratio;if(H>st.height-24){H=st.height-24;W=H*o.ratio}
       fr.style.width=W+'px';fr.style.height=H+'px';cv.width=Math.round(W*dpr);cv.height=Math.round(H*dpr);cv.style.width=W+'px';cv.style.height=H+'px';clamp();draw()}
     const sc=()=>Math.max(W/iw(),H/ih())*z;
     function clamp(){const s=sc(),mx=Math.max(0,(iw()*s-W)/2),my=Math.max(0,(ih()*s-H)/2);tx=Math.max(-mx,Math.min(mx,tx));ty=Math.max(-my,Math.min(my,ty))}
@@ -2393,14 +2393,14 @@ async function clCrop(src,o){o=Object.assign({ratio:1,round:true,outW:480,maxByt
     const pts=new Map();let last=null;
     const rel=e=>{const b=fr.getBoundingClientRect();return [e.clientX-b.left-W/2,e.clientY-b.top-H/2]};
     function gest(){const a=[...pts.values()];if(a.length===1)return {x:a[0][0],y:a[0][1],d:0};const [p,q]=a;return {x:(p[0]+q[0])/2,y:(p[1]+q[1])/2,d:Math.hypot(p[0]-q[0],p[1]-q[1])}}
-    const stage=ov.querySelector('.cc-stage');
+    const stage=ov.querySelector('.kc-stage');
     stage.addEventListener('pointerdown',e=>{stage.setPointerCapture(e.pointerId);pts.set(e.pointerId,rel(e));last=gest()});
     stage.addEventListener('pointermove',e=>{if(!pts.has(e.pointerId))return;pts.set(e.pointerId,rel(e));const g=gest();if(last){if(g.d&&last.d){const nz=z*g.d/last.d;const r=Math.max(1,Math.min(5,nz))/z;tx=g.x-(last.x-tx)*r;ty=g.y-(last.y-ty)*r;z*=r;rg.value=z}else{tx+=g.x-last.x;ty+=g.y-last.y}clamp();draw()}last=g});
     const up=e=>{pts.delete(e.pointerId);last=pts.size?gest():null};stage.addEventListener('pointerup',up);stage.addEventListener('pointercancel',up);
     stage.addEventListener('wheel',e=>{e.preventDefault();const [x,y]=rel(e);zoomTo(z*(e.deltaY<0?1.08:1/1.08),x,y)},{passive:false});
     rg.addEventListener('input',()=>zoomTo(+rg.value));
     function rotate(){const c=document.createElement('canvas');c.width=ih();c.height=iw();const x=c.getContext('2d');x.translate(c.width/2,c.height/2);x.rotate(Math.PI/2);x.drawImage(img,-iw()/2,-ih()/2);img=c;tx=ty=0;z=1;rg.value=1;clamp();draw()}
-    function close(v){window.removeEventListener('resize',size);ov.classList.add('out');document.documentElement.classList.remove('cc-on');setTimeout(()=>ov.remove(),200);res(v)}
+    function close(v){window.removeEventListener('resize',size);ov.classList.add('out');document.documentElement.classList.remove('kc-on');setTimeout(()=>ov.remove(),200);res(v)}
     ov.addEventListener('click',e=>{const b=e.target.closest('[data-c]');if(!b)return;const c=b.dataset.c;
       if(c==='no')return close(null);if(c==='rot')return rotate();
       if(c==='ok'){const oh=Math.round(o.outW/o.ratio),k=o.outW/W,out=document.createElement('canvas');out.width=o.outW;out.height=oh;const x=out.getContext('2d');x.fillStyle='#0E0E10';x.fillRect(0,0,out.width,out.height);x.imageSmoothingQuality='high';paint(x,k);
@@ -4181,25 +4181,25 @@ body.shop-mode .shp-empty{border-color:#C9C9D2!important}
 .cl-media .post-video.paused::after{content:"";position:absolute;left:50%;top:50%;width:62px;height:62px;margin:-31px 0 0 -31px;border-radius:50%;background:rgba(14,14,16,.5) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23F2F2F5' d='M8 5.5v13l10.5-6.5z'/%3E%3C/svg%3E") center/30px no-repeat;pointer-events:none}
 
 /* ===== Recadrage ===== */
-html.cc-on,html.cc-on body{overflow:hidden}
-.cc{position:fixed;inset:0;z-index:9000;background:#0E0E10;color:#F2F2F5;display:flex;flex-direction:column;animation:ccIn .22s ease both;touch-action:none;user-select:none;-webkit-user-select:none}
-.cc.out{animation:ccOut .2s ease both}
+html.kc-on,html.kc-on body{overflow:hidden}
+.kcrop{position:fixed;inset:0;z-index:9000;background:#0E0E10;color:#F2F2F5;display:flex;flex-direction:column;animation:ccIn .22s ease both;touch-action:none;user-select:none;-webkit-user-select:none}
+.kcrop.out{animation:ccOut .2s ease both}
 @keyframes ccIn{from{opacity:0;transform:translateY(16px)}}@keyframes ccOut{to{opacity:0;transform:translateY(16px)}}
-.cc-top{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:calc(env(safe-area-inset-top,0px) + 10px) 12px 10px}
-.cc-top b{font-size:16px;font-weight:700}
-.cc-t{background:none;border:0;color:#C9C9D2;font:inherit;font-size:15px;font-weight:600;padding:10px 8px;cursor:pointer}
-.cc-t.cc-ok{color:#0E0E10;background:#F2F2F5;border-radius:999px;padding:9px 18px}
-.cc-stage{flex:1;display:grid;place-items:center;position:relative;overflow:hidden;cursor:grab}
-.cc-stage:active{cursor:grabbing}
-.cc-frame{position:relative;border-radius:14px;overflow:hidden;box-shadow:0 0 0 9999px rgba(14,14,16,.72),0 0 0 2px rgba(242,242,245,.9)}
-.cc-frame.round{border-radius:50%}
-.cc-frame::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(rgba(242,242,245,.18),rgba(242,242,245,.18)) 33.33% 0/1px 100% no-repeat,linear-gradient(rgba(242,242,245,.18),rgba(242,242,245,.18)) 66.66% 0/1px 100% no-repeat,linear-gradient(rgba(242,242,245,.18),rgba(242,242,245,.18)) 0 33.33%/100% 1px no-repeat,linear-gradient(rgba(242,242,245,.18),rgba(242,242,245,.18)) 0 66.66%/100% 1px no-repeat}
-.cc-cv{display:block}
-.cc-bot{display:flex;align-items:center;gap:12px;padding:14px 18px 4px;max-width:520px;width:100%;margin:0 auto;box-sizing:border-box}
-.cc-z{color:#9A9AA6;display:grid;place-items:center}
-.cc-range{flex:1;accent-color:#F2F2F5;height:28px}
-.cc-r{width:44px;height:44px;border-radius:50%;border:0;background:radial-gradient(130% 150% at 28% 12%,#9A9AA6,#63636E 26%,#3E3E45 60%,#232327);color:#F2F2F5;display:grid;place-items:center;cursor:pointer;flex:none}
-.cc-hint{margin:6px 0 calc(env(safe-area-inset-bottom,0px) + 16px);text-align:center;font-size:13px;color:#9A9AA6}
+.kc-top{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:calc(env(safe-area-inset-top,0px) + 10px) 12px 10px}
+.kc-top b{font-size:16px;font-weight:700}
+.kc-t{background:none;border:0;color:#C9C9D2;font:inherit;font-size:15px;font-weight:600;padding:10px 8px;cursor:pointer}
+.kc-t.kc-ok{color:#0E0E10;background:#F2F2F5;border-radius:999px;padding:9px 18px}
+.kc-stage{flex:1;display:grid;place-items:center;position:relative;overflow:hidden;cursor:grab}
+.kc-stage:active{cursor:grabbing}
+.kc-frame{position:relative;border-radius:14px;overflow:hidden;box-shadow:0 0 0 9999px rgba(14,14,16,.72),0 0 0 2px rgba(242,242,245,.9)}
+.kc-frame.round{border-radius:50%}
+.kc-frame::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(rgba(242,242,245,.18),rgba(242,242,245,.18)) 33.33% 0/1px 100% no-repeat,linear-gradient(rgba(242,242,245,.18),rgba(242,242,245,.18)) 66.66% 0/1px 100% no-repeat,linear-gradient(rgba(242,242,245,.18),rgba(242,242,245,.18)) 0 33.33%/100% 1px no-repeat,linear-gradient(rgba(242,242,245,.18),rgba(242,242,245,.18)) 0 66.66%/100% 1px no-repeat}
+.kc-cv{display:block}
+.kc-bot{display:flex;align-items:center;gap:12px;padding:14px 18px 4px;max-width:520px;width:100%;margin:0 auto;box-sizing:border-box}
+.kc-z{color:#9A9AA6;display:grid;place-items:center}
+.kc-range{flex:1;accent-color:#F2F2F5;height:28px}
+.kc-r{width:44px;height:44px;border-radius:50%;border:0;background:radial-gradient(130% 150% at 28% 12%,#9A9AA6,#63636E 26%,#3E3E45 60%,#232327);color:#F2F2F5;display:grid;place-items:center;cursor:pointer;flex:none}
+.kc-hint{margin:6px 0 calc(env(safe-area-inset-bottom,0px) + 16px);text-align:center;font-size:13px;color:#9A9AA6}
 /* petit menu photo */
 .ccm{position:fixed;inset:0;z-index:8500}
 .ccm-bg{position:absolute;inset:0;background:rgba(14,14,16,.45);animation:ccFade .2s ease both}
