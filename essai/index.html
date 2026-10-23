@@ -2908,7 +2908,7 @@ function gkAnswer(q){const t=' '+gNorm(q)+' ';let best=null,bs=0;
 /* Gucko « intelligence artificielle » (facultatif) : si la fonction Supabase « gucko » est installée, Gucko répond librement ; sinon il utilise la base ci-dessus. */
 const GK_AI={off:false};
 async function gkAI(msgs){if(GK_AI.off||!S.be?.sb||!S.be?.uid)return null;
-  try{const {data,error}=await S.be.sb.functions.invoke('gucko',{body:{messages:msgs.slice(-10),context:GUIDE_CTX,member:{firstName:me()?.firstName||'',city:me()?.city||'',commune:me()?.commune||''}}});
+  try{const {data,error}=await S.be.sb.functions.invoke('gucko',{body:{essai:true,messages:msgs.slice(-10),context:GUIDE_CTX,member:{firstName:me()?.firstName||'',city:me()?.city||'',commune:me()?.commune||''}}});
     if(error||!data||typeof data.text!=='string'||!data.text.trim()){if(error&&/404|not found|Failed to send/i.test(String(error.message||error)))GK_AI.off=true;return null}
     return data.text.trim()}catch(_){GK_AI.off=true;return null}}
 
