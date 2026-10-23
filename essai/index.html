@@ -2312,9 +2312,9 @@ function vProfile(id,self){const x=S.profiles[id];if(!x)return `<div class="empt
      ${SUBSCRIPTION&&self&&!x.owner&&x.paid?`<div class="sub-row ${isActive(x)?'':'off'}"><span class="dot"></span><span class="t">Abonnement ${isActive(x)?'actif':'expiré'}${x.paidUntil?` · ${isActive(x)?'jusqu\'au':'depuis le'} ${untilTxt(x.paidUntil)}`:''}</span><button data-go="pay" data-param="preview">Renouveler</button></div>`:''}</div></div>`;
   return `<section class="clp"><header class="cl-cover" style="background-image:linear-gradient(180deg,rgba(14,14,16,.25),rgba(14,14,16,.75)),url('${coverFor(id,x)}')">
    ${self?`<div class="cl-cl">${clAdmin()}</div>`:`<button class="cl-ib glass" data-back aria-label="Retour">${I.back}</button>`}<span class="sp"></span>
-   ${self?`<label class="cl-ib glass" for="cvPhoto" aria-label="Changer l'image de couverture">${CLI.cam}</label><input id="cvPhoto" type="file" accept="image/*" class="fpick"><button class="cl-ib glass" data-act="settings" aria-label="Réglages">${PB.gear}</button>`:''}<button class="cl-ib glass" data-act="help" aria-label="Aide">${PB.help}</button></header>
+   ${self?`<button class="cl-ib glass" data-ccm="cover" aria-label="Changer ou recadrer l'image de couverture">${CLI.cam}</button><input id="cvPhoto" type="file" accept="image/*" class="fpick"><button class="cl-ib glass" data-act="settings" aria-label="Réglages">${PB.gear}</button>`:''}<button class="cl-ib glass" data-act="help" aria-label="Aide">${PB.help}</button></header>
   <div class="cl-pcard">
-   ${self?`<label class="cl-pav" for="qPhoto" aria-label="Changer ma photo de profil">${av(x,96)}<b class="cl-pcam">${CLI.cam}</b></label><input id="qPhoto" type="file" accept="image/*" class="fpick">`:`<button class="cl-pav" ${S.viewPics.length?'data-view="0"':''} aria-label="Voir la photo de profil">${av(x,96)}</button>`}
+   ${self?`<button class="cl-pav" data-ccm="photo" aria-label="Changer ou recadrer ma photo de profil">${av(x,96)}<b class="cl-pcam">${CLI.cam}</b></button><input id="qPhoto" type="file" accept="image/*" class="fpick">`:`<button class="cl-pav" ${S.viewPics.length?'data-view="0"':''} aria-label="Voir la photo de profil">${av(x,96)}</button>`}
    <h1 class="cl-nm">${esc(x.firstName||fullName(x))}${x.certified?I.badge:''}</h1>${x.test?'<span class="demo-tag">PROFIL FICTIF · TEST</span>':''}
    <p class="cl-sub">${esc([x.certified&&x.handle?'@'+x.handle:'',x.age?x.age+' ans':'',[x.commune,x.city].filter(Boolean).join(', '),dist].filter(Boolean).join(' · '))}</p>
    ${st!=='off'?`<span class="cl-pill big">${INTENTS.find(t=>t[0]===st)[2]} ${esc(AVL[st])}</span>`:''}
@@ -2361,6 +2361,170 @@ document.addEventListener('click',e=>{const m=e.target.closest&&e.target.closest
   e.preventDefault();e.stopPropagation();
   if(v.muted){v.muted=false;CLV.snd=true;document.querySelectorAll('.cl-media video').forEach(o=>{if(o!==v)o.muted=true});if(v.paused)v.play().catch(()=>{});return}
   if(v.paused){delete v.dataset.user;v.play().catch(()=>{})}else{v.dataset.user='1';v.pause()}},true);
+
+
+/* ===== Recadrage des photos (profil + couverture) ===== */
+function ccLoad(src){return new Promise((res,rej)=>{const im=new Image();if(typeof src==='string'&&/^https:/.test(src)){im.crossOrigin='anonymous';src+=(src.includes('?')?'&':'?')+'cc='+Date.now()}
+  im.onload=()=>{const M=2400,k=Math.min(1,M/Math.max(im.naturalWidth,im.naturalHeight));if(k>=1&&!/^blob:/.test(im.src))return res(im);
+    const c=document.createElement('canvas');c.width=Math.round(im.naturalWidth*k);c.height=Math.round(im.naturalHeight*k);c.getContext('2d').drawImage(im,0,0,c.width,c.height);
+    if(/^blob:/.test(im.src))URL.revokeObjectURL(im.src);res(c)};
+  im.onerror=()=>rej(new Error('image'));im.src=src instanceof Blob?URL.createObjectURL(src):src})}
+function ccJpeg(c,maxBytes){let q=.86,u=c.toDataURL('image/jpeg',q);while(u.length>maxBytes&&q>.4){q-=.07;u=c.toDataURL('image/jpeg',q)}return u}
+/* Ouvre l'éditeur : déplacer (glisser), zoomer (pincer / curseur / molette), pivoter. Renvoie une image JPEG ou null. */
+async function clCrop(src,o){o=Object.assign({ratio:1,round:true,outW:480,maxBytes:80000,title:'Recadrer'},o||{});
+  let img;try{img=await ccLoad(src)}catch(_){toast("Cette image n'a pas pu être ouverte");return null}
+  return new Promise(res=>{
+    const ov=document.createElement('div');ov.className='cc';
+    ov.innerHTML=`<div class="cc-top"><button type="button" class="cc-t" data-c="no">Annuler</button><b>${esc(o.title)}</b><button type="button" class="cc-t cc-ok" data-c="ok">Valider</button></div>
+    <div class="cc-stage"><div class="cc-frame${o.round?' round':''}"><canvas class="cc-cv"></canvas></div></div>
+    <div class="cc-bot"><button type="button" class="cc-r" data-c="rot" aria-label="Pivoter">${CCI.rot}</button><span class="cc-z">${CCI.minus}</span><input type="range" class="cc-range" min="1" max="5" step="0.01" value="1" aria-label="Zoom"><span class="cc-z">${CCI.plus}</span></div>
+    <p class="cc-hint">Fais glisser pour déplacer · pince ou utilise le curseur pour zoomer</p>`;
+    document.body.appendChild(ov);document.documentElement.classList.add('cc-on');
+    const fr=ov.querySelector('.cc-frame'),cv=ov.querySelector('.cc-cv'),rg=ov.querySelector('.cc-range'),ctx=cv.getContext('2d');
+    let W=0,H=0,z=1,tx=0,ty=0,dpr=Math.min(2,window.devicePixelRatio||1);
+    const iw=()=>img.naturalWidth||img.width,ih=()=>img.naturalHeight||img.height;
+    function size(){const st=ov.querySelector('.cc-stage').getBoundingClientRect();W=Math.min(st.width-32,o.round?380:560);H=W/o.ratio;if(H>st.height-24){H=st.height-24;W=H*o.ratio}
+      fr.style.width=W+'px';fr.style.height=H+'px';cv.width=Math.round(W*dpr);cv.height=Math.round(H*dpr);cv.style.width=W+'px';cv.style.height=H+'px';clamp();draw()}
+    const sc=()=>Math.max(W/iw(),H/ih())*z;
+    function clamp(){const s=sc(),mx=Math.max(0,(iw()*s-W)/2),my=Math.max(0,(ih()*s-H)/2);tx=Math.max(-mx,Math.min(mx,tx));ty=Math.max(-my,Math.min(my,ty))}
+    function paint(c,k){const s=sc()*k,w=iw()*s,h=ih()*s;c.drawImage(img,(W*k-w)/2+tx*k,(H*k-h)/2+ty*k,w,h)}
+    function draw(){ctx.fillStyle='#0E0E10';ctx.fillRect(0,0,cv.width,cv.height);paint(ctx,dpr)}
+    function zoomTo(nz,cx,cy){nz=Math.max(1,Math.min(5,nz));const r=nz/z;cx=cx||0;cy=cy||0;tx=cx-(cx-tx)*r;ty=cy-(cy-ty)*r;z=nz;rg.value=z;clamp();draw()}
+    const pts=new Map();let last=null;
+    const rel=e=>{const b=fr.getBoundingClientRect();return [e.clientX-b.left-W/2,e.clientY-b.top-H/2]};
+    function gest(){const a=[...pts.values()];if(a.length===1)return {x:a[0][0],y:a[0][1],d:0};const [p,q]=a;return {x:(p[0]+q[0])/2,y:(p[1]+q[1])/2,d:Math.hypot(p[0]-q[0],p[1]-q[1])}}
+    const stage=ov.querySelector('.cc-stage');
+    stage.addEventListener('pointerdown',e=>{stage.setPointerCapture(e.pointerId);pts.set(e.pointerId,rel(e));last=gest()});
+    stage.addEventListener('pointermove',e=>{if(!pts.has(e.pointerId))return;pts.set(e.pointerId,rel(e));const g=gest();if(last){if(g.d&&last.d){const nz=z*g.d/last.d;const r=Math.max(1,Math.min(5,nz))/z;tx=g.x-(last.x-tx)*r;ty=g.y-(last.y-ty)*r;z*=r;rg.value=z}else{tx+=g.x-last.x;ty+=g.y-last.y}clamp();draw()}last=g});
+    const up=e=>{pts.delete(e.pointerId);last=pts.size?gest():null};stage.addEventListener('pointerup',up);stage.addEventListener('pointercancel',up);
+    stage.addEventListener('wheel',e=>{e.preventDefault();const [x,y]=rel(e);zoomTo(z*(e.deltaY<0?1.08:1/1.08),x,y)},{passive:false});
+    rg.addEventListener('input',()=>zoomTo(+rg.value));
+    function rotate(){const c=document.createElement('canvas');c.width=ih();c.height=iw();const x=c.getContext('2d');x.translate(c.width/2,c.height/2);x.rotate(Math.PI/2);x.drawImage(img,-iw()/2,-ih()/2);img=c;tx=ty=0;z=1;rg.value=1;clamp();draw()}
+    function close(v){window.removeEventListener('resize',size);ov.classList.add('out');document.documentElement.classList.remove('cc-on');setTimeout(()=>ov.remove(),200);res(v)}
+    ov.addEventListener('click',e=>{const b=e.target.closest('[data-c]');if(!b)return;const c=b.dataset.c;
+      if(c==='no')return close(null);if(c==='rot')return rotate();
+      if(c==='ok'){const oh=Math.round(o.outW/o.ratio),k=o.outW/W,out=document.createElement('canvas');out.width=o.outW;out.height=oh;const x=out.getContext('2d');x.fillStyle='#0E0E10';x.fillRect(0,0,out.width,out.height);x.imageSmoothingQuality='high';paint(x,k);
+        try{close(ccJpeg(out,o.maxBytes))}catch(_){toast("Cette image ne peut pas être recadrée");close(null)}}});
+    window.addEventListener('resize',size);requestAnimationFrame(size)})}
+const CCI={rot:'<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/></svg>',
+  minus:'<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14"/></svg>',
+  plus:'<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>',
+  shield:'<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg>',
+  face:'<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2"/><circle cx="12" cy="11" r="3"/><path d="M8 17c1-1.6 2.4-2.4 4-2.4s3 .8 4 2.4"/></svg>'};
+const CC_OPT={photo:{ratio:1,round:true,outW:480,maxBytes:80000,title:'Ma photo de profil'},cover:{ratio:16/9,round:false,outW:1080,maxBytes:160000,title:'Image de couverture'}};
+async function ccSave(kind,u){if(!u)return;try{await S.be.saveProfile({...me(),[kind]:u});fx&&fx.ok&&fx.ok();
+  if(kind==='photo'){toast('Photo de profil mise à jour');if(PV.state==='ready'&&!pvOk(me()))render()}else toast('Image de couverture mise à jour')}catch(_){toast(kind==='photo'?"La photo n'a pas pu être enregistrée":"L'image n'a pas pu être enregistrée")}}
+/* Les choix de fichier passent d'abord par le recadrage */
+document.addEventListener('change',async e=>{const id=e.target.id;if(!['qPhoto','cvPhoto','fPhoto','pvPick'].includes(id))return;e.stopImmediatePropagation();
+  const f=e.target.files&&e.target.files[0];e.target.value='';if(!f)return;
+  if(!/^image\//.test(f.type||'image/')){toast('Choisis une image (JPG ou PNG)');return}
+  if(id==='cvPhoto')return ccSave('cover',await clCrop(f,CC_OPT.cover));
+  const u=await clCrop(f,CC_OPT.photo);if(!u)return;
+  if(id==='fPhoto'){pendingPhoto=u;const a=$('#avPrev');if(a)a.innerHTML=av({photo:u},60);return}
+  ccSave('photo',u)},true);
+/* Petit menu : nouvelle photo ou recadrer l'actuelle */
+document.addEventListener('click',e=>{const b=e.target.closest('[data-ccm],[data-ccx]');if(!b)return;e.preventDefault();e.stopPropagation();
+  if(b.dataset.ccx){const k=b.dataset.ccx;document.querySelector('.ccm')?.remove();
+    if(k==='close')return;const [kind,what]=k.split(':');
+    if(what==='new'){const inp=document.getElementById(kind==='cover'?'cvPhoto':(document.getElementById('qPhoto')?'qPhoto':'pvPick'));if(inp)inp.click();return}
+    const cur=kind==='cover'?safeImg(me()?.cover):safeImg(me()?.photo);if(!cur)return;clCrop(cur,CC_OPT[kind]).then(u=>ccSave(kind,u));return}
+  const kind=b.dataset.ccm,p=me()||{},has=kind==='cover'?!!safeImg(p.cover):!!safeImg(p.photo);
+  document.querySelector('.ccm')?.remove();const m=document.createElement('div');m.className='ccm';
+  m.innerHTML=`<div class="ccm-bg" data-ccx="close"></div><div class="ccm-s" role="dialog" aria-label="${kind==='cover'?'Image de couverture':'Photo de profil'}"><i class="ccm-h"></i>
+   <b class="ccm-t">${kind==='cover'?'Image de couverture':'Photo de profil'}</b>
+   <button data-ccx="${kind}:new">${PB.image||''}<span>Choisir une nouvelle ${kind==='cover'?'image':'photo'}</span></button>
+   ${has?`<button data-ccx="${kind}:crop">${CCI.face}<span>Recadrer ${kind==='cover'?"l'image":'la photo'} actuelle</span></button>`:''}
+   ${kind==='photo'?`<p class="ccm-n">Une nouvelle photo (ou un recadrage) sera vérifiée de nouveau avec un selfie.</p>`:''}
+   <button class="ccm-c" data-ccx="close">Annuler</button></div>`;
+  document.body.appendChild(m)},true);
+
+/* ===== Photo de profil vraie, vérifiée par selfie ===== */
+const PV={state:'idle',row:null,skip:false,adm:null,base:location.pathname.startsWith('/essai')?'/essai/':'/'};
+async function pvLoad(){if(!S.be||!S.be.sb||!S.be.uid){PV.state='off';return}
+  try{const {data,error}=await S.be.sb.from('photo_checks').select('uid,photo,status,reason,at,by').eq('uid',S.be.uid).maybeSingle();if(error)throw error;PV.row=data||null;PV.state='ready'}
+  catch(_){PV.state=PV.state==='ready'?'ready':'off'}}
+const pvOk=p=>!!p&&PV.row&&PV.row.status==='ok'&&PV.row.photo===p.photo;
+function pvNeed(p,r){if(!p||!p.firstName||!S.be||!S.be.sb||!S.be.uid||PV.state==='off')return false;
+  if(['auth','onboard','signup','about','visit','inbox','pvadmin'].includes(r.v))return false;
+  if(S.owner&&PV.skip)return false;return PV.state!=='ready'||!pvOk(p)}
+function vPvGate(p){if(PV.state!=='ready')return `<div class="loading"><div class="spin"></div></div>`;
+  const ph=safeImg(p.photo),r=PV.row,same=r&&r.photo===p.photo;let note='';
+  if(!ph)note=`<div class="pv-note pvw"><b>Tu n'as pas encore de photo de profil.</b>Ajoute une vraie photo de toi pour activer ton compte.</div>`;
+  else if(same&&r.status==='review')note=`<div class="pv-note wait"><b>Vérification par l'équipe en cours…</b>Ta photo et ton selfie ont été envoyés. Ton compte sera débloqué dès qu'ils seront validés.</div>`;
+  else if(same&&r.status==='rejected')note=`<div class="pv-note bad"><b>Photo refusée</b>${esc(r.reason||"Mets une vraie photo de toi, visage bien visible.")}</div>`;
+  else if(r&&r.status==='ok')note=`<div class="pv-note pvw"><b>Tu as changé de photo.</b>Refais la vérification pour continuer.</div>`;
+  else note=`<div class="pv-note pvw"><b>Action requise pour continuer d'utiliser ton compte.</b>Vérifie que ta photo de profil est bien une vraie photo de toi. Ça prend une minute.</div>`;
+  const wait=same&&r&&r.status==='review';
+  return `<section class="pv"><div class="pv-hero"><span class="pv-ic">${CCI.shield}</span><h1>Une vraie photo de toi</h1><p>Sur Koris, chaque membre a une vraie photo de lui. Les photos créées par IA, les dessins, les avatars, les filtres et les photos d'une autre personne ne sont pas acceptés.</p></div>
+  <div class="pv-body">${note}
+   <div class="pv-card"><span class="pv-n">1</span><div class="pv-ct"><b>Ta photo de profil</b><small>Visage de face, bien éclairé, seul(e) sur la photo.</small></div>
+    <div class="pv-ph">${ph?`<img src="${ph}" alt="">`:`<span>${I.user}</span>`}</div>
+    <div class="pv-acts"><label class="btn btn-ghost" for="pvPick">${ph?'Changer':'Ajouter ma photo'}</label>${ph?`<button class="btn btn-ghost" data-ccx="photo:crop">Recadrer</button>`:''}</div><input id="pvPick" type="file" accept="image/*" class="fpick"></div>
+   <div class="pv-card"><span class="pv-n">2</span><div class="pv-ct"><b>Un selfie maintenant</b><small>On le compare à ta photo pour vérifier que c'est bien toi. Ton selfie n'est jamais publié.</small></div>
+    <button class="btn btn-primary pv-go" data-pv="selfie" ${ph&&!wait?'':'disabled'}>${CCI.face}<span>${wait?'En attente de validation':'Prendre mon selfie'}</span></button></div>
+   <div class="pv-foot"><button class="pv-l" data-pv="help">Besoin d'aide ?</button>${S.be.signOut?`<button class="pv-l" data-pv="out">Me déconnecter</button>`:''}${S.owner?`<button class="pv-l" data-pv="skip">Plus tard (admin)</button><button class="pv-l" data-go="pvadmin">Photos à vérifier</button>`:''}</div>
+  </div></section>`}
+function pvBusy(t){let o=document.querySelector('.pv-busy');if(!t){o&&o.remove();return}if(!o){o=document.createElement('div');o.className='pv-busy';document.body.appendChild(o)}o.innerHTML=`<div class="spin"></div><b>${esc(t)}</b><small>Ne ferme pas l'application</small>`}
+async function pvSend(selfie,live){pvBusy('Vérification de ta photo…');
+  try{const {data}=await S.be.sb.auth.getSession();const tok=data&&data.session&&data.session.access_token;if(!tok)throw new Error('session');
+    const r=await fetch(ACC_FN,{method:'POST',headers:{'Content-Type':'application/json',apikey:SB_KEY,Authorization:'Bearer '+tok},body:JSON.stringify({action:'photocheck',selfie,live,base:PV.base})});
+    const j=await r.json().catch(()=>({}));if(!r.ok||j.error)throw new Error(j.error||r.status);
+    await pvLoad();pvBusy();
+    if(j.status==='ok'){fx&&fx.ok&&fx.ok();toast('Photo vérifiée ✓ Bienvenue !');render()}
+    else if(j.status==='review'){toast("Merci ! L'équipe vérifie ta photo");render()}
+    else{toast(j.reason||'Photo refusée');render()}}
+  catch(e){pvBusy();toast("La vérification n'a pas pu se faire. Réessaie dans un instant.")}}
+function pvFallback(){const i=document.createElement('input');i.type='file';i.accept='image/*';i.setAttribute('capture','user');i.style.display='none';document.body.appendChild(i);
+  i.onchange=async()=>{const f=i.files[0];i.remove();if(!f)return;try{const u=await compress(f,640,180000);pvSend(u,false)}catch(_){toast("Le selfie n'a pas pu être lu")}};i.click()}
+async function pvSelfie(){if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia)return pvFallback();
+  let st;try{st=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user',width:{ideal:720},height:{ideal:960}},audio:false})}
+  catch(e){if(e&&e.name==='NotAllowedError'){toast("Autorise l'appareil photo pour faire le selfie");return}return pvFallback()}
+  const ov=document.createElement('div');ov.className='pv-cam';
+  ov.innerHTML=`<video playsinline autoplay muted></video><div class="pv-mask"></div><div class="pv-ct2"><b>Place ton visage dans l'ovale</b><small>Regarde l'écran, sans lunettes de soleil ni masque</small></div>
+   <div class="pv-cb"><button class="pv-x" data-k="no" aria-label="Annuler">✕</button><button class="pv-shot" data-k="shot" aria-label="Prendre le selfie"></button><span style="width:48px"></span></div>`;
+  document.body.appendChild(ov);const v=ov.querySelector('video');v.srcObject=st;try{await v.play()}catch(_){}
+  const stop=()=>{st.getTracks().forEach(t=>t.stop());ov.remove()};
+  ov.addEventListener('click',e=>{const k=e.target.closest('[data-k]')?.dataset.k;if(!k)return;if(k==='no')return stop();
+    if(!v.videoWidth)return;const M=720,s=Math.min(1,M/Math.max(v.videoWidth,v.videoHeight)),c=document.createElement('canvas');c.width=Math.round(v.videoWidth*s);c.height=Math.round(v.videoHeight*s);c.getContext('2d').drawImage(v,0,0,c.width,c.height);
+    const u=ccJpeg(c,220000);stop();pvSend(u,true)})}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-pv]');if(!b)return;e.preventDefault();e.stopPropagation();const k=b.dataset.pv;
+  if(k==='selfie')return pvSelfie();if(k==='out'){b.disabled=true;return S.be.signOut()}
+  if(k==='skip'){PV.skip=true;return render()}if(k==='help'){location.href=PV.base+'?discuter=photo';return}
+  const pa=b.dataset.pva;if(pa)return pvDecide(k,pa)},true);
+/* en attente de l'équipe : on regarde régulièrement si c'est validé */
+setInterval(async()=>{if(PV.state==='ready'&&PV.row&&PV.row.status==='review'&&document.querySelector('.pv')&&!document.hidden){const was=PV.row.status;await pvLoad();if(PV.row&&PV.row.status!==was){if(PV.row.status==='ok')toast('Ta photo est validée ✓');render()}}},20000);
+
+/* ===== Admin : photos à vérifier ===== */
+async function pvAdmLoad(){try{const {data,error}=await S.be.sb.from('photo_checks').select('uid,photo,status,reason,score,selfie,by,at').order('at',{ascending:false}).limit(400);if(error)throw error;PV.adm=data||[]}catch(_){PV.adm=false}
+  if(S.route.v==='pvadmin')render();else pvAdmBtn()}
+function vPvAdmin(){const rows=PV.adm;const top=`<div class="top" style="padding-inline:0"><button class="icon-btn" data-go="admin" aria-label="Retour">${I.back}</button><h1 style="font-size:22px;flex:1;text-align:center">Photos à vérifier</h1><span style="width:42px"></span></div>`;
+  if(rows==null)return `<section class="adm pv-adm">${top}<div class="loading"><div class="spin"></div></div></section>`;
+  if(rows===false)return `<section class="adm pv-adm">${top}<p class="hint">La table « photo_checks » n'existe pas encore : exécute le SQL fourni.</p></section>`;
+  const ok=new Set(rows.filter(r=>r.status==='ok'&&S.profiles[r.uid]&&r.photo===S.profiles[r.uid].photo).map(r=>r.uid));
+  const members=Object.entries(S.profiles).filter(([,x])=>x&&x.firstName);const todo=members.filter(([id])=>!ok.has(id)).length;
+  const list=rows.filter(r=>r.status!=='ok'&&S.profiles[r.uid]).sort((a,b)=>(a.status==='review'?0:1)-(b.status==='review'?0:1)||b.at-a.at);
+  const card=r=>{const x=S.profiles[r.uid]||{},ph=safeImg(x.photo),sf=/^data:image\/(jpeg|png|webp);base64,/.test(r.selfie||'')?r.selfie:'';
+    return `<div class="pv-ar"><div class="pv-pics"><figure>${ph?`<img src="${ph}" alt="">`:'<span>—</span>'}<figcaption>Profil</figcaption></figure><figure>${sf?`<img src="${sf}" alt="">`:'<span>—</span>'}<figcaption>Selfie</figcaption></figure></div>
+    <div class="pv-ai"><b>${esc((x.firstName||'')+' '+(x.lastName||''))}</b><span class="pv-chip ${r.status}">${r.status==='review'?'À vérifier':'Refusée'}${r.by==='admin'?' · équipe':''}</span><small>${esc(r.reason||'')}${r.photo!==x.photo?' · a changé de photo depuis':''}</small><small>${new Date(r.at).toLocaleString('fr-FR',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})}</small>
+    </div><div class="pv-aa"><button class="btn btn-primary" data-pv="ok" data-pva="${r.uid}">Valider la photo</button><button class="btn btn-ghost" data-pv="no" data-pva="${r.uid}">Refuser</button></div></div>`};
+  return `<section class="adm pv-adm">${top}<div class="mc-stats"><span>Membres <b>${members.length}</b></span><span>Vérifiés <b>${members.length-todo}</b></span><span>Pas encore <b>${todo}</b></span></div>
+   ${list.length?list.map(card).join(''):`<p class="hint" style="text-align:center;margin:30px 0">Aucune photo en attente 👍</p>`}</section>`}
+async function pvDecide(k,uid){const x=S.profiles[uid]||{};
+  const patch=k==='ok'?{status:'ok',reason:"Validée par l'équipe",by:'admin',photo:x.photo||'',selfie:null,at:Date.now()}:{status:'rejected',reason:"Photo refusée par l'équipe : mets une vraie photo de toi, visage bien visible.",by:'admin',selfie:null,at:Date.now()};
+  try{const {error}=await S.be.sb.from('photo_checks').update(patch).eq('uid',uid);if(error)throw error;toast(k==='ok'?'Photo validée':'Photo refusée');await pvAdmLoad()}catch(_){toast("La décision n'a pas été enregistrée")}}
+function pvAdmBtn(){if(!S.owner||!S.route||S.route.v!=='admin')return;const t=document.querySelector('#app .adm .top');if(!t||document.querySelector('.pv-admbtn'))return;
+  const n=Array.isArray(PV.adm)?PV.adm.filter(r=>r.status==='review').length:0;
+  t.insertAdjacentHTML('afterend',`<button class="pv-admbtn" data-go="pvadmin">${CCI.shield}<span>Photos à vérifier</span>${n?`<b>${n}</b>`:''}</button>`)}
+
+/* La vérification passe avant tout le reste (y compris le paiement / l'activation) */
+(function(){const _r=render;let fromUrl=false;
+  render=function(){const app=$('#app'),r=S.route||{},p=S.be&&S.be.uid?me():null;
+    if(!fromUrl&&S.gotProfiles&&S.owner&&/[?&]pvadmin\b/.test(location.search)){fromUrl=true;history.replaceState(history.state,'',location.pathname);S.route={v:'pvadmin'};return render()}
+    if(r.v==='pvadmin'){if(!S.owner){S.route={v:'feed'};return render()}app.classList.add('no-nav');app.innerHTML=vPvAdmin();if(PV.adm==null&&!pvAdmLoad.busy){pvAdmLoad.busy=true;pvAdmLoad().finally(()=>pvAdmLoad.busy=false)}return}
+    if(p&&p.firstName&&PV.state==='idle'&&S.be.sb){PV.state='loading';pvLoad().then(()=>render())}
+    if(pvNeed(p,r)){app.classList.add('no-nav');app.innerHTML=vPvGate(p);return}
+    _r();if(r.v==='admin'&&S.owner){if(PV.adm==null&&!pvAdmLoad.busy){pvAdmLoad.busy=true;pvAdmLoad().finally(()=>pvAdmLoad.busy=false)}else setTimeout(pvAdmBtn,80);setTimeout(pvAdmBtn,400)}};
+})();
 
 function isVid(x){return !!(x&&x.vid&&(x.vid.mid||x.vid.url))}
 function vidHtml(x){const v=x.vid;const poster=safeImg(v.poster);const src=vidCache[x.id];
@@ -4062,6 +4226,90 @@ body.shop-mode .shp-empty{border-color:#C9C9D2!important}
 .cl-snd{position:absolute;right:10px;bottom:10px;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:rgba(14,14,16,.55);color:#F2F2F5;backdrop-filter:blur(6px);pointer-events:none;z-index:2}
 .cl-snd svg{width:18px;height:18px}
 .cl-media .post-video.paused::after{content:"";position:absolute;left:50%;top:50%;width:62px;height:62px;margin:-31px 0 0 -31px;border-radius:50%;background:rgba(14,14,16,.5) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23F2F2F5' d='M8 5.5v13l10.5-6.5z'/%3E%3C/svg%3E") center/30px no-repeat;pointer-events:none}
+
+/* ===== Recadrage ===== */
+html.cc-on,html.cc-on body{overflow:hidden}
+.cc{position:fixed;inset:0;z-index:9000;background:#0E0E10;color:#F2F2F5;display:flex;flex-direction:column;animation:ccIn .22s ease both;touch-action:none;user-select:none;-webkit-user-select:none}
+.cc.out{animation:ccOut .2s ease both}
+@keyframes ccIn{from{opacity:0;transform:translateY(16px)}}@keyframes ccOut{to{opacity:0;transform:translateY(16px)}}
+.cc-top{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:calc(env(safe-area-inset-top,0px) + 10px) 12px 10px}
+.cc-top b{font-size:16px;font-weight:700}
+.cc-t{background:none;border:0;color:#C9C9D2;font:inherit;font-size:15px;font-weight:600;padding:10px 8px;cursor:pointer}
+.cc-t.cc-ok{color:#0E0E10;background:#F2F2F5;border-radius:999px;padding:9px 18px}
+.cc-stage{flex:1;display:grid;place-items:center;position:relative;overflow:hidden;cursor:grab}
+.cc-stage:active{cursor:grabbing}
+.cc-frame{position:relative;border-radius:14px;overflow:hidden;box-shadow:0 0 0 9999px rgba(14,14,16,.72),0 0 0 2px rgba(242,242,245,.9)}
+.cc-frame.round{border-radius:50%}
+.cc-frame::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(rgba(242,242,245,.18),rgba(242,242,245,.18)) 33.33% 0/1px 100% no-repeat,linear-gradient(rgba(242,242,245,.18),rgba(242,242,245,.18)) 66.66% 0/1px 100% no-repeat,linear-gradient(rgba(242,242,245,.18),rgba(242,242,245,.18)) 0 33.33%/100% 1px no-repeat,linear-gradient(rgba(242,242,245,.18),rgba(242,242,245,.18)) 0 66.66%/100% 1px no-repeat}
+.cc-cv{display:block}
+.cc-bot{display:flex;align-items:center;gap:12px;padding:14px 18px 4px;max-width:520px;width:100%;margin:0 auto;box-sizing:border-box}
+.cc-z{color:#9A9AA6;display:grid;place-items:center}
+.cc-range{flex:1;accent-color:#F2F2F5;height:28px}
+.cc-r{width:44px;height:44px;border-radius:50%;border:0;background:radial-gradient(130% 150% at 28% 12%,#9A9AA6,#63636E 26%,#3E3E45 60%,#232327);color:#F2F2F5;display:grid;place-items:center;cursor:pointer;flex:none}
+.cc-hint{margin:6px 0 calc(env(safe-area-inset-bottom,0px) + 16px);text-align:center;font-size:13px;color:#9A9AA6}
+/* petit menu photo */
+.ccm{position:fixed;inset:0;z-index:8500}
+.ccm-bg{position:absolute;inset:0;background:rgba(14,14,16,.45);animation:ccFade .2s ease both}
+@keyframes ccFade{from{opacity:0}}
+.ccm-s{position:absolute;left:0;right:0;bottom:0;background:#fff;color:#0E0E10;border-radius:22px 22px 0 0;padding:8px 16px calc(env(safe-area-inset-bottom,0px) + 14px);display:flex;flex-direction:column;gap:6px;animation:ccIn .22s ease both;max-width:560px;margin:0 auto}
+.ccm-h{width:38px;height:4px;border-radius:4px;background:#C9C9D2;margin:4px auto 8px}
+.ccm-t{font-size:16px;margin:0 4px 6px}
+.ccm-s>button{display:flex;align-items:center;gap:12px;width:100%;border:0;background:#F2F2F5;border-radius:14px;padding:14px;font:inherit;font-size:15px;font-weight:600;color:#0E0E10;cursor:pointer;text-align:left}
+.ccm-s>button svg{width:22px;height:22px;flex:none}
+.ccm-s>button.ccm-c{justify-content:center;background:none;color:#63636E}
+.ccm-n{margin:2px 4px;font-size:12.5px;color:#63636E}
+button.cl-pav{border:0;padding:0;background:none;cursor:pointer;font:inherit}
+/* ===== Vérification de la photo ===== */
+.pv{min-height:100vh;background:#F2F2F5;margin:-4px -16px 0;padding-bottom:30px}
+.pv-hero{background:var(--hero,linear-gradient(160deg,#0E0E10,#232327 48%,#3E3E45));color:#F2F2F5;padding:calc(env(safe-area-inset-top,0px) + 26px) 22px 54px;text-align:center}
+.pv-ic{width:56px;height:56px;border-radius:50%;display:inline-grid;place-items:center;background:radial-gradient(130% 150% at 28% 12%,#9A9AA6,#63636E 26%,#3E3E45 60%,#232327);box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 10px 22px -10px rgba(0,0,0,.6)}
+.pv-ic svg{width:28px;height:28px}
+.pv-hero h1{margin:14px 0 8px;font-size:24px;color:#F2F2F5}
+.pv-hero p{margin:0 auto;max-width:440px;font-size:14.5px;line-height:1.5;color:#C9C9D2}
+.pv-body{max-width:520px;margin:-34px auto 0;padding:0 16px;display:flex;flex-direction:column;gap:12px}
+.pv-note{border-radius:16px;padding:13px 15px;font-size:14px;line-height:1.45;background:#fff;border-left:4px solid #63636E;box-shadow:0 8px 24px -18px rgba(14,14,16,.45)}
+.pv-note b{display:block;margin-bottom:2px}
+.pv-note.bad{border-left-color:#C2413A}.pv-note.bad b{color:#C2413A}
+.pv-note.wait{border-left-color:#B7862B}
+.pv-card{position:relative;background:#fff;border-radius:20px;padding:16px;box-shadow:0 8px 24px -18px rgba(14,14,16,.45);display:flex;flex-direction:column;gap:12px}
+.pv-n{position:absolute;top:16px;left:16px;width:26px;height:26px;border-radius:50%;background:#232327;color:#fff;display:grid;place-items:center;font-size:13px;font-weight:700}
+.pv-ct{padding-left:38px;display:flex;flex-direction:column;gap:2px}
+.pv-ct small{color:#63636E;font-size:13px;line-height:1.4}
+.pv-ph{width:124px;height:124px;border-radius:50%;overflow:hidden;margin:2px auto;background:#E9E9EE;display:grid;place-items:center;color:#9A9AA6;border:3px solid #fff;box-shadow:0 0 0 1px rgba(14,14,16,.08)}
+.pv-ph img{width:100%;height:100%;object-fit:cover}
+.pv-ph svg{width:44px;height:44px}
+.pv-acts{display:flex;gap:8px}
+.pv-acts>*{flex:1;height:46px;display:grid;place-items:center;cursor:pointer}
+.pv-go{display:flex!important;align-items:center;justify-content:center;gap:8px;height:50px}
+.pv-go:disabled{opacity:.5}
+.pv-foot{display:flex;flex-wrap:wrap;justify-content:center;gap:4px 14px;margin-top:4px}
+.pv-l{background:none;border:0;color:#63636E;font:inherit;font-size:13.5px;text-decoration:underline;padding:8px 2px;cursor:pointer}
+.pv-busy{position:fixed;inset:0;z-index:9100;background:rgba(242,242,245,.94);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:#0E0E10;text-align:center}
+.pv-busy small{color:#63636E}
+/* caméra selfie */
+.pv-cam{position:fixed;inset:0;z-index:9000;background:#0E0E10;color:#F2F2F5}
+.pv-cam video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:scaleX(-1)}
+.pv-mask{position:absolute;left:50%;top:44%;width:min(66vw,300px);aspect-ratio:3/4;transform:translate(-50%,-50%);border-radius:50%;box-shadow:0 0 0 9999px rgba(14,14,16,.62);outline:3px solid rgba(242,242,245,.9);outline-offset:0}
+.pv-ct2{position:absolute;left:0;right:0;top:calc(env(safe-area-inset-top,0px) + 22px);text-align:center;display:flex;flex-direction:column;gap:4px;padding:0 20px}
+.pv-ct2 small{color:#C9C9D2}
+.pv-cb{position:absolute;left:0;right:0;bottom:calc(env(safe-area-inset-bottom,0px) + 26px);display:flex;align-items:center;justify-content:space-around}
+.pv-x{width:48px;height:48px;border-radius:50%;border:0;background:rgba(242,242,245,.14);color:#F2F2F5;font-size:18px;cursor:pointer}
+.pv-shot{width:74px;height:74px;border-radius:50%;border:4px solid #F2F2F5;background:radial-gradient(circle,#F2F2F5 58%,transparent 60%);cursor:pointer}
+/* admin */
+.pv-admbtn{display:flex;align-items:center;gap:10px;width:100%;border:0;border-radius:16px;padding:14px 16px;margin:4px 0 12px;background:#232327;color:#fff;font:inherit;font-size:15px;font-weight:600;cursor:pointer}
+.pv-admbtn span{flex:1;text-align:left}
+.pv-admbtn b{background:#F2F2F5;color:#0E0E10;border-radius:999px;padding:2px 9px;font-size:13px}
+.pv-ar{background:#fff;border-radius:18px;padding:12px;margin:10px 0;display:flex;flex-wrap:wrap;gap:12px;box-shadow:0 8px 24px -18px rgba(14,14,16,.45)}
+.pv-pics{display:flex;gap:6px;flex:none}
+.pv-pics figure{margin:0;width:78px;display:flex;flex-direction:column;gap:3px;align-items:center}
+.pv-pics img,.pv-pics span{width:78px;height:98px;border-radius:12px;object-fit:cover;background:#E9E9EE;display:grid;place-items:center;color:#9A9AA6}
+.pv-pics figcaption{font-size:11px;color:#63636E}
+.pv-ai{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
+.pv-ai small{color:#63636E;font-size:12.5px;line-height:1.35}
+.pv-chip{align-self:flex-start;font-size:11.5px;font-weight:700;border-radius:999px;padding:2px 8px;background:#F2E6CC;color:#7A5410}
+.pv-chip.rejected{background:#F6DAD8;color:#9B2C26}
+.pv-aa{display:flex;gap:8px;width:100%}
+.pv-aa .btn{flex:1;height:42px;font-size:14px}
 
 </style>
 <script>if('serviceWorker' in navigator&&location.protocol==='https:'){window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js').catch(function(){})})}</script></body></html>
