@@ -2264,10 +2264,10 @@ const CLI={plane:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" str
  up:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"/><path d="m6 11 6-6 6 6"/></svg>',
  grid:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="4" width="7" height="7" rx="2"/><rect x="13" y="4" width="7" height="7" rx="2"/><rect x="4" y="13" width="7" height="7" rx="2"/><rect x="13" y="13" width="7" height="7" rx="2"/></svg>'};
 function clAdmin(){if(!S.owner)return '';const pend=Object.values(S.profiles).filter(y=>y.pay?.status==='pending'||y.cert?.status==='pending').length,un=concUnread();
-  return `<button class="cl-ib" data-go="admin" aria-label="Paiements">${PB.wallet}${pend?`<span class="cnt-b">${pend}</span>`:''}</button><button class="cl-ib" data-go="inbox" aria-label="Messagerie visiteurs">${PB.chat}${un?`<span class="cnt-b">${un}</span>`:''}</button>`}
+  return `<button class="cl-ib" data-go="admin" aria-label="Paiements">${PB.wallet}${pend?`<span class="cnt-b">${pend}</span>`:''}</button><button class="cl-ib cl-ghost" data-go="inbox" aria-label="Messagerie visiteurs">${GHOSTI}${un?`<span class="cnt-b">${un}</span>`:''}</button>`}
 function clUnread(){return S.chats.some(c=>c.lastFrom!==S.be.uid&&c.lastAt>(S.reads[c.id]||0)&&c.lastAt>chatHid(c.id))}
 function clHello(){const h=new Date().getHours();return h<12?'Bonjour':h<18?'Bon après-midi':'Bonsoir'}
-const GKBOT='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="8" width="16" height="12" rx="4.5"/><path d="M12 8V5"/><circle cx="12" cy="3.6" r="1.3"/><path d="M9.2 13.2v1.4M14.8 13.2v1.4"/><path d="M10 17.2c1.2.7 2.8.7 4 0"/><path d="M2 12.5v3M22 12.5v3"/></svg>';
+const GKBOT='<svg class="gkb" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="8" width="16" height="12" rx="4.5"/><g class="gk-ant"><path d="M12 8V5"/><circle cx="12" cy="3.6" r="1.3"/></g><path class="gk-eye" d="M9.2 13.2v1.4"/><path class="gk-eye" d="M14.8 13.2v1.4"/><path d="M10 17.2c1.2.7 2.8.7 4 0"/><path d="M2 12.5v3M22 12.5v3"/></svg>';
 function clGucko(){return `<button class="cl-ib cl-gk" data-act="guide" aria-label="Gucko, ton assistant" title="Gucko">${I.spark}</button>`}
 function clHero(title,right,sub,cls){return `<header class="cl-hero${cls?' '+cls:''}"><div class="cl-row">${title}<div class="cl-acts">${right||''}</div></div>${sub?`<p class="cl-hi">${sub}</p>`:''}</header>`}
 function vFeed(){const p=me();const tab=S.route.tab==='ab'?'ab':'pt';const fol=followingOf(p);
@@ -2480,6 +2480,33 @@ ntBanner=function(html,onTap){document.querySelector('.ntb')?.remove();const d=d
   d.addEventListener('pointerup',end);d.addEventListener('pointercancel',end);
   d.addEventListener('click',e=>{if(drag){e.preventDefault();drag=false;return}close();onTap&&onTap()});
   timer=setTimeout(close,6000)};
+
+
+/* ===== Icônes animées (style « Lordicon ») ===== */
+/* Icône fantôme de la messagerie visiteurs (dessinée par Chrimos) */
+const GHOSTI='<svg class="ghi" viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="kgh" x1="1" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFA41B"/><stop offset=".55" stop-color="#FF5A3C"/><stop offset="1" stop-color="#FF1F7A"/></linearGradient></defs><rect x="2" y="2" width="20" height="20" rx="6.2" fill="url(#kgh)"/><g class="gh-b"><path d="M5 9a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v7.6q0 .9-.9.9h-1.7a1.2 1.2 0 0 1-2.4 0h-.8a1.2 1.2 0 0 1-2.4 0h-.8a1.2 1.2 0 0 1-2.4 0H5.9q-.9 0-.9-.9z" fill="#0A1418"/><g class="gh-e"><ellipse cx="10.2" cy="10.6" rx=".95" ry="1.35" fill="#fff"/><ellipse cx="13.8" cy="10.6" rx=".95" ry="1.35" fill="#fff"/></g></g></svg>';
+const ANI_RM=matchMedia('(prefers-reduced-motion: reduce)');
+function aniKind(b){const d=b.dataset||{},go=d.go,act=d.act,lab=(b.getAttribute('aria-label')||'');
+  if(b.closest('.nav')){if(act==='guide')return 'bot';return {feed:'bounce',discover:'spin',messages:'wiggle',me:'nod'}[go]||'pop'}
+  if(go==='inbox')return 'ghost';if(go==='admin')return 'tilt';if(go==='messages')return 'fly';
+  if(act==='guide')return 'bot';if(act==='settings')return 'slide';if(act==='help')return 'wobble';
+  if('like' in d||'fav' in d)return 'beat';if('share' in d)return 'fly';if('cmt' in d)return 'wiggle';if('del' in d)return 'shake';
+  if(d.ccm||/photo|vidéo/i.test(lab))return 'flash';if(act==='notifs'||b.classList.contains('bell'))return 'ring';
+  if('back' in d||/retour/i.test(lab))return 'nudge';if(/cherch|search|trouver/i.test(lab))return 'zoom';
+  if(/envoyer|publier/i.test(lab))return 'fly';return 'pop'}
+function aniPlay(svg,k){if(!svg||ANI_RM.matches)return;const c='a-'+k;svg.classList.remove(c);void svg.getBoundingClientRect();svg.classList.add(c);
+  clearTimeout(svg._at);svg._at=setTimeout(()=>svg.classList.remove(c),1100)}
+function aniDraw(svg){if(!svg||ANI_RM.matches||svg.classList.contains('ghi'))return;
+  svg.querySelectorAll('path,circle,rect,ellipse,line,polyline').forEach(s=>{if(!s.hasAttribute('pathLength'))s.setAttribute('pathLength','1')});
+  svg.classList.remove('a-draw');void svg.getBoundingClientRect();svg.classList.add('a-draw');clearTimeout(svg._dt);svg._dt=setTimeout(()=>svg.classList.remove('a-draw'),900)}
+/* au toucher : chaque icône joue sa petite animation */
+document.addEventListener('pointerdown',e=>{const b=e.target.closest('button,label,[role=button],a');if(!b)return;const svg=b.querySelector(':scope > svg, :scope > .ic > svg, :scope svg');if(!svg||b.querySelector('img'))return;aniPlay(svg,aniKind(b))},{passive:true,capture:true});
+/* à l'arrivée sur une page : l'icône active de la barre se dessine, les icônes du haut apparaissent l'une après l'autre */
+(function(){const _r=render;let last='';
+  render=function(){_r();const k=(S.route&&S.route.v)+'|'+(S.route&&S.route.param||'');if(k===last)return;last=k;
+    setTimeout(()=>{const on=document.querySelector('.nav.cln .nav-in>button.on');if(on){const s=on.querySelector('svg');aniDraw(s);aniPlay(s,aniKind(on))}
+      document.querySelectorAll('#app .cl-hero .cl-acts>button svg,#app .cl-tools .cl-ib>svg').forEach((s,i)=>setTimeout(()=>aniPlay(s,'in'),90*i))},120)};
+})();
 
 function isVid(x){return !!(x&&x.vid&&(x.vid.mid||x.vid.url))}
 function vidHtml(x){const v=x.vid;const poster=safeImg(v.poster);const src=vidCache[x.id];
@@ -4294,6 +4321,64 @@ button.cl-pav{border:0;padding:0;background:none;cursor:pointer;font:inherit}
 .gk-bg{background:linear-gradient(180deg,#16808F 0%,#0B4452 24%,#062832 46%,#03141A 100%)!important}
 .gk-glow{background:radial-gradient(circle,rgba(79,179,191,.7),rgba(79,179,191,0) 70%)!important}
 .gk-orb{background:radial-gradient(circle at 34% 28%,#BFEFF3 0%,#7FD3DC 24%,#16808F 62%,#0B4452 100%)!important;box-shadow:0 0 40px rgba(79,179,191,.4),inset -10px -14px 30px rgba(4,30,38,.45)!important}
+
+/* ===== Icônes animées ===== */
+@media (prefers-reduced-motion: no-preference){
+svg[class*="a-"]{transform-box:fill-box;transform-origin:50% 50%}
+.a-pop{animation:aPop .45s cubic-bezier(.3,1.6,.5,1)}
+@keyframes aPop{0%{transform:scale(1)}35%{transform:scale(.78)}70%{transform:scale(1.14)}100%{transform:scale(1)}}
+.a-in{animation:aIn .55s cubic-bezier(.3,1.5,.5,1) both}
+@keyframes aIn{0%{transform:scale(.4) rotate(-20deg);opacity:0}60%{transform:scale(1.12) rotate(4deg);opacity:1}100%{transform:none}}
+.a-bounce{animation:aBounce .7s cubic-bezier(.3,1.4,.5,1);transform-origin:50% 100%!important}
+@keyframes aBounce{0%{transform:none}25%{transform:scale(1.12,.84)}50%{transform:translateY(-5px) scale(.92,1.1)}75%{transform:translateY(0) scale(1.06,.94)}100%{transform:none}}
+.a-spin{animation:aSpin .85s cubic-bezier(.55,-.35,.35,1.35)}
+@keyframes aSpin{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
+.a-wiggle{animation:aWig .65s ease;transform-origin:30% 90%!important}
+@keyframes aWig{0%{transform:none}20%{transform:rotate(-14deg) scale(1.08)}40%{transform:rotate(11deg)}60%{transform:rotate(-7deg)}80%{transform:rotate(3deg)}100%{transform:none}}
+.a-nod{animation:aNod .6s ease}
+@keyframes aNod{0%{transform:none}30%{transform:translateY(-3px) scale(1.06)}55%{transform:translateY(1px) scale(.97)}80%{transform:translateY(-1px)}100%{transform:none}}
+.a-ring{animation:aRing .9s ease;transform-origin:50% 8%!important}
+@keyframes aRing{0%{transform:none}12%{transform:rotate(20deg)}26%{transform:rotate(-17deg)}40%{transform:rotate(12deg)}54%{transform:rotate(-8deg)}68%{transform:rotate(4deg)}100%{transform:none}}
+.a-fly{animation:aFly .7s cubic-bezier(.5,0,.3,1)}
+@keyframes aFly{0%{transform:none;opacity:1}40%{transform:translate(10px,-10px) scale(.7);opacity:0}41%{transform:translate(-10px,10px) scale(.7);opacity:0}100%{transform:none;opacity:1}}
+.a-tilt{animation:aTilt .6s ease}
+@keyframes aTilt{0%{transform:none}30%{transform:rotate(-12deg) scale(1.1)}60%{transform:rotate(7deg)}100%{transform:none}}
+.a-slide{animation:aSlide .6s ease}
+@keyframes aSlide{0%{transform:none}30%{transform:scaleX(-1)}60%{transform:scaleX(-1) scale(1.08)}100%{transform:none}}
+.a-wobble{animation:aWob .7s ease}
+@keyframes aWob{0%{transform:none}20%{transform:rotate(-16deg) scale(1.1)}40%{transform:rotate(12deg)}60%{transform:rotate(-7deg)}80%{transform:rotate(3deg)}100%{transform:none}}
+.a-beat{animation:aBeat .6s cubic-bezier(.3,1.6,.5,1)}
+@keyframes aBeat{0%{transform:scale(1)}25%{transform:scale(1.35)}45%{transform:scale(.88)}70%{transform:scale(1.12)}100%{transform:scale(1)}}
+.a-shake{animation:aShake .45s ease}
+@keyframes aShake{0%,100%{transform:none}20%{transform:translateX(-3px) rotate(-6deg)}40%{transform:translateX(3px) rotate(6deg)}60%{transform:translateX(-2px)}80%{transform:translateX(2px)}}
+.a-nudge{animation:aNudge .5s ease}
+@keyframes aNudge{0%{transform:none}35%{transform:translateX(-5px)}65%{transform:translateX(1px)}100%{transform:none}}
+.a-zoom{animation:aZoom .55s cubic-bezier(.3,1.5,.5,1)}
+@keyframes aZoom{0%{transform:none}45%{transform:scale(1.22) rotate(-12deg)}100%{transform:none}}
+.a-flash{animation:aFlash .55s ease}
+@keyframes aFlash{0%{transform:none;filter:none}30%{transform:scale(.82)}55%{transform:scale(1.16);filter:drop-shadow(0 0 6px rgba(255,255,255,.9))}100%{transform:none;filter:none}}
+.a-bot{animation:aBot .8s ease;transform-origin:50% 100%!important}
+@keyframes aBot{0%{transform:none}20%{transform:rotate(-12deg) translateY(-2px)}45%{transform:rotate(10deg) translateY(-3px)}70%{transform:rotate(-4deg)}100%{transform:none}}
+.a-ghost{animation:aGhost .8s ease}
+@keyframes aGhost{0%{transform:none}25%{transform:translateY(-3px) rotate(-8deg) scale(1.08)}55%{transform:translateY(1px) rotate(6deg)}80%{transform:rotate(-2deg)}100%{transform:none}}
+/* l'icône se « dessine » (trait qui apparaît) */
+.a-draw path,.a-draw circle,.a-draw rect,.a-draw ellipse,.a-draw line{stroke-dasharray:1;stroke-dashoffset:1;animation:aDraw .7s cubic-bezier(.6,0,.2,1) forwards}
+@keyframes aDraw{to{stroke-dashoffset:0}}
+/* Gucko vit tout seul : il cligne des yeux et son antenne bouge */
+.gkb .gk-eye{transform-box:fill-box;transform-origin:50% 50%;animation:gkBlink 4.2s infinite}
+.gkb .gk-ant{transform-box:view-box;transform-origin:12px 8px;animation:gkAnt 3.4s ease-in-out infinite}
+@keyframes gkBlink{0%,90%,100%{transform:scaleY(1)}94%{transform:scaleY(.1)}}
+@keyframes gkAnt{0%,100%{transform:rotate(0)}25%{transform:rotate(-14deg)}50%{transform:rotate(0)}75%{transform:rotate(12deg)}}
+/* fantôme : il flotte et cligne des yeux */
+.ghi .gh-b{animation:ghFloat 2.8s ease-in-out infinite}
+.ghi .gh-e{transform-box:fill-box;transform-origin:50% 50%;animation:gkBlink 3.6s infinite}
+@keyframes ghFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-.8px)}}
+/* cloche : elle sonne de temps en temps quand il y a des notifications */
+.bell:has(.cnt-b)>svg{transform-box:fill-box;transform-origin:50% 8%;animation:aRingLoop 7s ease infinite}
+@keyframes aRingLoop{0%,88%,100%{transform:none}90%{transform:rotate(18deg)}92%{transform:rotate(-15deg)}94%{transform:rotate(10deg)}96%{transform:rotate(-5deg)}}
+}
+.ghi{width:24px!important;height:24px!important}
+.cl-ib .ghi *{fill-opacity:1!important}
 
 </style>
 <script>if('serviceWorker' in navigator&&location.protocol==='https:'){window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js').catch(function(){})})}</script></body></html>
