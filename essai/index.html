@@ -2411,7 +2411,7 @@ const CCI={rot:'<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stro
   plus:'<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>',
   shield:'<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg>',
   face:'<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2"/><circle cx="12" cy="11" r="3"/><path d="M8 17c1-1.6 2.4-2.4 4-2.4s3 .8 4 2.4"/></svg>'};
-const CC_OPT={photo:{ratio:1,round:true,outW:480,maxBytes:80000,title:'Ma photo de profil'},cover:{ratio:4/3,round:false,outW:1080,maxBytes:160000,title:'Image de couverture'}};
+const CC_OPT={photo:{ratio:1,round:true,outW:480,maxBytes:80000,title:'Ma photo de profil'},cover:{ratio:16/9,round:false,outW:1080,maxBytes:160000,title:'Image de couverture'}};
 async function ccSave(kind,u){if(!u)return;try{await S.be.saveProfile({...me(),[kind]:u});fx&&fx.ok&&fx.ok();
   if(kind==='photo'){toast('Photo de profil mise à jour');if(document.querySelector('.pv'))render()}else toast('Image de couverture mise à jour')}catch(_){toast(kind==='photo'?"La photo n'a pas pu être enregistrée":"L'image n'a pas pu être enregistrée")}}
 /* Les choix de fichier passent d'abord par le recadrage */
@@ -2459,6 +2459,25 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-pv]');if(!
     if(pvNeed(p,r)){app.classList.add('no-nav');app.innerHTML=vPvGate(p);return}
     _r()};
 })();
+
+/* Bandeau de notification à l'ouverture : on peut le balayer à gauche ou à droite (ou vers le haut) pour l'effacer */
+ntBanner=function(html,onTap){document.querySelector('.ntb')?.remove();const d=document.createElement('button');d.className='ntb';d.innerHTML=html;document.body.appendChild(d);
+  requestAnimationFrame(()=>requestAnimationFrame(()=>d.classList.add('in')));
+  let gone=false,timer=0;const close=()=>{if(gone)return;gone=true;clearTimeout(timer);d.classList.remove('in');setTimeout(()=>d.remove(),450)};
+  const fly=(dx,dy)=>{if(gone)return;gone=true;clearTimeout(timer);d.style.transition='transform .28s ease,opacity .28s ease';d.style.opacity='0';
+    d.style.transform=dy?`translate(-50%,-160%)`:`translate(calc(-50% + ${dx>0?'':'-'}110vw),0) rotate(${dx>0?8:-8}deg)`;setTimeout(()=>d.remove(),300)};
+  let x0=0,y0=0,t0=0,dx=0,dy=0,drag=false,id=null;
+  d.addEventListener('pointerdown',e=>{if(gone)return;id=e.pointerId;x0=e.clientX;y0=e.clientY;t0=Date.now();dx=dy=0;drag=false;clearTimeout(timer);try{d.setPointerCapture(id)}catch(_){}});
+  d.addEventListener('pointermove',e=>{if(e.pointerId!==id||gone)return;dx=e.clientX-x0;dy=e.clientY-y0;
+    if(!drag&&Math.hypot(dx,dy)>8){drag=true;d.style.transition='none'}
+    if(drag){const up=dy<0&&Math.abs(dy)>Math.abs(dx);d.style.transform=up?`translate(-50%,${dy}px)`:`translate(calc(-50% + ${dx}px),0) rotate(${dx/40}deg)`;d.style.opacity=String(Math.max(.25,1-Math.abs(up?dy/120:dx/260)))}});
+  const end=e=>{if(e.pointerId!==id||gone)return;id=null;const v=Math.abs(dx)/Math.max(1,Date.now()-t0);
+    if(drag){if(dy<-40&&Math.abs(dy)>Math.abs(dx))return fly(0,1);if(Math.abs(dx)>90||v>.6&&Math.abs(dx)>30)return fly(dx,0);
+      d.style.transition='transform .3s cubic-bezier(.2,.9,.3,1.15),opacity .3s';d.style.transform='';d.style.opacity='';timer=setTimeout(close,4000);return}
+    timer=setTimeout(close,6000)};
+  d.addEventListener('pointerup',end);d.addEventListener('pointercancel',end);
+  d.addEventListener('click',e=>{if(drag){e.preventDefault();drag=false;return}close();onTap&&onTap()});
+  timer=setTimeout(close,6000)};
 
 function isVid(x){return !!(x&&x.vid&&(x.vid.mid||x.vid.url))}
 function vidHtml(x){const v=x.vid;const poster=safeImg(v.poster);const src=vidCache[x.id];
@@ -4008,7 +4027,7 @@ body{background:#F2F2F5!important;color:#0E0E10}
 .nav.cln .cl-dot{top:-2px;right:14px;border-color:#fff}
 /* profil */
 .clp{padding-bottom:120px}
-.cl-cover{margin:-4px -16px 0;height:min(310px,44vh);background-size:cover;background-position:center 30%;display:flex;align-items:flex-start;gap:6px;padding:calc(env(safe-area-inset-top,0px) + 12px) 12px 0}
+.cl-cover{margin:-4px -16px 0;height:auto;aspect-ratio:16/9;background-size:cover;background-position:center 30%;display:flex;align-items:flex-start;gap:6px;padding:calc(env(safe-area-inset-top,0px) + 12px) 12px 0}
 .cl-cover .sp{flex:1}
 .cl-cl{display:flex}
 .cl-pcard{position:relative;margin:-34px 0 0;background:#FFFFFF;border-radius:26px;padding:0 16px 16px;text-align:center;box-shadow:0 18px 40px -26px rgba(14,14,16,.55);border:1px solid rgba(14,14,16,.05)}
@@ -4247,6 +4266,8 @@ button.cl-pav{border:0;padding:0;background:none;cursor:pointer;font:inherit}
 
 .pv-card .pv-go{width:100%;box-sizing:border-box;cursor:pointer}
 .pv-tip{text-align:center;color:#63636E;font-size:13px}
+
+.ntb{touch-action:none;user-select:none;-webkit-user-select:none}
 
 </style>
 <script>if('serviceWorker' in navigator&&location.protocol==='https:'){window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js').catch(function(){})})}</script></body></html>
