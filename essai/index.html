@@ -2310,7 +2310,7 @@ function vProfile(id,self){const x=S.profiles[id];if(!x)return `<div class="empt
        :phoneOk(x,id)?row('phone',x.phoneHidden&&S.owner?'Téléphone · 🔒 masqué aux membres, visible par toi (admin)':'Téléphone',x.phone,`<button class="copy" data-copy="${esc(x.phone)}">Copier</button>`):''}
      ${row('city','Ville',[x.commune,x.city].filter(Boolean).join(', '))}${row('globe','Pays',x.country)}${row('sex','Sexe',x.sex==='F'?'Femme':x.sex==='H'?'Homme':'')}${row('cake','Âge',x.age?x.age+' ans':'')}
      ${SUBSCRIPTION&&self&&!x.owner&&x.paid?`<div class="sub-row ${isActive(x)?'':'off'}"><span class="dot"></span><span class="t">Abonnement ${isActive(x)?'actif':'expiré'}${x.paidUntil?` · ${isActive(x)?'jusqu\'au':'depuis le'} ${untilTxt(x.paidUntil)}`:''}</span><button data-go="pay" data-param="preview">Renouveler</button></div>`:''}</div></div>`;
-  return `<section class="clp"><header class="cl-cover" style="background-image:linear-gradient(180deg,rgba(14,14,16,.25),rgba(14,14,16,.75)),url('${coverFor(id,x)}')">
+  return `<section class="clp"><header class="cl-cover" style="background-image:linear-gradient(180deg,rgba(14,14,16,.32),rgba(14,14,16,0) 34%,rgba(14,14,16,0) 72%,rgba(14,14,16,.3)),url('${coverFor(id,x)}')">
    ${self?`<div class="cl-cl">${clAdmin()}</div>`:`<button class="cl-ib glass" data-back aria-label="Retour">${I.back}</button>`}<span class="sp"></span>
    ${self?`<button class="cl-ib glass" data-ccm="cover" aria-label="Changer ou recadrer l'image de couverture">${CLI.cam}</button><input id="cvPhoto" type="file" accept="image/*" class="fpick"><button class="cl-ib glass" data-act="settings" aria-label="Réglages">${PB.gear}</button>`:''}<button class="cl-ib glass" data-act="help" aria-label="Aide">${PB.help}</button></header>
   <div class="cl-pcard">
@@ -2411,7 +2411,7 @@ const CCI={rot:'<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stro
   plus:'<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>',
   shield:'<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg>',
   face:'<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2"/><circle cx="12" cy="11" r="3"/><path d="M8 17c1-1.6 2.4-2.4 4-2.4s3 .8 4 2.4"/></svg>'};
-const CC_OPT={photo:{ratio:1,round:true,outW:480,maxBytes:80000,title:'Ma photo de profil'},cover:{ratio:16/9,round:false,outW:1080,maxBytes:160000,title:'Image de couverture'}};
+const CC_OPT={photo:{ratio:1,round:true,outW:480,maxBytes:80000,title:'Ma photo de profil'},cover:{ratio:4/3,round:false,outW:1080,maxBytes:160000,title:'Image de couverture'}};
 async function ccSave(kind,u){if(!u)return;try{await S.be.saveProfile({...me(),[kind]:u});fx&&fx.ok&&fx.ok();
   if(kind==='photo'){toast('Photo de profil mise à jour');if(document.querySelector('.pv'))render()}else toast('Image de couverture mise à jour')}catch(_){toast(kind==='photo'?"La photo n'a pas pu être enregistrée":"L'image n'a pas pu être enregistrée")}}
 /* Les choix de fichier passent d'abord par le recadrage */
@@ -4008,10 +4008,10 @@ body{background:#F2F2F5!important;color:#0E0E10}
 .nav.cln .cl-dot{top:-2px;right:14px;border-color:#fff}
 /* profil */
 .clp{padding-bottom:120px}
-.cl-cover{margin:-4px -16px 0;height:200px;background-size:cover;background-position:center 30%;display:flex;align-items:flex-start;gap:6px;padding:calc(env(safe-area-inset-top,0px) + 12px) 12px 0}
+.cl-cover{margin:-4px -16px 0;height:min(310px,44vh);background-size:cover;background-position:center 30%;display:flex;align-items:flex-start;gap:6px;padding:calc(env(safe-area-inset-top,0px) + 12px) 12px 0}
 .cl-cover .sp{flex:1}
 .cl-cl{display:flex}
-.cl-pcard{position:relative;margin:-56px 0 0;background:#FFFFFF;border-radius:26px;padding:0 16px 16px;text-align:center;box-shadow:0 18px 40px -26px rgba(14,14,16,.55);border:1px solid rgba(14,14,16,.05)}
+.cl-pcard{position:relative;margin:-34px 0 0;background:#FFFFFF;border-radius:26px;padding:0 16px 16px;text-align:center;box-shadow:0 18px 40px -26px rgba(14,14,16,.55);border:1px solid rgba(14,14,16,.05)}
 .cl-pav{position:relative;display:inline-block;margin-top:-52px;padding:4px;border-radius:50%;background:#FFFFFF;border:0;cursor:pointer;box-shadow:0 10px 24px -12px rgba(14,14,16,.6)}
 .cl-pav .avatar{width:96px!important;height:96px!important;font-size:34px!important;display:grid}
 .cl-pcam{position:absolute;right:2px;bottom:4px;width:30px;height:30px;border-radius:50%;background:#232327;color:#fff;display:grid;place-items:center;border:3px solid #fff}
