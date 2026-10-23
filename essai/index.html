@@ -2301,7 +2301,7 @@ function vProfile(id,self){const x=S.profiles[id];if(!x)return `<div class="empt
      ${self?(x.certified?'':x.cert?.status==='pending'?`<div class="cert-cta wait2">${I.badge}<div><b>Certification en vérification</b><small>@${esc(x.cert.handle)} · tu seras prévenu dès la validation</small></div></div>`:`<button class="cert-cta" data-go="certif">${I.badge}<div><b>Obtenir le badge certifié · 5 $</b><small>Badge à côté de ton nom + nom d'utilisateur réservé</small></div><span class="go-ar">${I.back}</span></button>`):''}
      <div class="info pf-info">${row('work','Poste',x.job)}
      ${self?`<div class="info-row"><span class="ic">${I.phone}</span><div><small>Téléphone · ${x.phoneHidden?'masqué pour les membres':'visible par les membres'}</small><b>${esc(x.phone||'—')}</b></div><label class="tg" title="Afficher mon numéro aux membres"><input type="checkbox" id="phoneVis" ${x.phoneHidden?'':'checked'} aria-label="Afficher mon numéro aux autres membres"></label></div>`
-       :phoneOk(x,id)?row('phone','Téléphone',x.phone,`<button class="copy" data-copy="${esc(x.phone)}">Copier</button>`):''}
+       :phoneOk(x,id)?row('phone',x.phoneHidden&&S.owner&&id!==S.be.uid?'Téléphone · 🔒 masqué aux membres, visible par toi (admin)':'Téléphone',x.phone,`<button class="copy" data-copy="${esc(x.phone)}">Copier</button>`):''}
      ${row('city','Ville',[x.commune,x.city].filter(Boolean).join(', '))}${row('globe','Pays',x.country)}${row('sex','Sexe',x.sex==='F'?'Femme':x.sex==='H'?'Homme':'')}${row('cake','Âge',x.age?x.age+' ans':'')}
      ${SUBSCRIPTION&&self&&!x.owner&&x.paid?`<div class="sub-row ${isActive(x)?'':'off'}"><span class="dot"></span><span class="t">Abonnement ${isActive(x)?'actif':'expiré'}${x.paidUntil?` · ${isActive(x)?'jusqu\'au':'depuis le'} ${untilTxt(x.paidUntil)}`:''}</span><button data-go="pay" data-param="preview">Renouveler</button></div>`:''}</div></div>`;
   const stEm=st==='off'?'🌙':INTENTS.find(t=>t[0]===st)[2];
@@ -2372,7 +2372,7 @@ function availPanel(x){const st=availOf(x);const z=x.zone||{};
    <div class="zone-row">${I.pin}<select id="zoneSel" aria-label="Ma zone"><option value="">Choisis ta commune / ville</option>${Object.keys(ZONES).map(n=>`<option ${z.name===n&&!z.gps?'selected':''}>${n}</option>`).join('')}${z.gps?`<option selected value="__gps">Ma position (${esc(z.name||'GPS')})</option>`:''}</select><button type="button" class="mini" data-gps="1">Ma position</button></div>
    <p class="hint" style="font-size:11.5px">Seule une zone approximative (à ~1 km près) est partagée, jamais ton adresse exacte.</p></div>`}
 
-const phoneOk=(x,id)=>!!x?.phone&&(id===S.be.uid||!x.phoneHidden);
+const phoneOk=(x,id)=>!!x?.phone&&(id===S.be.uid||!x.phoneHidden||!!S.owner); /* l'administrateur voit aussi les numéros masqués (lutte contre les escroqueries) */
 const handleTaken=(h,except)=>Object.entries(S.profiles).some(([id,x])=>id!==except&&((x.certified&&String(x.handle||'').toLowerCase()===h)||(x.cert?.status==='pending'&&String(x.cert.handle||'').toLowerCase()===h)));
 
 function vMessages(){const list=[...S.chats].filter(c=>(c.lastAt||0)>chatHid(c.id)).sort((a,b)=>b.lastAt-a.lastAt);const pane=S.route.pane||0;
