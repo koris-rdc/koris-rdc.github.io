@@ -3401,7 +3401,7 @@ async function vsAcc(body,tok){const r=await fetch(ACC_FN,{method:'POST',headers
 function vsPushDraw(){const el=$('#vsPush');if(!el)return;const on=ls.get('vsPush',0)&&'Notification' in window&&Notification.permission==='granted';
   if(on){el.innerHTML='<span class="vp-ok">🔔 Vous serez prévenu(e) dès que l\'équipe répond</span>';return}
   if(!VS.msgs||!VS.msgs.some(m=>m.role==='user')){el.innerHTML='';return}
-  if(VS.pushHint){el.innerHTML='<span class="vp-hint">Pour être prévenu(e), ouvrez cette page dans <b>Chrome</b> : touchez <b>⋮</b> en haut à droite puis « <b>Ouvrir dans Chrome</b> », et revenez ici.</span>';return}
+  if(VS.pushHint){el.innerHTML='<span class="vp-hint">Ce navigateur ne permet pas les notifications. Pour être prévenu(e), ouvrez cette page dans <b>Chrome</b> (ou Samsung Internet, Firefox) : touchez <b>⋮</b> puis « <b>Ouvrir dans Chrome</b> », ou copiez le lien.</span>';return}
   el.innerHTML='<div class="vp-bar"><span>🔔 Être prévenu(e) quand l\'équipe répond</span><button type="button" id="vsPushB">Activer</button></div>';
   const b=$('#vsPushB');if(b)b.onclick=vsPushOn}
 async function vsPushOn(){const b=$('#vsPushB');
