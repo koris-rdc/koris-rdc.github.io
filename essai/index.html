@@ -2290,10 +2290,10 @@ function postHtml(x){const a=S.profiles[x.uid]||{};const likes=Array.isArray(x.l
    ${st!=='off'?`<span class="cl-pill">${INTENTS.find(t=>t[0]===st)[2]} ${esc(INT_LBL[st])}</span>`:''}${mine?`<button class="cl-ib sm" data-del="${esc(x.id)}" aria-label="Supprimer la publication">${I.trash}</button>`:''}</header>
   ${x.caption?`<p class="cl-cap${media?'':' big'}">${esc(x.caption)}</p>`:''}
   ${media}
-  <footer class="cl-pf"><button class="${liked?'on':''}" data-like="${esc(x.id)}" aria-label="J'aime">${liked?I.heart:I.heartO}<span>${likes.length}</span></button><button data-cmt="${esc(x.id)}" aria-label="Commentaires">${I.comment}<span>${cms}</span></button><button data-share="${esc(x.id)}" aria-label="Partager">${CLI.share}</button><span class="sp"></span>${mine?'':`<button class="cl-write" data-msg="${esc(x.uid)}">${CLI.plane}Écrire</button>`}</footer></article>`}
+  <footer class="cl-pf"><button class="${liked?'on':''}" data-like="${esc(x.id)}" aria-label="J'aime">${liked?I.heart:I.heartO}<span>${likes.length}</span></button><button data-cmt="${esc(x.id)}" aria-label="Commentaires">${I.comment}<span>${cms}</span></button><button data-share="${esc(x.id)}" aria-label="Partager">${CLI.share}</button></footer></article>`}
 function navHtml(active){const un=clUnread();
   const b=(v,ic,l)=>`<button class="${active===v?'on':''}" data-go="${v}" aria-label="${l}">${I[ic]}${v==='messages'&&un?'<i class="cl-dot"></i>':''}</button>`;
-  return `<nav class="nav cln"><div class="nav-in">${b('feed','home','Accueil')}${b('discover','compass','Découvrir')}<button class="gl-pill cl-pub" data-act="compose" aria-label="Publier">${I.plus}</button>${b('messages','chat','Messages')}${b('me','user','Profil')}</div></nav>`}
+  return `<nav class="nav cln"><div class="nav-in">${b('feed','home','Accueil')}${b('discover','compass','Découvrir')}${b('messages','chat','Messages')}${b('me','user','Profil')}</div></nav>`}
 function vProfile(id,self){const x=S.profiles[id];if(!x)return `<div class="empty">${I.user}<b>Profil introuvable</b><button class="btn btn-ghost" data-go="feed" style="flex:none">Retour au fil</button></div>`;
   const fav=S.favs.has(id);const own=S.posts.filter(p=>p.uid===id);const fo=followersOf(id).length,fi=followingOf(x).filter(u=>S.profiles[u]).length;
   S.viewPics=[safeImg(x.photo)].filter(Boolean);const tab=S.route.tab==='info'?'info':'grid';const st=availOf(x);
