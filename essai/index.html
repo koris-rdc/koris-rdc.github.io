@@ -2258,6 +2258,10 @@ function feedTiles(){const pend=Object.values(S.profiles).filter(x=>x.pay?.statu
 const CLI={plane:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 3 10.2 14.3"/><path d="M21.5 3 14.6 21l-4.4-6.7L3.5 9.9z"/></svg>',
  share:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 8 5-5 5 5"/><path d="M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/></svg>',
  cam:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"><path d="M4 8.5h3l2-3h6l2 3h3V19H4z"/><circle cx="12" cy="13.2" r="3.4"/></svg>',
+ img:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="9" cy="9.5" r="1.7"/><path d="m4 17 4.2-4.2a1.8 1.8 0 0 1 2.5 0L17 19"/><path d="m14 15 1.6-1.6a1.8 1.8 0 0 1 2.5 0l2.4 2.4"/></svg>',
+ vid:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><rect x="3" y="6" width="13" height="12" rx="3.5"/><path d="m16 10.5 4.2-2.6a.6.6 0 0 1 .9.5v7.2a.6.6 0 0 1-.9.5L16 13.5"/></svg>',
+ doc:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M7 3.5h6.5L19 9v9.5a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-13a2 2 0 0 1 2-2z"/><path d="M13.5 3.5V9H19"/></svg>',
+ up:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"/><path d="m6 11 6-6 6 6"/></svg>',
  grid:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="4" width="7" height="7" rx="2"/><rect x="13" y="4" width="7" height="7" rx="2"/><rect x="4" y="13" width="7" height="7" rx="2"/><rect x="13" y="13" width="7" height="7" rx="2"/></svg>'};
 function clAdmin(){if(!S.owner)return '';const pend=Object.values(S.profiles).filter(y=>y.pay?.status==='pending'||y.cert?.status==='pending').length,un=concUnread();
   return `<button class="cl-ib" data-go="admin" aria-label="Paiements">${PB.wallet}${pend?`<span class="cnt-b">${pend}</span>`:''}</button><button class="cl-ib" data-go="inbox" aria-label="Messagerie visiteurs">${PB.chat}${un?`<span class="cnt-b">${un}</span>`:''}</button>`}
@@ -2270,7 +2274,8 @@ function vFeed(){const p=me();const tab=S.route.tab==='ab'?'ab':'pt';const fol=f
     :`<div class="cl-empty">${I.image}<b>Rien pour l'instant</b><p>Partage le premier moment : il apparaîtra ici pour tous les membres.</p><button class="cl-btn dark" data-act="compose" data-withpic="1">Publier</button></div>`;
   return `${clHero(`<div class="wordmark cl-wm" data-go="about" role="button" tabindex="0" aria-label="À propos de Koris"><i></i>KORIS</div>`,`${clAdmin()}${bellHtml()}<button class="cl-ib" data-go="messages" aria-label="Messages">${CLI.plane}${clUnread()?'<i class="cl-dot"></i>':''}</button>`,`${clHello()}, <b>${esc(p.firstName||'')}</b>`)}
   <div class="cl-body">${demoBanner()}
-   <div class="cl-compose"><label class="cl-cav" for="qPhoto" aria-label="${p.photo?'Changer ma photo de profil':'Ajouter une photo de profil'}">${av(p,42)}</label><input id="qPhoto" type="file" accept="image/*" class="fpick"><button class="cl-ask" data-act="compose">Partager un moment…</button><button class="cl-cam" data-act="compose" data-withpic="1" aria-label="Publier une photo">${CLI.cam}</button></div>
+   <div class="cl-box"><div class="cl-box-top"><label class="cl-cav" for="qPhoto" aria-label="${p.photo?'Changer ma photo de profil':'Ajouter une photo de profil'}">${av(p,34)}</label><input id="qPhoto" type="file" accept="image/*" class="fpick"><button class="cl-ask" data-act="compose">Partager un moment, ${esc(p.firstName||'')}…</button></div>
+    <div class="cl-box-bot"><button class="cl-ic" data-act="compose" data-withpic="1" aria-label="Ajouter une photo">${CLI.img}</button><button class="cl-ic" data-act="compose" data-withpic="1" aria-label="Ajouter une vidéo">${CLI.vid}</button><button class="cl-ic" data-act="compose" aria-label="Écrire un texte">${CLI.doc}</button><span class="sp"></span><button class="gl-pill cl-send" data-act="compose" aria-label="Publier">${CLI.up}</button></div></div>
    <div class="cl-seg" role="tablist"><button data-tab="pt" class="${tab==='pt'?'on':''}">Pour toi</button><button data-tab="ab" class="${tab==='ab'?'on':''}">Abonnements</button></div>
    ${L.length?`<div class="cl-feed">${L.map(postHtml).join('')}</div>`:empty}
   </div>${navHtml('feed')}`}
@@ -2286,8 +2291,8 @@ function postHtml(x){const a=S.profiles[x.uid]||{};const likes=Array.isArray(x.l
   ${media}
   <footer class="cl-pf"><button class="${liked?'on':''}" data-like="${esc(x.id)}" aria-label="J'aime">${liked?I.heart:I.heartO}<span>${likes.length}</span></button><button data-cmt="${esc(x.id)}" aria-label="Commentaires">${I.comment}<span>${cms}</span></button><button data-share="${esc(x.id)}" aria-label="Partager">${CLI.share}</button><span class="sp"></span>${mine?'':`<button class="cl-write" data-msg="${esc(x.uid)}">${CLI.plane}Écrire</button>`}</footer></article>`}
 function navHtml(active){const un=clUnread();
-  const b=(v,ic,l)=>`<button class="${active===v?'on':''}" data-go="${v}" aria-label="${l}">${I[ic]}<small>${l}</small>${v==='messages'&&un?'<i class="cl-dot"></i>':''}</button>`;
-  return `<nav class="nav cln"><div class="nav-in">${b('feed','home','Accueil')}${b('discover','compass','Découvrir')}<button class="cl-pub" data-act="compose" aria-label="Publier">${I.plus}</button>${b('messages','chat','Messages')}${b('me','user','Profil')}</div></nav>`}
+  const b=(v,ic,l)=>`<button class="${active===v?'on':''}" data-go="${v}" aria-label="${l}">${I[ic]}${v==='messages'&&un?'<i class="cl-dot"></i>':''}</button>`;
+  return `<nav class="nav cln"><div class="nav-in">${b('feed','home','Accueil')}${b('discover','compass','Découvrir')}<button class="gl-pill cl-pub" data-act="compose" aria-label="Publier">${I.plus}</button>${b('messages','chat','Messages')}${b('me','user','Profil')}</div></nav>`}
 function vProfile(id,self){const x=S.profiles[id];if(!x)return `<div class="empty">${I.user}<b>Profil introuvable</b><button class="btn btn-ghost" data-go="feed" style="flex:none">Retour au fil</button></div>`;
   const fav=S.favs.has(id);const own=S.posts.filter(p=>p.uid===id);const fo=followersOf(id).length,fi=followingOf(x).filter(u=>S.profiles[u]).length;
   S.viewPics=[safeImg(x.photo)].filter(Boolean);const tab=S.route.tab==='info'?'info':'grid';const st=availOf(x);
@@ -2319,6 +2324,19 @@ function vProfile(id,self){const x=S.profiles[id];if(!x)return `<div class="empt
   ${x.bio||x.job?`<div class="cl-about"><h3>À propos</h3>${x.bio?`<p>${esc(x.bio)}</p>`:''}${x.job?`<span>${I.work}${esc(x.job)}</span>`:''}</div>`:''}
   <div class="cl-seg" role="tablist" style="margin-top:16px"><button data-tab="grid" class="${tab==='grid'?'on':''}">${CLI.grid}Publications</button><button data-tab="info" class="${tab==='info'?'on':''}">${I.user}Infos</button></div>
   ${body}<div style="margin-top:12px">${self?demoBanner():''}</div></section>${self?navHtml('me'):''}`}
+
+/* Navigation animée (inspirée de la vidéo) : onde au toucher + page qui s'ouvre depuis l'endroit touché */
+(function(){const root=document.documentElement;
+  document.addEventListener('pointerdown',e=>{const t=e.target.closest&&e.target.closest('button,a,label,[data-go],[data-profile],.pcard,.cl-post');if(!t)return;
+    root.style.setProperty('--ox',e.clientX+'px');root.style.setProperty('--oy',e.clientY+'px');
+    root.classList.toggle('vt-back',!!t.closest('[data-back],[aria-label="Retour"]'));
+    const r=document.createElement('i');r.className='cl-rip';r.style.left=e.clientX+'px';r.style.top=e.clientY+'px';document.body.appendChild(r);setTimeout(()=>r.remove(),650)},{passive:true,capture:true});
+  if(!document.startViewTransition)return;
+  const _render=render;let last='',busy=false;
+  render=function(){const k=(S.route&&S.route.v)+'|'+(S.route&&S.route.param||'')+'|'+(S.route&&S.route.tab||'');
+    if(busy||k===last||!last||matchMedia('(prefers-reduced-motion: reduce)').matches){last=k;return _render()}
+    last=k;busy=true;try{const vt=document.startViewTransition(()=>{_render()});vt.finished.finally(()=>{busy=false})}catch(_){busy=false;_render()}};
+})();
 
 function isVid(x){return !!(x&&x.vid&&(x.vid.mid||x.vid.url))}
 function vidHtml(x){const v=x.vid;const poster=safeImg(v.poster);const src=vidCache[x.id];
@@ -3946,6 +3964,56 @@ body.shop-mode{--ink:#F2F2F5;--panel:#FFFFFF;--panel-2:#E9E9EE;--line:rgba(14,14
 body.shop-mode .shp-ban .go,body.shop-mode .shp-tabs button.on,body.shop-mode .pe-tier button.on,body.shop-mode .shp-search .sq{background:#232327!important;color:#fff!important}
 body.shop-mode .shp-add{background:#fff!important;color:#232327!important;border:1.5px dashed #9A9AA6!important}
 body.shop-mode .shp-empty{border-color:#C9C9D2!important}
+/* ===== Boutons et navigation inspirés des références (pilule bleue brillante, onde, transitions) ===== */
+:root{--sky1:#E3F6FF;--sky2:#9FDCFF;--sky3:#4CB6FF;--sky4:#2B95EE}
+.gl-pill{background:radial-gradient(130% 150% at 28% 18%,#EAF8FF 0%,#A9E0FF 28%,#56BCFF 66%,#2B95EE 100%)!important;color:#fff!important;border:2px solid rgba(255,255,255,.85)!important;box-shadow:0 12px 26px -10px rgba(43,149,238,.75),inset 0 2px 6px rgba(255,255,255,.75),inset 0 -6px 12px rgba(25,110,210,.35)!important}
+.gl-pill svg{filter:drop-shadow(0 1px 1px rgba(20,90,180,.35))}
+.cl-btn.dark,.btn-primary,.btn.btn-primary,.cl-pf .cl-write,.cl-cam{background:radial-gradient(130% 150% at 28% 18%,#EAF8FF 0%,#A9E0FF 28%,#56BCFF 66%,#2B95EE 100%)!important;color:#fff!important;border:2px solid rgba(255,255,255,.85)!important;box-shadow:0 12px 26px -12px rgba(43,149,238,.75),inset 0 2px 6px rgba(255,255,255,.7),inset 0 -6px 12px rgba(25,110,210,.3)!important;text-shadow:0 1px 1px rgba(20,90,180,.35)}
+.cl-pill{background:#EEF7FF!important;border-color:#CBE7FF!important;color:#1D6FB8!important}
+/* zone « Partager un moment » façon carte */
+.cl-box{border-radius:26px;background:#F7F8FA;border:2px solid #FFFFFF;box-shadow:0 22px 44px -26px rgba(14,14,16,.55),0 2px 0 rgba(14,14,16,.03)}
+.cl-box-top{display:flex;align-items:center;gap:10px;padding:12px 14px}
+.cl-box-top .cl-ask{background:none;height:36px;padding:0;font-size:14.5px;color:#63636E;font-weight:500}
+.cl-box-bot{display:flex;align-items:center;gap:6px;padding:10px 12px 12px 10px;border-top:1px solid #E6E7EC}
+.cl-box-bot .sp{flex:1}
+.cl-ic{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:none;border:0;color:#0E0E10}
+.cl-ic svg{width:24px;height:24px}
+.cl-send{width:74px;height:46px;border-radius:999px!important;display:grid;place-items:center}
+.cl-send svg{width:22px;height:22px}
+/* barre du bas : blanche, icônes seules, rond central brillant */
+.nav.cln{left:0!important;right:0!important;transform:none!important;width:100%!important;padding:0!important;background:none!important}
+.nav.cln .nav-in{max-width:560px;margin:0 auto;height:calc(66px + env(safe-area-inset-bottom,0px));padding:0 18px env(safe-area-inset-bottom,0px)!important;border-radius:26px 26px 0 0!important;background:#FFFFFF!important;border:0!important;box-shadow:0 -10px 30px -18px rgba(14,14,16,.35)!important;align-items:center}
+.nav.cln .nav-in>button{width:48px;height:48px;display:grid!important;place-items:center;color:#9A9AA6!important;border-radius:16px}
+.nav.cln .nav-in>button svg{width:24px;height:24px}
+.nav.cln .nav-in>button.on{color:#2B95EE!important}
+.nav.cln .nav-in>button.on::after{content:"";position:absolute;bottom:4px;left:50%;width:5px;height:5px;margin-left:-2.5px;border-radius:50%;background:#2B95EE}
+.nav.cln .nav-in>button.cl-pub{width:54px!important;height:54px!important;border-radius:50%!important;margin-top:-6px}
+.nav.cln .nav-in>button.cl-pub svg{width:24px;height:24px;color:#fff}
+.nav.cln .nav-in>button.cl-pub::after{display:none}
+.nav.cln .cl-dot{top:9px;right:10px}
+/* onde au toucher */
+.cl-rip{position:fixed;z-index:9999;width:16px;height:16px;margin:-8px 0 0 -8px;border-radius:50%;background:rgba(76,182,255,.35);pointer-events:none;animation:clRip .6s cubic-bezier(.2,.7,.2,1) forwards}
+@keyframes clRip{to{transform:scale(7);opacity:0}}
+/* transitions entre les pages : la page s'ouvre depuis l'endroit touché */
+@supports (view-transition-name:none){.app.enter>*{animation:none!important}}
+::view-transition-old(root){animation:clOut .26s ease both}
+::view-transition-new(root){animation:clIn .38s cubic-bezier(.2,.85,.25,1) both;transform-origin:var(--ox,50%) var(--oy,50%)}
+.vt-back::view-transition-new(root){animation:clBack .32s cubic-bezier(.2,.85,.25,1) both}
+@keyframes clIn{from{opacity:0;transform:scale(.86);filter:blur(10px)}to{opacity:1;transform:none;filter:none}}
+@keyframes clBack{from{opacity:0;transform:scale(1.06);filter:blur(6px)}to{opacity:1;transform:none;filter:none}}
+@keyframes clOut{to{opacity:0;filter:blur(6px)}}
+/* zones de message façon carte, bouton d'envoi en pilule brillante */
+.composer{margin:0 10px calc(10px + env(safe-area-inset-bottom,0px))!important;padding:8px 8px 8px 16px!important;border-radius:26px!important;background:#F7F8FA!important;border:2px solid #FFFFFF!important;box-shadow:0 18px 40px -24px rgba(14,14,16,.55)!important}
+.composer input,#chatIn{background:none!important;border:0!important;box-shadow:none!important}
+.composer .send{width:66px!important;height:44px!important;border-radius:999px!important;background:radial-gradient(130% 150% at 28% 18%,#EAF8FF 0%,#A9E0FF 28%,#56BCFF 66%,#2B95EE 100%)!important;border:2px solid rgba(255,255,255,.85)!important;box-shadow:0 12px 26px -10px rgba(43,149,238,.75),inset 0 2px 6px rgba(255,255,255,.75),inset 0 -6px 12px rgba(25,110,210,.35)!important;color:#fff!important}
+.vs .vs-f{margin:0 10px calc(10px + env(safe-area-inset-bottom,0px))!important;padding:8px!important;border-radius:26px!important;background:#F7F8FA!important;border:2px solid #FFFFFF!important;box-shadow:0 18px 40px -24px rgba(14,14,16,.55)!important}
+.vs .vs-f textarea{background:none!important;border:0!important}
+.vs .vs-f>button#vsB,.vs #vsB{border-radius:999px!important;width:62px!important;background:radial-gradient(130% 150% at 28% 18%,#EAF8FF 0%,#A9E0FF 28%,#56BCFF 66%,#2B95EE 100%)!important;border:2px solid rgba(255,255,255,.85)!important;box-shadow:0 12px 26px -10px rgba(43,149,238,.75),inset 0 2px 6px rgba(255,255,255,.75),inset 0 -6px 12px rgba(25,110,210,.35)!important;color:#fff!important}
+.vs .vs-ph{background:none!important;color:#0E0E10!important}
+.vs .vb.me,.bub.me{background:linear-gradient(135deg,#56BCFF,#2B95EE)!important;color:#fff!important}
+.composer{width:min(440px,calc(100% - 20px))!important;margin:0!important;bottom:calc(var(--kb,0px) + 10px + env(safe-area-inset-bottom,0px))!important;align-items:center}
+.nav.cln .nav-in>button.cl-pub.gl-pill{background:radial-gradient(130% 150% at 28% 18%,#EAF8FF 0%,#A9E0FF 28%,#56BCFF 66%,#2B95EE 100%)!important;box-shadow:0 12px 26px -10px rgba(43,149,238,.75),inset 0 2px 6px rgba(255,255,255,.75),inset 0 -6px 12px rgba(25,110,210,.35)!important;border:2px solid rgba(255,255,255,.9)!important}
+.cl-btn.dark,.btn-primary,.btn.btn-primary,.cl-pf .cl-write{background:radial-gradient(140% 160% at 30% 0%,#9BD8FF 0%,#4CB6FF 42%,#1F82DB 100%)!important}
 
 </style>
 <script>if('serviceWorker' in navigator&&location.protocol==='https:'){window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js').catch(function(){})})}</script></body></html>
