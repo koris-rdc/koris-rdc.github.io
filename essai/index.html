@@ -2267,13 +2267,14 @@ function clAdmin(){if(!S.owner)return '';const pend=Object.values(S.profiles).fi
   return `<button class="cl-ib" data-go="admin" aria-label="Paiements">${PB.wallet}${pend?`<span class="cnt-b">${pend}</span>`:''}</button><button class="cl-ib" data-go="inbox" aria-label="Messagerie visiteurs">${PB.chat}${un?`<span class="cnt-b">${un}</span>`:''}</button>`}
 function clUnread(){return S.chats.some(c=>c.lastFrom!==S.be.uid&&c.lastAt>(S.reads[c.id]||0)&&c.lastAt>chatHid(c.id))}
 function clHello(){const h=new Date().getHours();return h<12?'Bonjour':h<18?'Bon après-midi':'Bonsoir'}
+function clGucko(){return `<button class="cl-ib cl-gk" data-act="guide" aria-label="Gucko, ton assistant" title="Gucko">${I.spark}</button>`}
 function clHero(title,right,sub,cls){return `<header class="cl-hero${cls?' '+cls:''}"><div class="cl-row">${title}<div class="cl-acts">${right||''}</div></div>${sub?`<p class="cl-hi">${sub}</p>`:''}</header>`}
 function vFeed(){const p=me();const tab=S.route.tab==='ab'?'ab':'pt';const fol=followingOf(p);
   const L=tab==='ab'?S.posts.filter(x=>x.uid===S.be.uid||fol.includes(x.uid)):S.posts;
   const empty=tab==='ab'?`<div class="cl-empty">${I.user}<b>Personne à suivre pour l'instant</b><p>Abonne-toi à des membres : leurs publications apparaîtront ici.</p><button class="cl-btn dark" data-go="discover">Découvrir des membres</button></div>`
     :`<div class="cl-empty">${I.image}<b>Rien pour l'instant</b><p>Partage le premier moment : il apparaîtra ici pour tous les membres.</p><button class="cl-btn dark" data-act="compose" data-withpic="1">Publier</button></div>`;
   setTimeout(clVideos,60);
-  return `${clHero(`<div class="wordmark cl-wm" data-go="about" role="button" tabindex="0" aria-label="À propos de Koris"><i></i>KORIS</div>`,`${clAdmin()}${bellHtml()}<button class="cl-ib" data-go="messages" aria-label="Messages">${CLI.plane}${clUnread()?'<i class="cl-dot"></i>':''}</button>`,'','cl-mid')}
+  return `${clHero(`<div class="wordmark cl-wm" data-go="about" role="button" tabindex="0" aria-label="À propos de Koris"><i></i>KORIS</div>`,`${clAdmin()}${clGucko()}${bellHtml()}<button class="cl-ib" data-go="messages" aria-label="Messages">${CLI.plane}${clUnread()?'<i class="cl-dot"></i>':''}</button>`,'','cl-mid')}
   <div class="cl-body">${demoBanner()}
    <div class="cl-box"><div class="cl-box-top"><label class="cl-cav" for="qPhoto" aria-label="${p.photo?'Changer ma photo de profil':'Ajouter une photo de profil'}">${av(p,34)}</label><input id="qPhoto" type="file" accept="image/*" class="fpick"><button class="cl-ask" data-act="compose">Partager un moment, ${esc(p.firstName||'')}…</button></div>
     <div class="cl-box-bot"><button class="cl-ic" data-act="compose" data-withpic="1" aria-label="Ajouter une photo">${CLI.img}</button><button class="cl-ic" data-act="compose" data-withpic="1" aria-label="Ajouter une vidéo">${CLI.vid}</button><button class="cl-ic" data-act="compose" aria-label="Écrire un texte">${CLI.doc}</button><span class="sp"></span><button class="gl-pill cl-send" data-act="compose" aria-label="Publier">${CLI.up}</button></div></div>
@@ -2495,7 +2496,7 @@ function vDiscover(){const q=(S.route.q||'').toLowerCase(),city=S.route.city||''
   const cols=[[],[]];list.forEach((e,i)=>cols[i%2].push([e,i]));
   const card=([[id,x],i])=>{const img=safeImg(x.photo);const fav=S.favs.has(id);return `<div class="pcard ${i%3===1?'tall':''}">${isNewM(x)?'<span class="new-flag">Nouveau</span>':''}<button data-profile="${esc(id)}" style="display:block;width:100%" aria-label="Voir le profil de ${esc(x.firstName)}"><div class="ph">${img?`<img src="${img}" alt="">`:`<div class="initials-ph">${esc(initials(x))}</div>`}</div>${availOf(x)!=='off'?`<span class="av-flag ${availOf(x)}">${INTENTS.find(t=>t[0]===availOf(x))[2]} ${INT_LBL[availOf(x)]}</span>`:''}</button>
     <div class="ov"><div><span class="loc">${I.pin.replace('<svg','<svg width="11" height="11"')}${esc([x.commune,x.city,x.country].filter(Boolean).join(', '))}</span><span class="nm"><span>${esc(x.firstName)}${x.age?', '+esc(x.age):''}</span>${x.certified?I.badge:''}</span><span class="job">${esc(x.job)}</span></div><button class="heart-mini ${fav?'on':''}" data-fav="${esc(id)}" aria-label="Coup de cœur">${I.heart}</button></div></div>`};
-  return `${clHero('<h1>Découvrir</h1>',bellHtml(),'Des personnes près de chez toi')}<div class="cl-body">
+  return `${clHero('<h1>Découvrir</h1>',clGucko()+bellHtml(),'Des personnes près de chez toi')}<div class="cl-body">
   <div class="search"><label>${I.search.replace('<svg','<svg width="18" height="18"')}<input id="q" placeholder="Nom, métier, ville…" value="${esc(S.route.q||'')}" aria-label="Rechercher"></label></div>
   <div class="intents">${[['','Tous','✨'],...INTENTS].map(([k,l,e])=>`<button type="button" data-intent="${k}" class="${intent===k?'on '+k:''}"><span>${e}</span><b>${l}</b><small>${k?icount(k)+' dispo':all.length+' membres'}</small></button>`).join('')}</div>
   ${intent?`<div class="sec-head" style="margin:14px 0 10px"><h2>${intent==='diner'?'Disponibles pour un dîner':intent==='chill'?'Disponibles pour un flirt':'Disponibles pour une rencontre'}</h2><span class="count">${list.length}</span></div>`:''}
@@ -2549,7 +2550,7 @@ function vMessages(){const list=[...S.chats].filter(c=>(c.lastAt||0)>chatHid(c.i
   const calls=ids.length?`<p class="hint">L'appel passe par ton téléphone, au numéro indiqué sur le profil.</p>${ids.map(id=>{const x=S.profiles[id];const vis=phoneOk(x,id);const tel=vis?String(x.phone||'').replace(/[^\d+]/g,''):'';
     return `<div class="call"><button data-profile="${esc(id)}" aria-label="Profil de ${esc(x.firstName)}"><span class="ar" style="padding:2px;border-radius:50%;background:var(--grad);display:block">${av(x,48)}</span></button><div class="mid"><b>${esc(fullName(x))}</b><small>${esc([x.city,vis?x.phone:'Numéro masqué'].filter(Boolean).join(' · '))}</small></div><button class="ca" data-chat="${esc(id)}" aria-label="Écrire à ${esc(x.firstName)}">${I.chat}</button>${tel?`<a class="ca go" href="tel:${esc(tel)}" target="_top" aria-label="Appeler ${esc(x.firstName)}">${I.phone}</a>`:''}</div>`}).join('')}`
     :`<div class="empty">${I.phone}<b>Personne à appeler pour l'instant</b><p>Les membres apparaîtront ici avec leur numéro.</p></div>`;
-  return `${clHero('<h1>Messages</h1>',`<button class="cl-ib" data-go="discover" aria-label="Trouver quelqu'un">${I.search}</button>`,'Tes discussions privées')}<div class="cl-body">
+  return `${clHero('<h1>Messages</h1>',`${clGucko()}<button class="cl-ib" data-go="discover" aria-label="Trouver quelqu'un">${I.search}</button>`,'Tes discussions privées')}<div class="cl-body">
   <div class="stories"><button class="story add" data-act="compose" data-withpic="1"><span class="card"><span class="plus">${I.plus}</span>Ta story</span></button>${st.map(story).join('')}</div>
   <div class="seg" role="tablist"><i id="segI" style="transform:translateX(${pane*100}%)"></i><button role="tab" data-pane="0" class="${pane?'':'on'}">Discussions</button><button role="tab" data-pane="1" class="${pane?'on':''}">Appels</button></div>
   <div class="pager" id="pager"><section class="pane">${convs}</section><section class="pane">${calls}</section></div>
@@ -4186,6 +4187,9 @@ body.shop-mode .shp-empty{border-color:#C9C9D2!important}
 .nav.cln{left:0!important;right:0!important;transform:none!important;width:100%!important;padding:0 12px calc(12px + env(safe-area-inset-bottom,0px))!important;background:none!important}
 .nav.cln::before{content:"";position:absolute;left:0;right:0;bottom:0;height:150px;background:linear-gradient(180deg,rgba(14,14,16,0),rgba(14,14,16,.28) 55%,rgba(14,14,16,.6));pointer-events:none;z-index:-1}
 .nav.cln .nav-in{max-width:540px;margin:0 auto;height:66px!important;padding:0 18px!important;border-radius:26px!important;box-shadow:0 18px 40px -12px rgba(14,14,16,.6)!important}
+
+.cl-ib.cl-gk svg{width:21px!important;height:21px!important;fill:currentColor!important;stroke:none!important}
+.cl-ib.cl-gk svg *{fill-opacity:1!important}
 
 /* ===== Recadrage ===== */
 html.kc-on,html.kc-on body{overflow:hidden}
