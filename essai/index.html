@@ -4014,6 +4014,24 @@ body.shop-mode .shp-empty{border-color:#C9C9D2!important}
 .composer{width:min(440px,calc(100% - 20px))!important;margin:0!important;bottom:calc(var(--kb,0px) + 10px + env(safe-area-inset-bottom,0px))!important;align-items:center}
 .nav.cln .nav-in>button.cl-pub.gl-pill{background:radial-gradient(130% 150% at 28% 18%,#EAF8FF 0%,#A9E0FF 28%,#56BCFF 66%,#2B95EE 100%)!important;box-shadow:0 12px 26px -10px rgba(43,149,238,.75),inset 0 2px 6px rgba(255,255,255,.75),inset 0 -6px 12px rgba(25,110,210,.35)!important;border:2px solid rgba(255,255,255,.9)!important}
 .cl-btn.dark,.btn-primary,.btn.btn-primary,.cl-pf .cl-write{background:radial-gradient(140% 160% at 30% 0%,#9BD8FF 0%,#4CB6FF 42%,#1F82DB 100%)!important}
+/* ===== Retouche : boutons brillants en graphite (plus de bleu) et à la taille des autres icônes ===== */
+:root{--gloss:radial-gradient(130% 150% at 28% 12%,#9A9AA6 0%,#63636E 26%,#3E3E45 60%,#232327 100%);--glossSh:0 8px 18px -10px rgba(14,14,16,.65),inset 0 1.5px 3px rgba(255,255,255,.35),inset 0 -4px 8px rgba(0,0,0,.35)}
+.gl-pill,.cl-btn.dark,.btn-primary,.btn.btn-primary,.cl-pf .cl-write,.cl-cam,.composer .send,.vs .vs-f>button#vsB,.vs #vsB,.vs .vs-f button,.vs .vs-f .vs-rs,.vp-bar button,.nav.cln .nav-in>button.cl-pub.gl-pill{background:var(--gloss)!important;color:#F2F2F5!important;border:1px solid rgba(255,255,255,.18)!important;box-shadow:var(--glossSh)!important;text-shadow:none!important}
+.gl-pill svg{filter:none}
+.vs .vs-f .vs-rx{background:transparent!important;color:#63636E!important;box-shadow:none!important;border:0!important}
+.cl-send{width:48px!important;height:40px!important}
+.cl-send svg{width:20px!important;height:20px!important}
+.nav.cln .nav-in>button.cl-pub{width:44px!important;height:44px!important;margin-top:0!important}
+.nav.cln .nav-in>button.cl-pub svg{width:22px!important;height:22px!important}
+.nav.cln .nav-in>button.on{color:#0E0E10!important}
+.nav.cln .nav-in>button.on::after{background:#0E0E10!important}
+.cl-pf .cl-write{height:34px!important;padding:0 13px!important;font-size:13px!important}
+.cl-pf .cl-write svg{width:15px!important;height:15px!important}
+.composer .send{width:48px!important;height:40px!important}
+.vs .vs-f>button#vsB,.vs #vsB{width:48px!important;height:40px!important}
+.cl-pill{background:#F2F2F5!important;border-color:#C9C9D2!important;color:#232327!important}
+.vs .vb.me,.bub.me{background:#232327!important;color:#F2F2F5!important}
+.cl-rip{background:rgba(99,99,110,.28)!important}
 
 </style>
 <script>if('serviceWorker' in navigator&&location.protocol==='https:'){window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js').catch(function(){})})}</script></body></html>
