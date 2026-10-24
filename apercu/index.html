@@ -2522,7 +2522,7 @@ function vidHtml(x){const v=x.vid;const poster=safeImg(v.poster);const src=vidCa
 
 
 function vDiscover(){const q=(S.route.q||'').toLowerCase(),city=S.route.city||'';
-  const all=Object.entries(S.profiles).filter(([id,x])=>id!==S.be.uid&&x&&x.firstName).sort((a,b)=>(b[1].at||0)-(a[1].at||0));
+  const all=Object.entries(S.profiles).filter(([id,x])=>id!==S.be.uid&&x&&x.firstName&&isActive(x)).sort((a,b)=>(b[1].at||0)-(a[1].at||0)); /* seuls les membres dont l'accès est confirmé apparaissent */
   const NEWD=7*864e5,isNewM=x=>(x.at||0)>Date.now()-NEWD;const fresh=all.filter(([,x])=>isNewM(x)).slice(0,12);
   const cities=[...DRC_CITIES,...[...new Set(all.map(([,x])=>x.city).filter(Boolean))].filter(c=>!DRC_CITIES.includes(c)).sort()];const ccount=c=>all.filter(([,x])=>x.city===c).length;
   const avail=all.filter(([,x])=>availOf(x)!=='off').sort((a,b)=>((b[1].avail||{}).at||0)-((a[1].avail||{}).at||0)).slice(0,15);
