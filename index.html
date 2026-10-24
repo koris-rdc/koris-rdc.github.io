@@ -190,9 +190,9 @@ body.shop-mode .top{background:linear-gradient(rgba(27,9,4,.0),rgba(27,9,4,0))}
 </style></head><body><div id="ksplash" class="wait" role="img" aria-label="Koris" title="Touchez pour passer">
 <style>
 #ksplash{position:fixed;inset:0;z-index:99999;background:#070707;display:grid;place-items:center;overflow:hidden;cursor:pointer;animation:ksOut .7s cubic-bezier(.7,0,.3,1) 10.4s forwards}
-#ksplash .ks-stage{position:relative;height:100svh;max-height:100%;aspect-ratio:9/16;max-width:100vw;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4.2svh;background:radial-gradient(70% 45% at 50% 44%,rgba(99,99,110,.26),transparent 70%),radial-gradient(60% 40% at 50% 110%,rgba(201,201,210,.14),transparent 70%),#070707;animation:ksBg 1.6s ease-out both}
-#ksplash .ks-halo{position:absolute;left:50%;top:41%;width:62%;aspect-ratio:1;translate:-50% -50%;border-radius:50%;background:conic-gradient(from 0deg,transparent,rgba(99,99,110,.55),rgba(201,201,210,.35),transparent 60%);filter:blur(28px);opacity:0;animation:ksHalo 3.4s ease-out .6s both,ksSpin 6s linear infinite,ksUpH .9s cubic-bezier(.6,0,.2,1) 3.5s forwards}
-#ksplash .ks-ring{position:absolute;left:50%;top:41%;width:46%;aspect-ratio:1;translate:-50% -50%;border-radius:50%;border:1px solid rgba(201,201,210,.55);opacity:0;animation:ksRing 1.3s cubic-bezier(.2,.7,.2,1) 1.85s both}
+#ksplash .ks-stage{position:relative;height:100svh;max-height:100%;aspect-ratio:9/16;max-width:100vw;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4.2svh;background:radial-gradient(70% 45% at 50% 44%,rgba(76,122,102,.26),transparent 70%),radial-gradient(60% 40% at 50% 110%,rgba(143,187,166,.14),transparent 70%),#070707;animation:ksBg 1.6s ease-out both}
+#ksplash .ks-halo{position:absolute;left:50%;top:41%;width:62%;aspect-ratio:1;translate:-50% -50%;border-radius:50%;background:conic-gradient(from 0deg,transparent,rgba(76,122,102,.55),rgba(143,187,166,.35),transparent 60%);filter:blur(28px);opacity:0;animation:ksHalo 3.4s ease-out .6s both,ksSpin 6s linear infinite,ksUpH .9s cubic-bezier(.6,0,.2,1) 3.5s forwards}
+#ksplash .ks-ring{position:absolute;left:50%;top:41%;width:46%;aspect-ratio:1;translate:-50% -50%;border-radius:50%;border:1px solid rgba(143,187,166,.55);opacity:0;animation:ksRing 1.3s cubic-bezier(.2,.7,.2,1) 1.85s both}
 #ksplash .ks-ring.r2{animation-delay:2.05s}
 #ksplash .ks-logo{position:relative;width:34%;animation:ksLogo 3.5s cubic-bezier(.2,.8,.2,1) both}
 #ksplash svg{width:100%;height:auto;display:block;overflow:visible}
@@ -211,7 +211,7 @@ body.shop-mode .top{background:linear-gradient(rgba(27,9,4,.0),rgba(27,9,4,0))}
 #ksplash .ks-main{display:flex;flex-direction:column;align-items:center;gap:4.2svh;width:100%;animation:ksUp .9s cubic-bezier(.6,0,.2,1) 3.5s forwards}
 #ksplash .ks-feat{position:absolute;left:50%;top:50%;transform:translate(-50%,-42%);width:max-content;max-width:84%;margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:1.7svh}
 #ksplash .ks-feat li{display:flex;align-items:center;gap:10px;opacity:0;transform:translateX(-18px);filter:blur(4px);animation:ksIn .7s cubic-bezier(.2,.8,.2,1) var(--d) forwards}
-#ksplash .ks-ic{flex:none;width:min(3.9svh,32px);height:min(3.9svh,32px);border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,rgba(201,201,210,.22),rgba(99,99,110,.22));border:1px solid rgba(201,201,210,.35);box-shadow:0 0 18px -6px #C9C9D2}
+#ksplash .ks-ic{flex:none;width:min(3.9svh,32px);height:min(3.9svh,32px);border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,rgba(143,187,166,.22),rgba(76,122,102,.22));border:1px solid rgba(143,187,166,.35);box-shadow:0 0 18px -6px #C9C9D2}
 #ksplash .ks-ic svg{width:52%;height:52%;fill:none;stroke:#A8A8B2;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 #ksplash .ks-feat b{display:block;font:600 min(1.7svh,13px)/1.25 "Poppins","Montserrat",sans-serif;color:#F5F5F7;text-align:left}
 #ksplash .ks-feat small{display:block;font:400 min(1.4svh,11px)/1.35 "Montserrat",sans-serif;color:#8A8A97;text-align:left}
@@ -235,7 +235,7 @@ body.shop-mode .top{background:linear-gradient(rgba(27,9,4,.0),rgba(27,9,4,0))}
 #ksplash .ks-gate b{font:600 16px "Poppins",sans-serif;color:#F5F5F7;margin-top:6px}
 #ksplash .ks-gate small{display:flex;align-items:center;gap:6px;font-size:12px;letter-spacing:.08em;color:#8A8A97}
 #ksplash .ks-gate small svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-@keyframes ksGate{0%,100%{transform:scale(1);box-shadow:0 0 0 0 rgba(99,99,110,.5)}50%{transform:scale(1.08);box-shadow:0 0 0 18px rgba(99,99,110,0)}}
+@keyframes ksGate{0%,100%{transform:scale(1);box-shadow:0 0 0 0 rgba(76,122,102,.5)}50%{transform:scale(1.08);box-shadow:0 0 0 18px rgba(76,122,102,0)}}
 @keyframes ksBg{from{opacity:.4}to{opacity:1}}
 @keyframes ksHalo{0%{opacity:0}40%{opacity:.9}100%{opacity:.45}}
 @keyframes ksSpin{to{rotate:360deg}}
@@ -1835,7 +1835,7 @@ function vAuth(){const mode=S.authMode||'up';const via=S.authVia||ls.get('authVi
   ${mode!=='reset'?`<div class="via" role="radiogroup" aria-label="Façon de s'inscrire"><button type="button" data-via="tel" class="${via==='tel'?'on':''}" role="radio" aria-checked="${via==='tel'}">${I.phone}<span><b>Numéro de téléphone</b><small>Sans e-mail</small></span></button><button type="button" data-via="mail" class="${via==='mail'?'on':''}" role="radio" aria-checked="${via==='mail'}">${I.mail}<span><b>Adresse e-mail</b><small>Gmail ou autre</small></span></button></div>`:''}
   ${mode==='reset'&&via==='tel'?`<button type="button" class="btn btn-primary" data-act="help" style="flex:none;height:52px">${I.wa}Contacter l'aide Koris</button><button type="button" class="lnk-in" data-via="mail">Mon compte est avec un e-mail</button>`:`<form id="fAuth" class="form" novalidate>
    ${via==='tel'&&mode!=='reset'?`<label class="pill">${I.phone}<span class="cc-pre">+243</span><input id="aTel" type="tel" inputmode="tel" autocomplete="tel" placeholder="81 234 5678" aria-label="Numéro de téléphone" value="${esc(ls.get('authPhoneRaw',''))}" required></label>`:`<label class="pill">${I.user}<input id="aMail" type="email" inputmode="email" autocomplete="email" placeholder="Ton e-mail" aria-label="E-mail" required></label>`}
-   ${mode!=='reset'?`<label class="pill">${I.lock||I.user}<input id="aPass" type="password" autocomplete="${mode==='up'?'new-password':'current-password'}" placeholder="${mode==='up'?'Mot de passe (8 caractères min.)':'Ton mot de passe'}" aria-label="Mot de passe" minlength="8" required></label>`:''}
+   ${mode!=='reset'?`<label class="pill">${LOCKI}<input id="aPass" type="password" autocomplete="${mode==='up'?'new-password':'current-password'}" placeholder="${mode==='up'?'Mot de passe (8 caractères min.)':'Ton mot de passe'}" aria-label="Mot de passe" minlength="8" required></label>`:''}
    <p class="err" id="aErr"></p><p class="ok-msg" id="aOk"></p>
    <button class="btn btn-primary" id="aGo" type="submit">${mode==='up'?'Créer mon compte':mode==='in'?'Me connecter':'Recevoir le lien'}</button>
   </form>`}
@@ -1855,7 +1855,7 @@ function authErr(e){const m=String(e?.message||e||'');
   return 'Ça n\'a pas marché. Réessaie dans un instant.'}
 document.addEventListener('click',e=>{const v=e.target.closest&&e.target.closest('[data-via]');if(v){e.preventDefault();e.stopPropagation();S.authVia=v.dataset.via;ls.set('authVia',S.authVia);
   if(S.route.v==='signup'){const keep={};document.querySelectorAll('#fSign input,#fSign textarea').forEach(i=>{if(i.id)keep[i.id]=i.type==='checkbox'||i.type==='radio'?i.checked:i.value});render();Object.entries(keep).forEach(([id,v2])=>{const i=document.getElementById(id);if(!i)return;if(i.type==='checkbox'||i.type==='radio')i.checked=v2;else i.value=v2});return}
-  render();return}const b=e.target.closest&&e.target.closest('[data-auth]');if(!b)return;e.preventDefault();e.stopPropagation();S.authMode=b.dataset.auth;render()},true);
+  render();return}const b=e.target.closest&&e.target.closest('[data-auth]');if(!b)return;e.preventDefault();e.stopPropagation();S.authMode=b.dataset.auth;if(S.route.v==='auth')S.route.param=b.dataset.auth;render()},true);
 document.addEventListener('submit',async e=>{if(e.target.id!=='fAuth')return;e.preventDefault();e.stopPropagation();
   const sb=sbClient(),err=$('#aErr'),ok=$('#aOk'),b=$('#aGo'),pass=$('#aPass')?.value||'',mode=S.authMode||'up';err.textContent='';ok.textContent='';
   const telIn=$('#aTel'),tel=telIn?telNorm(telIn.value):'';let mail=telIn?telMail(tel):$('#aMail').value.trim();
@@ -2038,10 +2038,10 @@ function vAbout(){
 
   <div class="ab-sec"><h2>Comment c'est organisé</h2><p>L'application tient en cinq espaces, accessibles depuis la barre en bas de l'écran.</p>
    <div class="ab-tabs">
-    ${tab('home','Fil','Les messages et photos publiés par les membres, du plus récent au plus ancien. Tu peux aimer une publication ou écrire directement à son auteur.')}
+    ${tab('home','Accueil','Les messages et photos publiés par les membres, du plus récent au plus ancien. Pour publier, touche « Partager un moment » tout en haut.')}
     ${tab('compass','Découvrir','Tous les profils, filtrables par ville et par recherche. Ajoute une personne à tes coups de cœur pour la retrouver plus tard.')}
-    ${tab('plus','Publier','Partage un message, une photo, ou les deux. Ta publication apparaît dans le fil de tous les membres.','plus')}
-    ${tab('chat','Messages','Tes conversations privées. Un point orange te signale un nouveau message.')}
+    ${tab('help','Discussion','Le petit fantôme ouvre une discussion directe avec l’équipe Koris : une question, un souci de paiement, on te répond.')}
+    ${tab('chat','Messages','Tes conversations privées. Un point vert te signale un nouveau message.')}
     ${tab('user','Mon profil','Ta photo, ton image de couverture, ta bio et tes infos. C’est ce que les autres voient en premier.')}
    </div></div>
 
@@ -2091,7 +2091,7 @@ const cities=[...DRC_CITIES,'Brazzaville','Pointe-Noire'];
   <div class="row2">${pill('cake','fAge','Ton âge',p.age,'type="number" min="18" max="99" inputmode="numeric"')}${pill('work','fJob','Ton métier',p.job)}</div>
   ${pill('phone','fPhone','Ton numéro de téléphone',p.phone||ls.get('authPhone',''),'type="tel" inputmode="tel" autocomplete="tel"')}
   ${S.be.mode==='live'&&!S.be.uid?`${S.authVia==='mail'?pill('mail','fMail','Ton e-mail','','type="email" inputmode="email" autocomplete="email"'):''}
-   <label class="pill">${I.lock||I.user}<input id="fPass" type="password" autocomplete="new-password" placeholder="Mot de passe (8 caractères min.)" aria-label="Mot de passe" minlength="8"></label>
+   <label class="pill">${LOCKI}<input id="fPass" type="password" autocomplete="new-password" placeholder="Mot de passe (8 caractères min.)" aria-label="Mot de passe" minlength="8"></label>
    <p class="hint acc-hint">${S.authVia==='mail'?'Tu te reconnecteras avec ton e-mail et ce mot de passe. <button type="button" data-via="tel">Utiliser plutôt mon numéro</button>':'Tu te reconnecteras avec ton numéro et ce mot de passe, sans e-mail. <button type="button" data-via="mail">Utiliser plutôt mon e-mail</button>'}</p>`:''}
   <div class="row2">${pill('city','fCity','Ta ville',p.city,'list="cityList"')}${pill('globe','fCountry','Ton pays',p.country)}</div>
   ${pill('pin','fCommune','Ta commune (ex. Lemba, Ngaliema…)',p.commune,'list="communeList" autocomplete="address-level3"')}
@@ -2300,6 +2300,7 @@ function postHtml(x){const a=S.profiles[x.uid]||{};const likes=Array.isArray(x.l
   ${x.caption?`<p class="cl-cap${media?'':' big'}">${esc(x.caption)}</p>`:''}
   ${media}
   <footer class="cl-pf"><button class="${liked?'on':''}" data-like="${esc(x.id)}" aria-label="J'aime">${liked?I.heart:I.heartO}<span>${likes.length}</span></button><button data-cmt="${esc(x.id)}" aria-label="Commentaires">${I.comment}<span>${cms}</span></button><button data-share="${esc(x.id)}" aria-label="Partager">${CLI.share}</button></footer></article>`}
+const LOCKI='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4.5" y="10.5" width="15" height="10" rx="2.6"/><path d="M8 10.5V7.6a4 4 0 0 1 8 0v2.9"/><path d="M12 14.6v2.2"/></svg>';
 const NVI={home:'<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M10.5 2.9a2.4 2.4 0 0 1 3 0l6.6 5.4c.6.5.9 1.2.9 1.9v8.1a3.2 3.2 0 0 1-3.2 3.2H6.2A3.2 3.2 0 0 1 3 18.3v-8.1c0-.7.3-1.4.9-1.9z"/><path class="nv-sm" d="M8.8 14.4c1.8 1.7 4.6 1.7 6.4 0" fill="none" stroke-width="2.1" stroke-linecap="round"/></svg>',search:'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="3.4"/><path fill="currentColor" d="M15.7 8.3l-1.8 4.6-2.8-2.8z"/><path fill="currentColor" opacity=".6" d="M8.3 15.7l1.8-4.6 2.8 2.8z"/></svg>',chat:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><path d="M12 3.6c4.8 0 8.4 3.3 8.4 7.5s-3.6 7.5-8.4 7.5c-1 0-2-.1-2.9-.4l-4.6 1.9 1.2-3.9c-1.4-1.4-2.1-3.1-2.1-5.1 0-4.2 3.6-7.5 8.4-7.5z"/><path d="M8.7 11.2h.01M12 11.2h.01M15.3 11.2h.01" stroke-width="2.9"/></svg>'};
 function navHtml(active){const un=clUnread();const p=me()||{};const ph=safeImg(p.photo);
   const b=(v,ic,l,cls='')=>`<button class="${cls}${active===v?' on':''}" data-go="${v}" aria-label="${l}">${ic}${v==='messages'&&un?'<i class="cl-dot"></i>':''}</button>`;
@@ -2826,10 +2827,10 @@ Ce que fait l'application :
 - Installation : dans Chrome, ⋮ puis « Installer l'application » pour avoir l'icône Koris ; version Play Store bientôt.
 - Confidentialité : données jamais vendues, messages privés visibles seulement par les deux membres, page « Confidentialité » en bas de l'accueil. Signaler un faux profil ou une arnaque : Réglages → « Aide et contact ».
 - Prix : ${SUBSCRIPTION?"inscription 6 200 FC (une seule fois) + abonnement 6 200 FC par mois, soit 12 400 FC au premier paiement puis 6 200 FC à chaque renouvellement":"accès 6 200 FC, payé une seule fois (pas d'abonnement mensuel pour le moment)"}, par Orange Money ou Airtel Money. On envoie l'argent au numéro affiché (bouton « Copier » et bouton qui ouvre le menu Mobile Money), puis on entre le numéro qui a payé et la référence du SMS. Le service vérifie puis l'accès s'ouvre${SUBSCRIPTION?" pour 30 jours. On renouvelle depuis son profil (carte « Abonnement »).":"."}
-- Fil (icône maison) : publications des membres, J'aime, commentaires, partage. Le bouton « + » au centre en bas sert à publier une photo, une vidéo (jusqu'à 90 secondes, compressée automatiquement si besoin) ou un texte.
+- Fil (icône maison) : publications des membres, J'aime, commentaires, partage. La zone « Partager un moment » en haut de l'accueil sert à publier une photo, une vidéo (jusqu'à 90 secondes, compressée automatiquement si besoin) ou un texte.
 - Découvrir (boussole) : chercher des membres par nom ou par ville.
 - Messages (bulle) : stories en haut (« Ta story » pour publier), onglets Discussions et Appels qu'on fait glisser. Appels : l'appel passe par le téléphone, si le membre affiche son numéro.
-- Profil (bonhomme) : photo de profil, couverture et statut via les boutons sous le nom ; Informations ; Publications. L'interrupteur sur la ligne Téléphone masque ou affiche son numéro aux autres. Le crayon en haut recommence l'inscription. La roue dentée ouvre les Réglages : mode sombre ou normal, sons, vibreur, aide.
+- Profil (bonhomme) : photo de profil, couverture et statut via les boutons sous le nom ; Informations ; Publications. L'interrupteur sur la ligne Téléphone masque ou affiche son numéro aux autres. Le crayon en haut recommence l'inscription. La roue dentée ouvre les Réglages : mode Jour ou Nuit, sons, vibreur, aide.
 - Profil d'un autre membre : boutons « Écrire » et « J'aime » (coup de cœur), copier son numéro s'il est visible.
 - Certification : 5 $ une seule fois, carte « Obtenir le badge certifié » sur son profil ; on choisit un nom d'utilisateur @ unique, on paie, le service valide, puis le badge s'affiche et le nom est réservé.
 - Disponibilité : sur son profil, « Ma disponibilité » (Flirt, Rencontre, Dîner ou Pas dispo). Dans Découvrir, les rubriques Flirt, Rencontre et Dîner regroupent les membres disponibles pour chacun. Aussi et « Ma zone » (commune ou position approximative). Pour trouver quelqu'un de dispo près de soi, il suffit de demander à Gucko (ex. « qui est dispo aujourd'hui près de moi ? ») : Gucko affiche les profils avec la distance, un bouton carte et un bouton pour écrire.
@@ -2837,7 +2838,7 @@ Ce que fait l'application :
 const FIND_CHIPS=[['Qui est dispo pour un dîner ?',{when:'diner'}],['Qui est dispo pour une rencontre ?',{when:'rencontre'}],['Qui est dispo pour un flirt ?',{when:'chill'}],['Femmes dispo près de moi',{when:'any',sex:'F'}],['Hommes dispo près de moi',{when:'any',sex:'H'}]];
 const GUIDE_FAQ=[['Comment m\'inscrire ?','1. Sur l\'accueil, touche « Commencer ».\n2. Ajoute ta photo et remplis tes infos (18 ans minimum).\n3. Coche les règles et touche « S\'inscrire ».\n'+(SUBSCRIPTION?'4. Paie 12 400 FC par Mobile Money : 6 200 FC d\'inscription + 6 200 FC pour le premier mois.':'4. Paie 6 200 FC par Mobile Money, une seule fois, pour accéder à Koris.')],
  SUBSCRIPTION?['Comment payer l\'abonnement ?','1. Choisis Orange Money ou Airtel Money.\n2. Envoie le montant affiché au numéro indiqué (bouton « Copier ») : 12 400 FC la première fois (inscription + 1er mois), puis 6 200 FC par mois.\n3. Entre le numéro qui a payé et la référence du SMS, puis « J\'ai payé ».\nTon accès s\'ouvre pour 30 jours dès la vérification.']:['Comment payer l\'accès ?','1. Choisis Orange Money ou Airtel Money.\n2. Envoie 6 200 FC au numéro indiqué (bouton « Copier »). On paie une seule fois.\n3. Entre le numéro qui a payé et la référence du SMS, puis « J\'ai payé ».\nTon accès s\'ouvre dès la vérification.'],
- ['Comment publier une photo ?','Touche le gros bouton « + » en bas au centre, choisis une photo ou une vidéo, écris un petit message, puis « Publier ». Pour une story, utilise « Ta story » dans Messages.'],
+ ['Comment publier une photo ?','Sur l\'accueil, touche « Partager un moment », choisis une photo ou une vidéo, écris un petit message, puis « Publier ». Pour une story, utilise « Ta story » dans Messages.'],
  ['Comment écrire à quelqu\'un ?','Ouvre son profil (depuis le fil ou Découvrir), puis touche « Écrire ». Tes discussions sont dans l\'onglet Messages.'],
  ['Comment cacher mon numéro ?','Va sur ton profil, ligne « Téléphone », et éteins l\'interrupteur. Les autres membres verront « Numéro masqué ».'],
  ['C\'est quoi la certification ?','Pour 5 $ une seule fois, tu obtiens le badge à côté de ton nom et un nom d\'utilisateur @ que personne d\'autre ne peut prendre. Touche « Obtenir le badge certifié » sur ton profil.']];
@@ -2893,9 +2894,9 @@ const GKB=[
  {k:['abonnement','mensuel','chaque mois','renouveler','renouvellement','expire'],a:()=>SUBSCRIPTION?'L\'abonnement coûte 6 200 FC par mois. Tu le renouvelles depuis ton profil (carte « Abonnement ») ou la page de paiement : chaque paiement ajoute 30 jours.':'Il n\'y a pas d\'abonnement mensuel pour le moment : tu paies 6 200 FC une seule fois et ton accès reste actif.'},
  {k:['rembours','annuler mon paiement','recuperer mon argent'],a:()=>'Pour toute question de remboursement, contacte directement le service Koris depuis Réglages → « Aide et contact », avec la référence de ton paiement.'},
  /* ---- Fil et publications ---- */
- {k:['publier','poster','publication','partager une photo','mettre une photo','post'],a:()=>'Pour publier : touche le gros bouton « + » en bas au centre. Écris un message, ajoute une photo ou une vidéo si tu veux, choisis le format, puis « Publier ». Ta publication apparaît dans le fil de tous les membres.'},
+ {k:['publier','poster','publication','partager une photo','mettre une photo','post'],a:()=>'Pour publier : sur l\'accueil, touche « Partager un moment ». Écris un message, ajoute une photo ou une vidéo si tu veux, choisis le format, puis « Publier ». Ta publication apparaît dans le fil de tous les membres.'},
  {k:['format','9 16','1 1','16 9','carre','portrait','paysage','recadrer'],a:()=>'Après avoir ajouté une photo ou une vidéo, choisis son format : Original, 9:16, 4:5, 1:1, 3:4, 2:3, 4:3, 3:2 ou 16:9. L\'aperçu change tout de suite, et la publication s\'affiche dans ce format dans le fil.'},
- {k:['video','filmer','clip'],a:()=>'Tu peux publier des vidéos jusqu\'à 90 secondes avec le bouton « + » : si elles sont lourdes, Koris les compresse automatiquement. Dans le fil, on touche la vidéo pour la lire.'},
+ {k:['video','filmer','clip'],a:()=>'Tu peux publier des vidéos jusqu\'à 90 secondes depuis « Partager un moment » sur l\'accueil : si elles sont lourdes, Koris les compresse automatiquement. Dans le fil, on touche la vidéo pour la lire.'},
  {k:['supprimer une publication','supprimer mon post','effacer une photo','retirer une publication'],a:()=>'Pour supprimer une de tes publications, touche l\'icône poubelle en haut à droite de la publication dans le fil.'},
  {k:['like','j aime','aimer','coeur','coup de coeur'],a:()=>'Touche « J\'aime » sous une publication pour réagir (avec un petit son 💗). Sur le profil d\'un membre, le bouton « J\'aime » lui envoie un coup de cœur.'},
  {k:['commenter','commentaire','repondre a une publication'],a:()=>'Touche l\'icône bulle sous une publication pour voir les commentaires et écrire le tien. Tu peux supprimer tes propres commentaires.'},
@@ -2918,8 +2919,8 @@ const GKB=[
  /* ---- Certification ---- */
  {k:['certif','badge','verifie','nom d utilisateur','@','pseudo'],a:()=>'La certification coûte 5 $ une seule fois. Tu obtiens le badge à côté de ton nom et un nom d\'utilisateur @ que personne d\'autre ne peut prendre. Sur ton profil, touche « Obtenir le badge certifié », choisis ton @, paie, puis le service valide.'},
  /* ---- Réglages et appli ---- */
- {k:['reglage','parametre','roue dentee','options'],a:()=>'Les Réglages s\'ouvrent avec la roue dentée sur ton profil : mode sombre ou normal, sons, vibreur, aide et déconnexion.'},
- {k:['mode sombre','mode clair','theme','couleur','fond noir','fond blanc'],a:()=>'Pour passer du mode sombre au mode normal : Réglages (roue dentée sur ton profil) → Apparence.'},
+ {k:['reglage','parametre','roue dentee','options'],a:()=>'Les Réglages s\'ouvrent avec la roue dentée sur ton profil : mode Jour ou Nuit, sons, vibreur, aide et déconnexion.'},
+ {k:['mode sombre','mode clair','theme','couleur','fond noir','fond blanc'],a:()=>'Pour passer du mode Jour (fond blanc) au mode Nuit (fond noir) : Réglages (roue dentée sur ton profil) → Apparence → Jour ou Nuit.'},
  {k:['sons','le son','pas de son','bruit','musique','muet','volume','silence'],a:()=>'Les sons concernent le « J\'aime », l\'intro et la musique de l\'inscription. Tu les coupes dans Réglages → « Sons ». Pour la musique d\'inscription, touche aussi le haut-parleur en haut à droite. Pour entendre l\'intro, touche l\'écran au démarrage.'},
  {k:['vibr'],a:()=>'Le vibreur s\'active ou se coupe dans Réglages → « Vibreur » (non pris en charge sur iPhone).'},
  {k:['install','telecharger','play store','ecran d accueil','icone','application mobile','apk'],a:()=>'Pour installer Koris sur ton téléphone : ouvre koris-rdc.github.io dans Chrome, touche ⋮ puis « Installer l\'application » (ou « Ajouter à l\'écran d\'accueil »). L\'icône Koris apparaît comme une vraie appli. La version Play Store arrive bientôt.'},
@@ -4689,6 +4690,20 @@ svg[class*="a-"]{transform-box:fill-box;transform-origin:50% 50%}
 :root[data-theme] .btn,:root[data-theme] .cl-btn,:root[data-theme] .cl-send,:root[data-theme] .cl-cam,:root[data-theme] .composer .send,:root[data-theme] .wl-go,:root[data-theme] .go,:root[data-theme] .gl-pill{background-image:none!important;text-shadow:none!important}
 :root[data-theme] .kc-r,:root[data-theme] .pv-ic{background:var(--k-btn)!important;color:var(--k-btnT)!important;box-shadow:none!important}
 :root[data-theme] .wl-slide h1 span,:root[data-theme] .w-copy h1 span,:root[data-theme] .ab-hero h1 span{background:none!important;-webkit-background-clip:border-box!important;background-clip:border-box!important;color:var(--k-acc)!important}
+:root[data-theme] .cl-media{width:88%!important;margin:0 auto!important}
+:root[data-theme] .grid{gap:10px!important;padding:0 6px}
+:root[data-theme] .grid .col{gap:10px!important}
+:root[data-theme] .pcard .ph{aspect-ratio:4/5!important}
+:root[data-theme] .av-strip .avatar{width:48px!important;height:48px!important;font-size:17px!important}
+:root[data-theme] .new-strip button{width:62px!important}
+:root[data-theme] .av-em{width:20px!important;height:20px!important;font-size:10px!important}
+:root[data-theme] .story{width:62px!important}
+:root[data-theme] .story .card{width:62px!important;height:86px!important;border-radius:16px!important}
+:root[data-theme] .story .who .avatar{width:26px!important;height:26px!important;font-size:10px!important}
+:root[data-theme] .story .who span{font-size:9.5px!important;max-width:56px!important}
+:root[data-theme] .story.add .card{font-size:11px}
+:root[data-theme] .sex input:checked+span{background:var(--k-btn)!important;color:var(--k-btnT)!important;border-color:transparent!important}
+:root[data-theme] .terms input,:root[data-theme] input[type=checkbox]{accent-color:var(--k-accS)}
 /* variables des messageries, posées sur leurs propres conteneurs */
 :root[data-theme=light] :is(.wa,.wa-chat){--w-bg:#FFFFFF;--w-hd:#FFFFFF;--w-sf:#F0F5F2;--w-ln:#E1EAE4;--w-tx:#0B1611;--w-mu:#667A70;--w-out:#DDEEE3;--w-in:#FFFFFF;--w-ac:#233B32;--w-ac2:#2F5C49;--w-lt:#2F7A55;--w-tk:#34A6E0;--w-bdT:#FFFFFF}
 :root[data-theme=dark] :is(.wa,.wa-chat){--w-bg:#000000;--w-hd:#000000;--w-sf:#121815;--w-ln:#1C2621;--w-tx:#EEF6F1;--w-mu:#859B91;--w-out:#1D3A2D;--w-in:#141A17;--w-ac:#4C7A66;--w-ac2:#69D196;--w-lt:#8FE0B0;--w-tk:#53BDEB;--w-bdT:#04140B}
