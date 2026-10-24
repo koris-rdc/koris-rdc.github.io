@@ -2105,7 +2105,7 @@ const cities=[...DRC_CITIES,'Brazzaville','Pointe-Noire'];
   </form>`}
 
 /* Mobile Money : l'argent part directement du téléphone du membre vers les numéros du propriétaire (réglés dans l'espace Paiements). */
-const OPS=[{id:'orange',name:'Orange Money',short:'OM',c:'#FF7900',ussd:'*144#'},{id:'airtel',name:'Airtel Money',short:'AM',c:'#ED1C24',ussd:'*501#'},{id:'mpesa',name:'M-Pesa',short:'M',c:'#E31B23',ussd:'*1222#'}];
+const OPS=[{id:'orange',name:'Orange Money',short:'OM',c:'#FF7900',ussd:'*144#'},{id:'airtel',name:'Airtel Money',short:'AM',c:'#ED1C24',ussd:'*501#'}];
 /* ABONNEMENT : désactivé pour l'instant. Pour le remettre (5 000 FC d'inscription + 5 000 FC/mois),
    passer SUBSCRIPTION à true : tous les écrans, textes et l'aide reprennent l'abonnement mensuel. */
 const SUBSCRIPTION=false,ACCESS_FEE=5000;
@@ -2131,21 +2131,21 @@ const isActive=p=>!!p&&!!p.firstName&&(FREE()||(!p.paid&&!p.noFree&&(p.at||0)>0&
 const untilTxt=t=>new Date(t).toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'});
 const INV_OP={id:'invite',name:'Invitation gratuite',short:'🎁',c:'#C9C9D2',ussd:''};
 const MAN_OP={id:'manuel',name:'Payé directement',short:'✋',c:'#63636E',ussd:''};
-const opById=id=>id==='manuel'?MAN_OP:id==='invite'?INV_OP:(OPS.find(o=>o.id===id)||OPS[0]);
+const opById=id=>id==='manuel'?MAN_OP:id==='invite'?INV_OP:id==='mpesa'?{id:'mpesa',name:'M-Pesa (ancien)',short:'M',c:'#E31B23',ussd:'*1222#'}:(OPS.find(o=>o.id===id)||OPS[0]);
 function payCfg(id){const c=(S.payCfg||{})[id]||{};const o=opById(id);return{num:String(c.num||'').trim(),holder:String(c.holder||'').trim(),ussd:String(c.ussd||o.ussd).trim()}}
 function destHtml(id){const o=opById(id),c=payCfg(id);
   if(!c.num)return `<div class="warn">Le numéro ${esc(o.name)} de Koris n'est pas encore configuré. Choisis un autre moyen ou réessaie plus tard.</div>`;
   const tel='tel:'+c.ussd.replace(/#/g,'%23');
   return `<div class="dest"><div class="mid"><small>${esc(o.name)}${c.holder?' · '+esc(c.holder):''}</small><b>${esc(c.num)}</b></div><button type="button" class="mini" data-copy="${esc(c.num)}">Copier</button></div>
    <a class="mini solid" href="${tel}" target="_top" style="align-self:flex-start">${I.phone}Ouvrir ${esc(o.name)} (${esc(c.ussd)})</a>`}
-function vPay(){const p=me()||{};const pay=p.pay||{};const op=S.payOp||pay.op||'orange';
+function vPay(){const p=me()||{};const pay=p.pay||{};let op=S.payOp||pay.op||'orange';if(!OPS.some(o=>o.id===op))op='orange';
   const prev=isActive(p);const head=`${prev?`<div class="banner" style="margin:12px 0 0">${p.owner?'Aperçu : c\'est la page que voient les nouveaux membres. Ton compte propriétaire est toujours actif.':(SUBSCRIPTION?'Ton abonnement est actif'+(p.paidUntil?' jusqu\'au '+untilTxt(p.paidUntil):'')+'. Tu peux déjà payer le mois suivant.':'Ton accès à Koris est actif.')}</div>`:''}<div class="top" style="padding-inline:0"><button class="icon-btn" data-go="${prev?'admin':'signup'}" aria-label="Retour">${I.back}</button><span></span>${S.owner?`<button class="icon-btn" data-go="admin" aria-label="Espace paiements">${I.wallet}</button>`:''}</div>`;
   const due=dueFor(p);const amount=!SUBSCRIPTION?`<div class="glow amt-card"><div><span class="hint">Accès à Koris</span><div class="amt">${fc(due).replace(' FC','')}<small>FC</small></div></div><span class="tag">une seule fois</span></div>`:`<div class="glow amt-card"><div><span class="hint">${isNew(p)?'Inscription + 1er mois':'Abonnement · 1 mois'}</span><div class="amt">${fc(due).replace(' FC','')}<small>FC</small></div></div><span class="tag">${isNew(p)?'puis 5 000 FC / mois':'30 jours'}</span></div>
    ${isNew(p)?`<div class="fee-lines"><div><span>Frais d'inscription (une seule fois)</span><b>5 000 FC</b></div><div><span>Abonnement du 1er mois</span><b>5 000 FC</b></div><div class="tot"><span>Total à payer</span><b>${fc(due)}</b></div></div>`:''}`;
   if(pay.status==='pending'&&!S.route.repay){const o=opById(pay.op);
     return `<section class="form pay">${head}<h1>${pay.op==='invite'?'Invitation envoyée':'Paiement envoyé'}</h1><p class="lead">Étape 2 sur 2 · Vérification en cours.</p>${pay.op==='invite'?'':amount}
     <div class="glow wait"><div class="spin"></div><b>${pay.op==='invite'?'On vérifie ton invitation':'On vérifie ton paiement'}</b><p>${pay.op==='invite'?'Dès que Koris valide ton invitation, ton accès gratuit s\'ouvre tout seul.':`Dès que les ${fc(pay.amount??FEE)} sont confirmés, ton accès s'ouvre tout seul${SUBSCRIPTION?' pour 30 jours':''}.`}</p>
-     <dl><dt>Montant</dt><dd>${pay.op==='invite'?'Gratuit · code '+esc(pay.ref):fc(pay.amount??FEE)} · ${pay.kind==='acces'?'accès à Koris':pay.kind==='inscription'?'inscription + 1er mois':'renouvellement'}</dd><dt>Moyen</dt><dd>${esc(o.name)}</dd><dt>Depuis</dt><dd>${esc(pay.from)}</dd><dt>Référence</dt><dd>${esc(pay.ref)}</dd><dt>Envoyé</dt><dd>${ago(pay.at)}</dd></dl></div>
+     <dl><dt>Montant</dt><dd>${pay.op==='invite'?'Gratuit · code '+esc(pay.ref):fc(pay.amount??FEE)} · ${pay.kind==='acces'?'accès à Koris':pay.kind==='inscription'?'inscription + 1er mois':'renouvellement'}</dd><dt>Moyen</dt><dd>${esc(o.name)}</dd><dt>Depuis</dt><dd>${esc(pay.from)}</dd><dt>Référence</dt><dd>${esc(pay.ref)||'—'}</dd>${safeImg(pay.shot)?'<dt>Capture</dt><dd>Envoyée ✓</dd>':''}<dt>Envoyé</dt><dd>${ago(pay.at)}</dd></dl></div>
     <button class="btn btn-ghost" data-repay="1" style="flex:none;height:50px">${pay.op==='invite'?'Payer plutôt avec Mobile Money':'Corriger les infos du paiement'}</button>
     <p class="alt">Ça prend trop de temps ? <button type="button" data-act="help">Contacter l'aide</button></p>
     ${S.owner?`<button class="btn btn-ghost" data-ownok="1" style="flex:none;height:50px">Activer mon compte (propriétaire)</button>`:''}</section>`}
@@ -2158,9 +2158,12 @@ function vPay(){const p=me()||{};const pay=p.pay||{};const op=S.payOp||pay.op||'
   ${refDisc(p)?`<div class="ref-ok">🎁 <span>Réduction parrainage : <b>−500 FC</b> · ${refsOf(p.id||S.be.uid).length} ami(s) inscrit(s) grâce à toi</span></div>`:`<button type="button" class="ref-inv" data-act="shareapp"><span class="g">🎁</span><span><b>Paie 4 500 FC au lieu de 5 000 FC</b><small>Invite un ami : dès qu'il s'inscrit avec ton lien, ta réduction s'applique ici.</small></span><span class="go">${I.share}</span></button>`}
   <div class="mm" role="radiogroup" aria-label="Moyen de paiement">${OPS.map(o=>`<button type="button" role="radio" aria-checked="${o.id===op}" data-mm="${o.id}" class="${o.id===op?'on':''}" style="--c:${o.c}"><span class="lg" style="background:${o.c}">${o.short}</span>${o.name}</button>`).join('')}</div>
   <div class="step"><i>1</i><div><p>Envoie <b>${fc(due)}</b> à ce numéro depuis ton téléphone :</p><div id="payDest" style="display:flex;flex-direction:column;gap:10px">${destHtml(op)}</div></div></div>
-  <div class="step"><i>2</i><div><p>Après l'envoi, tu reçois un SMS de confirmation. Remplis ces deux cases :</p>
+  <div class="step"><i>2</i><div><p>Après l'envoi, ton opérateur t'envoie un SMS de confirmation. Indique le numéro qui a payé, puis <b>la référence du SMS ou une capture du SMS</b> :</p>
    <label class="pill">${I.phone}<input id="payFrom" type="tel" inputmode="tel" placeholder="Numéro qui a payé" aria-label="Numéro qui a payé" value="${esc(pay.from||p.phone)}"></label>
-   <label class="pill">${I.hash}<input id="payRef" placeholder="Référence de la transaction (SMS)" aria-label="Référence de la transaction" value="${esc(pay.ref||'')}" autocomplete="off"></label></div></div>
+   <label class="pill">${I.hash}<input id="payRef" placeholder="Référence de la transaction (SMS)" aria-label="Référence de la transaction" value="${esc(pay.ref||'')}" autocomplete="off"></label>
+   <div class="pay-or"><span>ou</span></div>
+   <label class="pay-shot${S.payShot?' ok':''}" for="payShot">${S.payShot?`<img src="${S.payShot}" alt="Capture du SMS">`:I.camera}<span id="payShotTx">${S.payShot?'Capture du SMS ajoutée ✓<small>Touche pour la changer</small>':'Envoyer la capture du SMS<small>Une photo d\'écran de ton SMS de paiement</small>'}</span></label><input id="payShot" type="file" accept="image/*" class="fpick">
+   <p class="hint pay-nosms">Pas reçu de SMS ? Envoie quand même avec ton numéro : l'équipe vérifie ton paiement sur son téléphone et active ton compte.</p></div></div>
   <p class="err" id="payErr"></p>
   <button class="btn btn-primary" id="payBtn">J'ai payé · Envoyer</button>
   ${S.owner?`<button type="button" class="btn btn-ghost" data-ownok="1" style="flex:none;height:50px">Activer mon compte (propriétaire)</button>`:''}
@@ -2242,7 +2245,8 @@ function vAdmin(){
 function admListHtml(){const l=Object.entries(S.profiles).filter(([,x])=>x.pay?.status==='pending').sort((a,b)=>(b[1].pay.at||0)-(a[1].pay.at||0));
   if(!l.length)return `<p class="hint" style="padding:6px 2px 4px">Aucun paiement en attente.</p>`;
   return l.map(([id,x])=>{const pay=x.pay,o=opById(pay.op);return `<div class="prow"><div class="hd">${av(x,44)}<div><b>${esc(fullName(x))}</b><small>${esc([x.city,x.phone].filter(Boolean).join(' · '))}</small></div><small>${ago(pay.at)}</small></div>
-   <dl><dt>Montant</dt><dd>${pay.op==='invite'?'Gratuit · code '+esc(pay.ref):fc(pay.amount??FEE)} · ${pay.kind==='acces'?'accès à Koris':pay.kind==='inscription'?'inscription + 1er mois':'renouvellement'}</dd>${refsOf(id).length?`<dt>Parrainage</dt><dd>−500 FC · ${refsOf(id).map(([,f])=>esc(f.firstName)).join(', ')}</dd>`:''}<dt>Moyen</dt><dd>${esc(o.name)}</dd><dt>Depuis</dt><dd>${esc(pay.from)}</dd><dt>Référence</dt><dd>${esc(pay.ref)}</dd></dl>
+   <dl><dt>Montant</dt><dd>${pay.op==='invite'?'Gratuit · code '+esc(pay.ref):fc(pay.amount??FEE)} · ${pay.kind==='acces'?'accès à Koris':pay.kind==='inscription'?'inscription + 1er mois':'renouvellement'}</dd>${refsOf(id).length?`<dt>Parrainage</dt><dd>−500 FC · ${refsOf(id).map(([,f])=>esc(f.firstName)).join(', ')}</dd>`:''}<dt>Moyen</dt><dd>${esc(o.name)}</dd><dt>Depuis</dt><dd>${esc(pay.from)}</dd><dt>Référence</dt><dd>${esc(pay.ref)||'— (pas de référence)'}</dd></dl>
+   ${safeImg(pay.shot)?`<a class="pay-shot-adm" href="${safeImg(pay.shot)}" target="_blank" rel="noopener"><img src="${safeImg(pay.shot)}" alt="Capture du SMS"><span>Capture du SMS · toucher pour agrandir</span></a>`:''}
    <div class="acts"><button class="btn btn-ghost" data-payno="${esc(id)}">Refuser</button><button class="btn btn-primary" data-payok="${esc(id)}">${I.check}Valider</button></div></div>`}).join('')}
 function admCertHtml(){const l=Object.entries(S.profiles).filter(([,x])=>x.cert?.status==='pending').sort((a,b)=>(b[1].cert.at||0)-(a[1].cert.at||0));
   if(!l.length)return `<p class="hint" style="padding:6px 2px 4px">Aucune demande de certification.</p>`;
@@ -2820,7 +2824,7 @@ Ce que fait l'application :
 - Notifications : cloche en haut du fil et de Découvrir avec les nouveaux inscrits (« Ta commune », « Ta ville ») ; alerte en haut de l'écran quand quelqu'un s'inscrit ; bouton « Activer les notifications du téléphone ».
 - Installation : dans Chrome, ⋮ puis « Installer l'application » pour avoir l'icône Koris ; version Play Store bientôt.
 - Confidentialité : données jamais vendues, messages privés visibles seulement par les deux membres, page « Confidentialité » en bas de l'accueil. Signaler un faux profil ou une arnaque : Réglages → « Aide et contact ».
-- Prix : ${SUBSCRIPTION?"inscription 5 000 FC (une seule fois) + abonnement 5 000 FC par mois, soit 10 000 FC au premier paiement puis 5 000 FC à chaque renouvellement":"accès 5 000 FC, payé une seule fois (pas d'abonnement mensuel pour le moment)"}, par Orange Money, Airtel Money ou M-Pesa. On envoie l'argent au numéro affiché (bouton « Copier » et bouton qui ouvre le menu Mobile Money), puis on entre le numéro qui a payé et la référence du SMS. Le service vérifie puis l'accès s'ouvre${SUBSCRIPTION?" pour 30 jours. On renouvelle depuis son profil (carte « Abonnement »).":"."}
+- Prix : ${SUBSCRIPTION?"inscription 5 000 FC (une seule fois) + abonnement 5 000 FC par mois, soit 10 000 FC au premier paiement puis 5 000 FC à chaque renouvellement":"accès 5 000 FC, payé une seule fois (pas d'abonnement mensuel pour le moment)"}, par Orange Money ou Airtel Money. On envoie l'argent au numéro affiché (bouton « Copier » et bouton qui ouvre le menu Mobile Money), puis on entre le numéro qui a payé et la référence du SMS. Le service vérifie puis l'accès s'ouvre${SUBSCRIPTION?" pour 30 jours. On renouvelle depuis son profil (carte « Abonnement »).":"."}
 - Fil (icône maison) : publications des membres, J'aime, commentaires, partage. Le bouton « + » au centre en bas sert à publier une photo, une vidéo (jusqu'à 90 secondes, compressée automatiquement si besoin) ou un texte.
 - Découvrir (boussole) : chercher des membres par nom ou par ville.
 - Messages (bulle) : stories en haut (« Ta story » pour publier), onglets Discussions et Appels qu'on fait glisser. Appels : l'appel passe par le téléphone, si le membre affiche son numéro.
@@ -2831,7 +2835,7 @@ Ce que fait l'application :
 - Sécurité : premier rendez-vous dans un lieu public, prévenir un proche, ne jamais envoyer d'argent à un membre. Les règles sont dans « À propos ».`;
 const FIND_CHIPS=[['Qui est dispo pour un dîner ?',{when:'diner'}],['Qui est dispo pour une rencontre ?',{when:'rencontre'}],['Qui est dispo pour un flirt ?',{when:'chill'}],['Femmes dispo près de moi',{when:'any',sex:'F'}],['Hommes dispo près de moi',{when:'any',sex:'H'}]];
 const GUIDE_FAQ=[['Comment m\'inscrire ?','1. Sur l\'accueil, touche « Commencer ».\n2. Ajoute ta photo et remplis tes infos (18 ans minimum).\n3. Coche les règles et touche « S\'inscrire ».\n'+(SUBSCRIPTION?'4. Paie 10 000 FC par Mobile Money : 5 000 FC d\'inscription + 5 000 FC pour le premier mois.':'4. Paie 5 000 FC par Mobile Money, une seule fois, pour accéder à Koris.')],
- SUBSCRIPTION?['Comment payer l\'abonnement ?','1. Choisis Orange Money, Airtel Money ou M-Pesa.\n2. Envoie le montant affiché au numéro indiqué (bouton « Copier ») : 10 000 FC la première fois (inscription + 1er mois), puis 5 000 FC par mois.\n3. Entre le numéro qui a payé et la référence du SMS, puis « J\'ai payé ».\nTon accès s\'ouvre pour 30 jours dès la vérification.']:['Comment payer l\'accès ?','1. Choisis Orange Money, Airtel Money ou M-Pesa.\n2. Envoie 5 000 FC au numéro indiqué (bouton « Copier »). On paie une seule fois.\n3. Entre le numéro qui a payé et la référence du SMS, puis « J\'ai payé ».\nTon accès s\'ouvre dès la vérification.'],
+ SUBSCRIPTION?['Comment payer l\'abonnement ?','1. Choisis Orange Money ou Airtel Money.\n2. Envoie le montant affiché au numéro indiqué (bouton « Copier ») : 10 000 FC la première fois (inscription + 1er mois), puis 5 000 FC par mois.\n3. Entre le numéro qui a payé et la référence du SMS, puis « J\'ai payé ».\nTon accès s\'ouvre pour 30 jours dès la vérification.']:['Comment payer l\'accès ?','1. Choisis Orange Money ou Airtel Money.\n2. Envoie 5 000 FC au numéro indiqué (bouton « Copier »). On paie une seule fois.\n3. Entre le numéro qui a payé et la référence du SMS, puis « J\'ai payé ».\nTon accès s\'ouvre dès la vérification.'],
  ['Comment publier une photo ?','Touche le gros bouton « + » en bas au centre, choisis une photo ou une vidéo, écris un petit message, puis « Publier ». Pour une story, utilise « Ta story » dans Messages.'],
  ['Comment écrire à quelqu\'un ?','Ouvre son profil (depuis le fil ou Découvrir), puis touche « Écrire ». Tes discussions sont dans l\'onglet Messages.'],
  ['Comment cacher mon numéro ?','Va sur ton profil, ligne « Téléphone », et éteins l\'interrupteur. Les autres membres verront « Numéro masqué ».'],
@@ -2879,8 +2883,8 @@ const GKB=[
  {k:['modifier mon profil','changer mes infos','modifier mes informations','recommencer','crayon','changer ma ville','changer ma commune','changer mon nom'],a:()=>'Pour modifier tes informations : va sur ton profil et touche le crayon en haut à droite. Le formulaire d\'inscription s\'ouvre pour tout mettre à jour, et ton accès reste actif.'},
  {k:['commune','quartier','ma zone','ma position','localisation','position'],a:()=>'Ta commune (Lemba, Ngaliema, Limete, Gombe…) se choisit à l\'inscription. Elle sert à te prévenir quand quelqu\'un de ta commune s\'inscrit. Sur ton profil, « Ma zone » permet aussi d\'afficher une position approximative pour voir les distances avec les autres membres.'},
  /* ---- Paiement ---- */
- {k:['prix','combien','cout','coute','tarif','payer','paiement','argent','frais','gratuit'],a:()=>`L'accès à Koris coûte ${PRIX_TXT()}. Tu paies par Orange Money, Airtel Money ou M-Pesa, directement depuis la page de paiement.`},
- {k:['comment payer','mobile money','m pesa','mpesa','orange money','airtel','envoyer l argent','numero de paiement'],a:()=>`Pour payer :\n1. Choisis Orange Money, Airtel Money ou M-Pesa.\n2. Envoie ${SUBSCRIPTION?'le montant affiché':'5 000 FC'} au numéro indiqué (bouton « Copier », ou le bouton qui ouvre directement le menu Mobile Money).\n3. Après l'envoi, tu reçois un SMS : entre le numéro qui a payé et la référence de la transaction, puis « J'ai payé ».\nTon accès s'ouvre dès que le service a vérifié.`},
+ {k:['prix','combien','cout','coute','tarif','payer','paiement','argent','frais','gratuit'],a:()=>`L'accès à Koris coûte ${PRIX_TXT()}. Tu paies par Orange Money ou Airtel Money, directement depuis la page de paiement.`},
+ {k:['comment payer','mobile money','m pesa','mpesa','orange money','airtel','envoyer l argent','numero de paiement'],a:()=>`Pour payer :\n1. Choisis Orange Money ou Airtel Money.\n2. Envoie ${SUBSCRIPTION?'le montant affiché':'5 000 FC'} au numéro indiqué (bouton « Copier », ou le bouton qui ouvre directement le menu Mobile Money).\n3. Après l'envoi, tu reçois un SMS : entre le numéro qui a payé et la référence de la transaction, puis « J'ai payé ».\nTon accès s'ouvre dès que le service a vérifié.`},
  {k:['verification','attente','en attente','toujours pas active','paiement pas valide','combien de temps','delai','valider mon paiement'],a:()=>'Après ton paiement, le service Koris vérifie la référence du SMS, en général rapidement. Ton accès s\'ouvre tout seul dès la validation. Si ça prend trop de temps, touche « Contacter l\'aide » sur la page de paiement. Si tu t\'es trompé de référence, touche « Corriger les infos du paiement ».'},
  {k:['refuse','rejete','paiement refuse','erreur de paiement','mauvaise reference'],a:()=>'Si ton paiement est marqué comme non confirmé, vérifie la référence du SMS (et le numéro qui a payé) puis renvoie-les depuis la page de paiement. En cas de doute, contacte l\'aide : Réglages → « Aide et contact ».'},
  {k:['parrainage','parrain','reduction','réduction','4500','4 500','partager koris','inviter un ami','invite','partage l application','lien de partage','recompense'],a:()=>`🎁 Le parrainage Koris :\n1. Ouvre Réglages (la roue ⚙️ sur ton profil), puis touche « Partager Koris ».\n2. Envoie ton lien personnel sur WhatsApp, Facebook ou par SMS.\n3. Dès qu'un ami s'inscrit avec ton lien, ton ${SUBSCRIPTION?'abonnement':'accès'} passe de 5 000 FC à 4 500 FC.\nSi tu n'as pas encore payé, le bouton 🎁 est aussi sur la page de paiement.`},
@@ -3130,11 +3134,13 @@ document.addEventListener('click',async e=>{const t=e.target.closest('button,[da
     if(!c.num){err.textContent="Ce moyen de paiement n'est pas encore disponible. Choisis-en un autre.";return}
     const from=$('#payFrom').value.trim(),ref=$('#payRef').value.trim();
     if(from.replace(/\D/g,'').length<9){err.textContent='Entre le numéro qui a envoyé l\'argent (ex. +243 81 234 5678).';$('#payFrom').focus();return}
-    if(ref.length<4){err.textContent='Entre la référence de la transaction reçue par SMS.';$('#payRef').focus();return}
+    if(ref.length<4&&!S.payShot&&!t.dataset.nosms){t.dataset.nosms='1';err.textContent="Ajoute la référence du SMS ou la capture du SMS. Tu n'as pas reçu de SMS ? Appuie encore une fois pour envoyer quand même.";t.textContent='Envoyer sans référence';return}
     t.disabled=true;t.textContent='Envoi…';
-    try{const p=me();await S.be.saveProfile({...p,pay:{op,from,ref:ref.slice(0,80),to:c.num,amount:dueFor(me()),kind:!SUBSCRIPTION?'acces':isNew(me())?'inscription':'renouvellement',at:Date.now(),status:'pending'}});S.route.repay=false;S.lastPaySt='pending';render()}
+    try{const p=me();const shot=S.payShot||'';await S.be.saveProfile({...p,pay:{op,from,ref:ref.slice(0,80),shot,to:c.num,amount:dueFor(me()),kind:!SUBSCRIPTION?'acces':isNew(me())?'inscription':'renouvellement',at:Date.now(),status:'pending'}});S.route.repay=false;S.lastPaySt='pending';S.payShot=null;render()}
     catch(_){t.disabled=false;t.textContent="J'ai payé · Envoyer";err.textContent="L'envoi a échoué. Vérifie ta connexion et réessaie."}}
 });
+document.addEventListener('change',async e=>{if(e.target.id!=='payShot')return;const f=e.target.files&&e.target.files[0];if(!f)return;
+  try{S.payShot=await compress(f,1400,320000);const b=$('#payBtn');if(b)delete b.dataset.nosms;const fr=$('#payFrom')?.value,rf=$('#payRef')?.value;render();if($('#payFrom'))$('#payFrom').value=fr||'';if($('#payRef'))$('#payRef').value=rf||'';toast('Capture du SMS ajoutée ✓')}catch(_){toast("Cette image n'a pas pu être lue")}});
 document.addEventListener('ended',()=>{if(softRender.later)softRender()},true);
 document.addEventListener('focusout',()=>{setTimeout(()=>{if(softRender.later)softRender()},400)},true);
 document.addEventListener('keydown',e=>{const t=e.target;if((e.key==='Enter'||e.key===' ')&&t.matches?.('[role=button][data-go]')){e.preventDefault();t.click()}});
@@ -3794,7 +3800,7 @@ function inboxBody(){const C=S.conc;
    <label class="sw" style="padding:0"><span class="ic">🤖</span><div><b>Réponses automatiques par l'IA</b><small>Désactive-les pour répondre toi-même à tous les messages</small></div><input type="checkbox" id="ccOn" ${c.on!==false?'checked':''}></label>
    <div style="display:flex;gap:10px"><label class="field" style="flex:1"><span>Nom affiché</span><input id="ccName" maxlength="40" value="${esc(c.name||'Koris')}"></label><label class="field" style="flex:1"><span>WhatsApp de l'équipe</span><input id="ccWa" type="tel" maxlength="20" value="${esc(c.wa||'')}" placeholder="243812345678"></label></div>
    <label class="field"><span>Message d'accueil</span><input id="ccWel" maxlength="200" value="${esc(c.welcome||'Bonjour 👋 Comment puis-je vous aider ?')}"></label>
-   <label class="field ib-instr"><span>🧠 Instructions pour l'IA</span><textarea id="ccInstr" maxlength="6000" style="min-height:150px" placeholder="Dis à l'IA comment se comporter. Exemples :&#10;• Tu t'appelles Gucko, tu tutoies les gens et tu es chaleureux.&#10;• Réponds toujours en 2 ou 3 phrases.&#10;• Si quelqu'un veut s'inscrire, donne-lui le lien koris-rdc.github.io.&#10;• Si on te parle de paiement, explique Orange Money, Airtel Money et M-Pesa.">${esc(c.instr||'')}</textarea></label>
+   <label class="field ib-instr"><span>🧠 Instructions pour l'IA</span><textarea id="ccInstr" maxlength="6000" style="min-height:150px" placeholder="Dis à l'IA comment se comporter. Exemples :&#10;• Tu t'appelles Gucko, tu tutoies les gens et tu es chaleureux.&#10;• Réponds toujours en 2 ou 3 phrases.&#10;• Si quelqu'un veut s'inscrire, donne-lui le lien koris-rdc.github.io.&#10;• Si on te parle de paiement, explique Orange Money et Airtel Money.">${esc(c.instr||'')}</textarea></label>
    <p class="ib-lbl">Questions-réponses <small>${C.faq.length} · l'IA s'en sert pour répondre</small></p>
    <div id="faqList">${C.faq.map((x,i)=>faqRow(x,i)).join('')}</div>
    <button type="button" class="btn btn-ghost" data-faqadd="1" style="width:100%;flex:none;height:46px">${I.plus}Ajouter une question</button>
@@ -4476,5 +4482,23 @@ svg[class*="a-"]{transform-box:fill-box;transform-origin:50% 50%}
 .su .sex{justify-content:center}
 .su .terms{justify-content:center}
 .su .acc-hint,.su .err{text-align:center}
+</style>
+<style>
+/* paiement : capture du SMS */
+.pay-or{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:13px;margin:4px 0}
+.pay-or::before,.pay-or::after{content:"";flex:1;height:1px;background:rgba(7,30,7,.12)}
+.pay-shot{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:18px;border:1.5px dashed rgba(7,30,7,.35);background:#fff;cursor:pointer;color:var(--text);text-align:left}
+.pay-shot>svg{width:26px;height:26px;flex:none;color:#071E07}
+.pay-shot span{display:flex;flex-direction:column;font-weight:700;font-size:15px}
+.pay-shot small{font-weight:400;font-size:12.5px;color:var(--muted)}
+.pay-shot.ok{border-style:solid;border-color:#477023;background:#F2F7EC}
+.pay-shot img{width:54px;height:54px;object-fit:cover;border-radius:10px;flex:none}
+.pay-nosms{font-size:12.5px!important;margin:2px 0 0!important}
+.pay-shot-adm{display:flex;align-items:center;gap:10px;margin:8px 0;padding:8px;border-radius:14px;background:#F2F7EC;color:#071E07;font-size:13px;font-weight:600;text-decoration:none}
+.pay-shot-adm img{width:64px;height:84px;object-fit:cover;border-radius:10px}
+/* barre de navigation collée en bas de l'écran */
+.nav.cln{padding:0!important;bottom:0!important}
+.nav.cln::before{display:none!important}
+.nav.cln .nav-in{border-radius:24px 24px 0 0!important;height:calc(64px + env(safe-area-inset-bottom,0px))!important;padding:0 10px env(safe-area-inset-bottom,0px)!important;border-bottom:0!important;box-shadow:0 -8px 24px -16px rgba(7,30,7,.35)!important;max-width:560px!important}
 </style>
 <script>if('serviceWorker' in navigator&&location.protocol==='https:'){window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js').catch(function(){})})}</script></body></html>
