@@ -1,0 +1,14 @@
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "cd.koris.app",
+      "sha256_cert_fingerprints": [
+        "99:CE:89:CC:47:72:CF:C2:03:D4:43:51:58:2F:4B:7A:13:88:EA:FC:1D:88:68:C4:7F:AA:3C:52:52:64:75:39"
+      ]
+    }
+  }
+]
