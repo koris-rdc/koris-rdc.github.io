@@ -175,6 +175,27 @@ body.shop-mode .top{background:linear-gradient(rgba(27,9,4,.0),rgba(27,9,4,0))}
 .vp-bar{display:flex;align-items:center;gap:10px;padding:8px 8px 8px 14px;border-radius:14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);font-size:13px}
 .vp-bar span{flex:1}.vp-bar button{flex:none;height:32px;padding:0 14px;border-radius:999px;background:var(--orange,#C9C9D2);color:var(--on-acc,#070707);font-weight:700;font-size:12.5px;border:0}
 .vp-ok{display:block;text-align:center;font-size:12px;opacity:.75}.vp-hint{display:block;font-size:12.5px;line-height:1.45;padding:8px 12px;border-radius:12px;background:rgba(255,255,255,.06)}
+.ban-note{display:flex;gap:10px;align-items:flex-start;margin:0 12px 8px;padding:12px 14px;border-radius:16px;background:rgba(229,72,77,.1);border:1px solid rgba(229,72,77,.35);color:var(--k-tx,var(--text));text-align:left}
+.ban-note svg{width:22px;height:22px;flex:none;color:var(--danger)}.ban-note b{display:block;font-size:14px}.ban-note small{display:block;font-size:12.5px;color:var(--k-mu,var(--muted));margin-top:2px;line-height:1.35}
+.cl-pcard .ban-note{margin:12px 0 0}
+.banned{min-height:100dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:32px 24px;text-align:center;color:var(--k-tx,var(--text))}
+.banned .bn-ic{width:76px;height:76px;border-radius:50%;display:grid;place-items:center;background:rgba(229,72,77,.12);color:var(--danger)}.banned .bn-ic svg{width:38px;height:38px}
+.banned h1{font-size:24px;margin:0}.banned p{margin:0;max-width:330px;line-height:1.45}.banned .btn{width:100%;max-width:330px;height:50px}
+.adm-tools{margin-top:14px;padding:12px;border-radius:16px;border:1px dashed var(--k-bd,var(--line));background:var(--k-sf,var(--panel-2));text-align:left}
+.adm-tools>small{display:block;font-weight:700;font-size:12px;color:var(--k-mu,var(--muted));margin-bottom:8px}.adm-tools>div{display:flex;gap:8px;flex-wrap:wrap}
+.adm-tools .ban-why{display:block;margin-top:8px;font-size:12px;color:var(--danger);font-weight:600}
+.mini.danger{background:var(--danger)!important;color:#fff!important}
+.mem-st.ban{color:#fff!important;background:var(--danger)!important}
+.adm-lock{font-size:12.5px;color:var(--k-mu,var(--muted));margin:0 2px 12px;text-align:center}
+.admc-list{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+.admc-row{display:flex;align-items:center;gap:10px;width:100%;padding:10px 12px;border-radius:16px;background:var(--k-sf,var(--panel-2));border:1px solid var(--k-bd,var(--line));color:var(--k-tx,var(--text));text-align:left}
+.admc-av{display:flex;flex:none}.admc-av>*+*{margin-left:-14px;box-shadow:0 0 0 2px var(--k-bg,#fff);border-radius:50%}
+.admc-row .mid{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}.admc-row .mid b{font-size:14px}.admc-row .mid small{font-size:12.5px;color:var(--k-mu,var(--muted));white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.admc-row time{font-size:11px;color:var(--k-mu,var(--muted));flex:none}.admc-row em.bn{font-style:normal;font-size:10.5px;font-weight:700;color:#fff;background:var(--danger);border-radius:999px;padding:1px 7px;margin-left:4px}
+.admc-who{display:flex;align-items:center;gap:8px;padding:8px 10px;margin-bottom:8px;border-radius:14px;background:var(--k-sf,var(--panel-2));border:1px solid var(--k-bd,var(--line))}
+.admc-who>button:first-child{flex:1;min-width:0;display:flex;align-items:center;gap:10px;text-align:left;color:var(--k-tx,var(--text))}.admc-who span{display:flex;flex-direction:column;min-width:0}.admc-who b{font-size:14px}.admc-who small{font-size:12px;color:var(--k-mu,var(--muted))}
+.admc-msgs{display:flex;flex-direction:column;gap:6px;margin-top:12px;padding-bottom:40px}.admc-msgs .vs-day{align-self:center;font-size:11.5px;color:var(--k-mu,var(--muted));margin:10px 0 4px;text-transform:capitalize}
+.admc-msgs .bub{max-width:82%}.admc-msgs .bub.them{align-self:flex-start}.admc-msgs .bub.me{align-self:flex-end}.admc-from{display:block;font-size:11px;font-weight:700;opacity:.75;margin-bottom:2px}
 </style></head><body><div id="ksplash" class="wait" role="img" aria-label="Koris" title="Touchez pour passer">
 <style>
 #ksplash.ks-quick{animation:none!important;cursor:default}#ksplash.ks-quick .ks-stage>:not(.ks-main),#ksplash.ks-quick .ks-main>:not(.ks-logo){display:none!important}#ksplash.ks-quick .ks-logo,#ksplash.ks-quick .ks-logo *{animation:none!important;opacity:1!important;stroke-dashoffset:0!important}#ksplash.ks-quick .ks-logo{animation:ksQk .6s cubic-bezier(.2,.9,.3,1.2) both!important}@keyframes ksQk{from{opacity:0;transform:scale(.82)}to{opacity:1;transform:none}}#ksplash{position:fixed;inset:0;z-index:99999;background:#070707;display:grid;place-items:center;overflow:hidden;cursor:pointer;animation:ksOut .7s cubic-bezier(.7,0,.3,1) 10.4s forwards}
@@ -1639,6 +1660,10 @@ function makeSupabaseBackend(sb,uid){
     onPayCfg(cb){return live('settings',()=>sb.from('settings').select('id,data').eq('id','pay'),rows=>cb((rows.find(r=>r.id==='pay')||{}).data||{}),{filter:'id=eq.pay'})},
     onHelpCfg(cb){return live('settings',()=>sb.from('settings').select('id,data').eq('id','help'),rows=>cb((rows.find(r=>r.id==='help')||{}).data||{}),{filter:'id=eq.help'})},
     async saveProfile(p){const data=await upImgs(strip(p));const {error}=await sb.from('profiles').upsert({id:uid,data});if(error)throw error;S.profiles={...S.profiles,[uid]:{...(S.profiles[uid]||{}),...data}}},
+    async admChats(){const {data,error}=await sb.from('chats').select('id,members,last_at,data').order('last_at',{ascending:false}).limit(1000);if(error)throw error;
+      return (data||[]).map(r=>({id:r.id,members:r.members||r.data?.members||[],lastAt:r.last_at||r.data?.lastAt||0,lastText:r.data?.lastText||'',lastFrom:r.data?.lastFrom||''}))},
+    async admMsgs(cid){const {data,error}=await sb.from('msgs').select('id,at,from_id,data').eq('chat_id',cid).order('at',{ascending:true}).limit(3000);if(error)throw error;
+      return (data||[]).map(r=>({id:r.id,at:r.at||r.data?.at||0,from:r.from_id||r.data?.from||'',text:r.data?.text||''}))},
     async updateProfileOf(id,patch){const cur=strip(S.profiles[id]||{});const data=await upImgs({...cur,...patch});const {error}=await sb.from('profiles').update({data}).eq('id',id);if(error)throw error},
     async deleteProfileOf(id){const {error}=await sb.from('profiles').delete().eq('id',id);if(error)throw error},
     async savePayCfg(c){const {error}=await sb.from('settings').upsert({id:'pay',data:c});if(error)throw error},
@@ -1754,6 +1779,8 @@ function makeDemoBackend(){
       if(p.cert?.status==='pending')setTimeout(()=>{const q=L.p.find(x=>x.id===uid);if(q&&q.cert?.status==='pending'){q.certified=true;q.handle=q.cert.handle;q.cert={...q.cert,status:'ok'};emitP()}},3500);
       if(p.pay?.status==='pending'&&!p.paid)setTimeout(()=>{const q=L.p.find(x=>x.id===uid);if(q&&q.pay?.status==='pending'){q.paid=true;q.regPaid=true;q.paidAt=Date.now();q.paidUntil=SUBSCRIPTION?Math.max(Date.now(),q.paidUntil||0)+MONTH:null;q.pay={...q.pay,status:'ok'};emitP()}},3500)},
     async updateProfileOf(id,data){const q=L.p.find(x=>x.id===id);if(q){Object.assign(q,data);emitP()}},
+    async admChats(){return L.c.map(c=>({...c})).sort((a,b)=>(b.lastAt||0)-(a.lastAt||0))},
+    async admMsgs(cid){return [...(L.m[cid]||[])]},
     onPayCfg(cb){L.cfgSubs=(L.cfgSubs||[]);L.cfgSubs.push(cb);setTimeout(()=>cb(L.cfg||{orange:{num:'+243 89 000 0000',holder:'Koris (démo)'},airtel:{num:'+243 99 000 0000',holder:'Koris (démo)'},mpesa:{num:'+243 81 000 0000',holder:'Koris (démo)'}}),0);return()=>{}},
     async savePayCfg(c){L.cfg=c;(L.cfgSubs||[]).forEach(f=>f(c))},
     onHelpCfg(cb){L.hSubs=(L.hSubs||[]);L.hSubs.push(cb);setTimeout(()=>cb(L.help||{wa:'243890000000',tel:'+243 89 000 0000',mail:'aide@koris.cd'}),0);return()=>{}},
@@ -1973,7 +2000,8 @@ const FREE_DEFAULT=false;
 const FREE_UNTIL=Date.parse('2026-10-12T20:15:00Z');
 /* réglage « freeTrial » : seulement le bouton Activer/Arrêter de l'espace Paiements le change (l'ancien réglage « free » est ignoré) */
 const FREE=()=>{const c=S.payCfg;return c&&typeof c.freeTrial==='boolean'?c.freeTrial:FREE_DEFAULT};
-const isActive=p=>!!p&&!!p.firstName&&(FREE()||(!p.paid&&!p.noFree&&(p.at||0)>0&&(p.at||0)<FREE_UNTIL))||!!p&&!!p.paid&&(!SUBSCRIPTION||!!p.owner||!p.paidUntil||p.paidUntil>Date.now());
+const isActive=p=>!p?.banned&&(!!p&&!!p.firstName&&(FREE()||(!p.paid&&!p.noFree&&(p.at||0)>0&&(p.at||0)<FREE_UNTIL))||!!p&&!!p.paid&&(!SUBSCRIPTION||!!p.owner||!p.paidUntil||p.paidUntil>Date.now()));
+const noBan=a=>S.owner?a:(a||[]).filter(o=>!S.profiles[o?.uid]?.banned);
 const untilTxt=t=>new Date(t).toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'});
 const INV_OP={id:'invite',name:'Invitation gratuite',short:'🎁',c:'#C9C9D2',ussd:''};
 const MAN_OP={id:'manuel',name:'Payé directement',short:'✋',c:'#63636E',ussd:''};
@@ -2070,6 +2098,8 @@ function vAdmin(){
   <h2>Membres</h2><p class="hint" style="padding:0 2px 8px">Un membre t'a payé directement (Mobile Money sur ton numéro, espèces…) ? Cherche-le et touche <b>${SUBSCRIPTION?'« +1 mois »':'« Activer »'}</b> : son accès s'ouvre tout de suite.</p>
   <label class="pill">${I.search}<input id="memQ" placeholder="Nom, numéro, ville…" autocomplete="off" aria-label="Chercher un membre"></label>
   <div id="memList" class="mem-list">${memListHtml('')}</div>
+  <h2>Conversations des membres 🔍</h2><p class="hint" style="padding:0 2px 8px">Un membre signale une escroquerie ? Lis ses discussions pour vérifier, puis bloque le compte fautif. Visible seulement par toi.</p>
+  <button class="btn btn-ghost" data-admchats="" style="width:100%;flex:none;height:48px">${I.chat}Lire les conversations</button>
   <h2>Certifications à vérifier (5 $)</h2><div id="admCert">${admCertHtml()}</div>
   <h2>Tes numéros de réception</h2>
   <form id="fCfg" novalidate>${OPS.map(o=>{const c=payCfg(o.id);return `<div class="opbox"><h3><i style="background:${o.c}"></i>${o.name}</h3>
@@ -2163,8 +2193,8 @@ function vProfile(id,self){const x=S.profiles[id];if(!x)return `<div class="empt
     :`<div class="cl-info">${self?availPanel(x):''}
      ${self?(x.certified?'':x.cert?.status==='pending'?`<div class="cert-cta wait2">${I.badge}<div><b>Certification en vérification</b><small>@${esc(x.cert.handle)} · tu seras prévenu dès la validation</small></div></div>`:`<button class="cert-cta" data-go="certif">${I.badge}<div><b>Obtenir le badge certifié · 5 $</b><small>Badge à côté de ton nom + nom d'utilisateur réservé</small></div><span class="go-ar">${I.back}</span></button>`):''}
      <div class="info pf-info">${row('work','Poste',x.job)}
-     ${self?`<div class="info-row"><span class="ic">${I.phone}</span><div><small>Téléphone · ${x.phoneHidden?'masqué pour les membres':'visible par les membres'}</small><b>${esc(x.phone||'—')}</b></div><label class="tg" title="Afficher mon numéro aux membres"><input type="checkbox" id="phoneVis" ${x.phoneHidden?'':'checked'} aria-label="Afficher mon numéro aux autres membres"></label></div>`
-       :phoneOk(x,id)?row('phone',x.phoneHidden&&S.owner?'Téléphone · 🔒 masqué aux membres, visible par toi (admin)':'Téléphone',x.phone,`<button class="copy" data-copy="${esc(x.phone)}">Copier</button>`):''}
+     ${self?`<div class="info-row"><span class="ic">${I.phone}</span><div><small>Téléphone · 🔒 privé, visible seulement par toi et l'équipe Koris</small><b>${esc(x.phone||'—')}</b></div></div>`
+       :phoneOk(x,id)?row('phone',S.owner?'Téléphone · 🔒 privé, visible seulement par toi (admin)':'Téléphone',x.phone,`<button class="copy" data-copy="${esc(x.phone)}">Copier</button>`):''}
      ${row('city','Ville',[x.commune,x.city].filter(Boolean).join(', '))}${row('globe','Pays',x.country)}${row('sex','Sexe',x.sex==='F'?'Femme':x.sex==='H'?'Homme':'')}${row('cake','Âge',x.age?x.age+' ans':'')}
      ${SUBSCRIPTION&&self&&!x.owner&&x.paid?`<div class="sub-row ${isActive(x)?'':'off'}"><span class="dot"></span><span class="t">Abonnement ${isActive(x)?'actif':'expiré'}${x.paidUntil?` · ${isActive(x)?'jusqu\'au':'depuis le'} ${untilTxt(x.paidUntil)}`:''}</span><button data-go="pay" data-param="preview">Renouveler</button></div>`:''}</div></div>`;
   return `<section class="clp"><header class="cl-cover" style="background-image:linear-gradient(180deg,rgba(14,14,16,.32),rgba(14,14,16,0) 34%,rgba(14,14,16,0) 72%,rgba(14,14,16,.3)),url('${coverFor(id,x)}')">
@@ -2178,6 +2208,8 @@ function vProfile(id,self){const x=S.profiles[id];if(!x)return `<div class="empt
    <div class="cl-stats"><div><b>${fmtN(own.length)}</b><small>Publications</small></div><button data-follist="followers" data-uid="${esc(id)}"><b>${fmtN(fo)}</b><small>Abonné${fo>1?'s':''}</small></button><button data-follist="following" data-uid="${esc(id)}"><b>${fmtN(fi)}</b><small>Abonnement${fi>1?'s':''}</small></button></div>
    ${self?`<div class="cl-btns"><button class="cl-btn dark" data-go="signup">Modifier le profil</button><button class="cl-btn line" data-act="compose" data-withpic="1">${I.plus}Publier</button></div>`
      :`<div class="cl-btns"><button class="cl-btn ${isFollowing(id)?'line':'dark'}" data-follow="${esc(id)}">${isFollowing(id)?I.check+'Abonné':'S\'abonner'}</button><button class="cl-btn line" data-msg="${esc(id)}">${CLI.plane}Écrire</button><button class="cl-btn sq ${fav?'on':''}" data-fav="${esc(id)}" aria-label="Coup de cœur">${fav?I.heart:I.heartO}</button></div>`}
+   ${!self&&x.banned&&!S.owner?`<div class="ban-note" style="margin-top:12px">${BAN_IC}<div><b>Compte suspendu par l'équipe Koris</b><small>Ce membre ne peut plus écrire ni publier.</small></div></div>`:''}
+   ${S.owner&&!self?admProfTools(id,x):''}
   </div>
   ${x.bio||x.job?`<div class="cl-about"><h3>À propos</h3>${x.bio?`<p>${esc(x.bio)}</p>`:''}${x.job?`<span>${I.work}${esc(x.job)}</span>`:''}</div>`:''}
   <div class="cl-seg" role="tablist" style="margin-top:16px"><button data-tab="grid" class="${tab==='grid'?'on':''}">${CLI.grid}Publications</button><button data-tab="info" class="${tab==='info'?'on':''}">${I.user}Infos</button></div>
@@ -2313,6 +2345,7 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-pv]');if(!
 /* Pas de photo de profil : on bloque tout (y compris le paiement / l'activation) jusqu'à ce qu'elle soit ajoutée */
 (function(){const _r=render;
   render=function(){const app=$('#app'),r=S.route||{},p=S.be&&S.be.uid?me():null;
+    if(p&&p.banned&&!S.owner){app.classList.add('no-nav');app.innerHTML=vBanned();return}
     if(pvNeed(p,r)){app.classList.add('no-nav');app.innerHTML=vPvGate(p);return}
     _r()};
 })();
@@ -2416,7 +2449,7 @@ function availPanel(x){const st=availOf(x);const z=x.zone||{};
    <div class="zone-row">${I.pin}<select id="zoneSel" aria-label="Ma zone"><option value="">Choisis ta commune / ville</option>${Object.keys(ZONES).map(n=>`<option ${z.name===n&&!z.gps?'selected':''}>${n}</option>`).join('')}${z.gps?`<option selected value="__gps">Ma position (${esc(z.name||'GPS')})</option>`:''}</select><button type="button" class="mini" data-gps="1">Ma position</button></div>
    <p class="hint" style="font-size:11.5px">Seule une zone approximative (à ~1 km près) est partagée, jamais ton adresse exacte.</p></div>`}
 
-const phoneOk=(x,id)=>!!x?.phone&&(id===S.be.uid||!x.phoneHidden||!!S.owner); /* l'administrateur voit aussi les numéros masqués (lutte contre les escroqueries) */
+const phoneOk=(x,id)=>!!x?.phone&&(id===S.be.uid||!!S.owner); /* numéros privés : seuls le membre lui-même et l'admin les voient (lutte contre les escroqueries) */
 const handleTaken=(h,except)=>Object.entries(S.profiles).some(([id,x])=>id!==except&&((x.certified&&String(x.handle||'').toLowerCase()===h)||(x.cert?.status==='pending'&&String(x.cert.handle||'').toLowerCase()===h)));
 
 function vMessages(){const list=[...S.chats].filter(c=>(c.lastAt||0)>chatHid(c.id)).sort((a,b)=>b.lastAt-a.lastAt);const pane=S.route.pane||0;
@@ -2429,10 +2462,10 @@ function vMessages(){const list=[...S.chats].filter(c=>(c.lastAt||0)>chatHid(c.i
     return `<div class="conv-w" style="--i:${ci}"><button class="conv" style="--i:${ci}" data-chat="${esc(o)}"><span class="ar ar-on">${av(x,50)}<i class="on-dot" data-on="${esc(o)}"></i></span><span class="mid"><b>${esc(fullName(x))}</b><p>${c.lastFrom===S.be.uid?'Toi : ':''}${esc(c.lastText)}</p></span><time>${ago(c.lastAt)}${un?'<span class="cnt">1</span>':''}</time></button><button class="conv-del" data-chatdel="${esc(c.id)}" aria-label="Supprimer la conversation avec ${esc(x.firstName||'ce membre')}">${I.trash}</button></div>`}).join('')}</div>`
     :`<div class="empty">${I.chat}<b>Pas encore de conversation</b><p>Ouvre un profil et appuie sur « Écrire » pour lancer la discussion.</p><button class="btn btn-primary" data-go="discover" style="flex:none">Découvrir des profils</button></div>`;
   // Appels : d'abord les personnes avec qui tu parles, puis les autres membres
-  const ids=[...list.map(c=>c.members.find(m=>m!==S.be.uid)).filter(Boolean),...Object.keys(S.profiles)].filter((id,i,a)=>id!==S.be.uid&&a.indexOf(id)===i&&S.profiles[id]?.paid);
-  const calls=ids.length?`<p class="hint">L'appel passe par ton téléphone, au numéro indiqué sur le profil.</p>${ids.map(id=>{const x=S.profiles[id];const vis=phoneOk(x,id);const tel=vis?String(x.phone||'').replace(/[^\d+]/g,''):'';
-    return `<div class="call"><button data-profile="${esc(id)}" aria-label="Profil de ${esc(x.firstName)}"><span class="ar" style="padding:2px;border-radius:50%;background:var(--grad);display:block">${av(x,48)}</span></button><div class="mid"><b>${esc(fullName(x))}</b><small>${esc([x.city,vis?x.phone:'Numéro masqué'].filter(Boolean).join(' · '))}</small></div><button class="ca" data-chat="${esc(id)}" aria-label="Écrire à ${esc(x.firstName)}">${I.chat}</button>${tel?`<a class="ca go" href="tel:${esc(tel)}" target="_top" aria-label="Appeler ${esc(x.firstName)}">${I.phone}</a>`:''}</div>`}).join('')}`
-    :`<div class="empty">${I.phone}<b>Personne à appeler pour l'instant</b><p>Les membres apparaîtront ici avec leur numéro.</p></div>`;
+  const ids=[...list.map(c=>c.members.find(m=>m!==S.be.uid)).filter(Boolean),...Object.keys(S.profiles)].filter((id,i,a)=>id!==S.be.uid&&a.indexOf(id)===i&&S.profiles[id]?.paid&&!S.profiles[id]?.banned);
+  const calls=ids.length?`<p class="hint">${S.owner?'Admin : tu vois les numéros des membres. L\'appel passe par ton téléphone.':'🔒 Pour ta sécurité, les numéros restent privés. Discute d\'abord dans Koris.'}</p>${ids.map(id=>{const x=S.profiles[id];const vis=phoneOk(x,id);const tel=vis?String(x.phone||'').replace(/[^\d+]/g,''):'';
+    return `<div class="call"><button data-profile="${esc(id)}" aria-label="Profil de ${esc(x.firstName)}"><span class="ar" style="padding:2px;border-radius:50%;background:var(--grad);display:block">${av(x,48)}</span></button><div class="mid"><b>${esc(fullName(x))}</b><small>${esc([x.city,vis?x.phone:''].filter(Boolean).join(' · '))}</small></div><button class="ca" data-chat="${esc(id)}" aria-label="Écrire à ${esc(x.firstName)}">${I.chat}</button>${tel?`<a class="ca go" href="tel:${esc(tel)}" target="_top" aria-label="Appeler ${esc(x.firstName)}">${I.phone}</a>`:''}</div>`}).join('')}`
+    :`<div class="empty">${I.phone}<b>Personne à appeler pour l'instant</b><p>Les membres apparaîtront ici.</p></div>`;
   return `${clHero('<h1>Messages</h1>',`<button class="cl-ib" data-go="discover" aria-label="Trouver quelqu'un">${I.search}</button>`,'Tes discussions privées')}<div class="cl-body">
   <div class="stories"><button class="story add" data-act="compose" data-withpic="1"><span class="card"><span class="plus">${I.plus}</span>Ta story</span></button>${st.map(story).join('')}</div>
   <div class="seg" role="tablist"><i id="segI" style="transform:translateX(${pane*100}%)"></i><button role="tab" data-pane="0" class="${pane?'':'on'}">Discussions</button><button role="tab" data-pane="1" class="${pane?'on':''}">Appels</button></div>
@@ -2452,7 +2485,7 @@ function chatFx(x){const st=availOf(x);if(st==='off')return '';
 function vChat(other){const x=S.profiles[other]||{};
   return `<section class="chat">${chatFx(x)}<header class="chat-head"><button class="icon-btn" data-go="messages" aria-label="Retour">${I.back}</button><button class="who" data-profile="${esc(other)}" style="display:flex;gap:10px;align-items:center"><span class="ar-on">${av(x,42)}<i class="on-dot" data-on="${esc(other)}"></i></span><span><b>${esc(fullName(x))}</b><small id="chatSt" class="chat-st">${esc([x.job,x.city].filter(Boolean).join(' · '))}</small></span></button><button class="icon-btn" data-chatdel="${esc(chatId(S.be.uid,other))}" aria-label="Supprimer la conversation" title="Supprimer la conversation" style="margin-left:auto">${I.trash}</button><button class="icon-btn" data-go="feed" aria-label="Retour à l'accueil" title="Accueil">${I.home}</button></header>
   <div class="msgs" id="msgs"><div class="empty" style="padding:30px 0"><p>Dis bonjour à ${esc(x.firstName||'ce membre')} 👋</p></div></div>
-  <form class="composer" id="chatForm"><div class="typing" id="typing" hidden>${av(x,24)}<span class="tdots"><i></i><i></i><i></i></span></div><input id="chatIn" placeholder="Écris un message…" autocomplete="off" aria-label="Message" maxlength="1000"><button class="send" aria-label="Envoyer">${I.send}</button></form></section>`}
+  ${x.banned&&!S.owner?`<div class="ban-note">${BAN_IC}<div><b>Compte suspendu par l'équipe Koris</b><small>Tu ne peux plus écrire à ce membre. N'envoie jamais d'argent à quelqu'un rencontré en ligne.</small></div></div>`:''}<form class="composer" id="chatForm" ${x.banned&&!S.owner?'hidden':''}><div class="typing" id="typing" hidden>${av(x,24)}<span class="tdots"><i></i><i></i><i></i></span></div><input id="chatIn" placeholder="Écris un message…" autocomplete="off" aria-label="Message" maxlength="1000"><button class="send" aria-label="Envoyer">${I.send}</button></form></section>`}
 
 function renderMsgs(list,cid){const box=$('#msgs');if(!box)return;
   {const h=chatHid(cid);if(h)list=list.filter(m=>(m.at||0)>h)}
@@ -2466,19 +2499,20 @@ function render(){const app=$('#app');const r=S.route;
   if(sphereStop){sphereStop();sphereStop=null}
   const p=me();
   if(r.v==='loading'){app.innerHTML=`<div class="loading"><div class="spin"></div></div>`;return}
-  const KNOWN=['auth','onboard','signup','pay','admin','certif','about','feed','discover','profile','me','messages','chat','shop','shopitem','visit','inbox'];
+  if(p&&p.banned&&!S.owner){app.classList.add('no-nav');app.innerHTML=vBanned();return}
+  const KNOWN=['admchats','admchat','auth','onboard','signup','pay','admin','certif','about','feed','discover','profile','me','messages','chat','shop','shopitem','visit','inbox'];
   if(r.v==='inbox'&&!S.owner){S.route={v:'feed'};return render()}
   if(!KNOWN.includes(r.v)){S.route={v:p?(isActive(p)?'feed':'pay'):'onboard'};return render()}
   // garde-fous : pas de profil → onboarding ; profil non payé → paiement
   const open=['onboard','signup','pay','about','auth','shop','shopitem','visit'];
   shopTick();
   if(r.v==='auth'&&S.be.uid&&!S.pendingProf){S.route=p?(isActive(p)?{v:'feed'}:{v:'pay'}):{v:'signup'};return render()}
-  if(r.v==='admin'&&!S.owner){S.route={v:'feed'};return render()}
+  if(['admin','admchats','admchat'].includes(r.v)&&!S.owner){S.route={v:'feed'};return render()}
   if(!p&&!open.includes(r.v)){S.route={v:'onboard'};return render()}
-  if(p&&!isActive(p)&&!['signup','pay','about','onboard','admin','shop','shopitem','visit'].includes(r.v)){S.route={v:'pay'};return render()}
+  if(p&&!isActive(p)&&!['signup','pay','about','onboard','admin','admchats','admchat','shop','shopitem','visit'].includes(r.v)){S.route={v:'pay'};return render()}
   if(render.last!==r.v){render.last=r.v;app.classList.remove('enter');void app.offsetWidth;app.classList.add('enter');clearTimeout(render.t);render.t=setTimeout(()=>app.classList.remove('enter'),400)}
   if(['feed','discover','messages','me','chat','profile','about','admin','certif','shop','shopitem'].includes(r.v)&&me())ls.set('lastRoute',{v:r.v,param:r.param||null});
-  app.classList.toggle('no-nav',['auth','onboard','signup','pay','chat','profile','about','admin','certif','shop','shopitem','visit','inbox'].includes(r.v));
+  app.classList.toggle('no-nav',['admchats','admchat','auth','onboard','signup','pay','chat','profile','about','admin','certif','shop','shopitem','visit','inbox'].includes(r.v));
   loveMusic(false);
   document.body.classList.toggle('shop-mode',['shop','shopitem'].includes(r.v));
   if(r.v==='auth'){if(r.param)S.authMode=r.param;app.innerHTML=vAuth()}
@@ -2490,6 +2524,8 @@ function render(){const app=$('#app');const r=S.route;
   else if(r.v==='inbox'){app.innerHTML=vInbox();if(S.conc.cfg===null||S.conc.chats===null)concRefresh()}
   else if(r.v==='shopitem'){if(render.sdId!==r.param){render.sdId=r.param;S.shop.img=0}app.innerHTML=vShopItem(r.param);sdBind();if(S.shop.items&&S.shop.items.some(x=>x.id===r.param))shopView(r.param)}
   else if(r.v==='admin')app.innerHTML=vAdmin();
+  else if(r.v==='admchats'){app.innerHTML=vAdmChats();admChatsLoad()}
+  else if(r.v==='admchat'){app.innerHTML=vAdmChat(r.param);admMsgsLoad(r.param)}
   else if(r.v==='certif'){app.innerHTML=vCertif();checkHandle()}
   else if(r.v==='about')app.innerHTML=vAbout();
   else if(r.v==='feed'){app.innerHTML=vFeed();if(S.owner&&S.be?.sb&&S.conc.chats===null){S.conc.chats=[];concRefresh()}}
@@ -2675,13 +2711,13 @@ Ce que fait l'application :
 - En ligne : point vert et « En ligne » quand un membre a Koris ouvert ; « écrit… » avec trois points quand il tape un message.
 - Notifications : cloche en haut du fil et de Découvrir avec les nouveaux inscrits (« Ta commune », « Ta ville ») ; alerte en haut de l'écran quand quelqu'un s'inscrit ; bouton « Activer les notifications du téléphone ».
 - Installation sur Android : Réglages (roue dentée du profil) → « Télécharger l'appli Android », puis ouvrir Koris.apk dans Téléchargements et toucher Installer (autoriser Chrome à installer des applis si le téléphone le demande). Lien direct : koris-rdc.github.io/koris.apk. Sur iPhone : Safari → Partager → « Sur l'écran d'accueil ».
-- Confidentialité : données jamais vendues, messages privés visibles seulement par les deux membres, page « Confidentialité » en bas de l'accueil. Signaler un faux profil ou une arnaque : Réglages → « Aide et contact ».
+- Confidentialité : données jamais vendues ; numéros de téléphone privés (jamais montrés aux autres membres) ; messages privés entre les deux membres, que l'équipe Koris peut consulter pour vérifier un signalement ou lutter contre l'escroquerie ; page « Confidentialité » en bas de l'accueil. Signaler un faux profil ou une arnaque : Réglages → « Aide et contact ». Un compte qui escroque est bloqué : il ne peut plus écrire ni publier.
 - Prix : ${SUBSCRIPTION?"inscription 6 200 FC (une seule fois) + abonnement 6 200 FC par mois, soit 12 400 FC au premier paiement puis 6 200 FC à chaque renouvellement":"accès 6 200 FC, payé une seule fois (pas d'abonnement mensuel pour le moment)"}, par Orange Money ou Airtel Money. On envoie l'argent au numéro affiché (bouton « Copier » et bouton qui ouvre le menu Mobile Money), puis on entre le numéro qui a payé et la référence du SMS. Le service vérifie puis l'accès s'ouvre${SUBSCRIPTION?" pour 30 jours. On renouvelle depuis son profil (carte « Abonnement »).":"."}
 - Fil (icône maison) : publications des membres, J'aime, commentaires, partage. La zone « Partager un moment » en haut de l'accueil sert à publier une photo, une vidéo (jusqu'à 90 secondes, compressée automatiquement si besoin) ou un texte.
 - Découvrir (boussole) : chercher des membres par nom ou par ville.
-- Messages (bulle) : stories en haut (« Ta story » pour publier), onglets Discussions et Appels qu'on fait glisser. Appels : l'appel passe par le téléphone, si le membre affiche son numéro.
-- Profil (bonhomme) : photo de profil, couverture et statut via les boutons sous le nom ; Informations ; Publications. L'interrupteur sur la ligne Téléphone masque ou affiche son numéro aux autres. Le crayon en haut recommence l'inscription. La roue dentée ouvre les Réglages : mode Jour ou Nuit, sons, vibreur, aide.
-- Profil d'un autre membre : boutons « Écrire » et « J'aime » (coup de cœur), copier son numéro s'il est visible.
+- Messages (bulle) : stories en haut (« Ta story » pour publier), onglets Discussions et Appels qu'on fait glisser. Appels : pour la sécurité de tous, les numéros des membres sont privés (seuls le membre et l'équipe Koris les voient) ; on discute d'abord dans Koris.
+- Profil (bonhomme) : photo de profil, couverture et statut via les boutons sous le nom ; Informations ; Publications. La ligne Téléphone montre son numéro, privé : visible seulement par le membre et l'équipe Koris. Le crayon en haut recommence l'inscription. La roue dentée ouvre les Réglages : mode Jour ou Nuit, sons, vibreur, aide.
+- Profil d'un autre membre : boutons « Écrire » et « J'aime » (coup de cœur). Son numéro n'est jamais affiché.
 - Certification : 5 $ une seule fois, carte « Obtenir le badge certifié » sur son profil ; on choisit un nom d'utilisateur @ unique, on paie, le service valide, puis le badge s'affiche et le nom est réservé.
 - Disponibilité : sur son profil, « Ma disponibilité » (Flirt, Rencontre, Dîner ou Pas dispo). Dans Découvrir, les rubriques Flirt, Rencontre et Dîner regroupent les membres disponibles pour chacun. Aussi et « Ma zone » (commune ou position approximative). Pour trouver quelqu'un de dispo près de soi, il suffit de demander à Gucko (ex. « qui est dispo aujourd'hui près de moi ? ») : Gucko affiche les profils avec la distance, un bouton carte et un bouton pour écrire.
 - Sécurité : premier rendez-vous dans un lieu public, prévenir un proche, ne jamais envoyer d'argent à un membre. Les règles sont dans « À propos ».`;
@@ -2690,7 +2726,7 @@ const GUIDE_FAQ=[['Comment m\'inscrire ?','1. Sur l\'accueil, touche « Commence
  SUBSCRIPTION?['Comment payer l\'abonnement ?','1. Choisis Orange Money ou Airtel Money.\n2. Envoie le montant affiché au numéro indiqué (bouton « Copier ») : 12 400 FC la première fois (inscription + 1er mois), puis 6 200 FC par mois.\n3. Entre le numéro qui a payé et la référence du SMS, puis « J\'ai payé ».\nTon accès s\'ouvre pour 30 jours dès la vérification.']:['Comment payer l\'accès ?','1. Choisis Orange Money ou Airtel Money.\n2. Envoie 6 200 FC au numéro indiqué (bouton « Copier »). On paie une seule fois.\n3. Entre le numéro qui a payé et la référence du SMS, puis « J\'ai payé ».\nTon accès s\'ouvre dès la vérification.'],
  ['Comment publier une photo ?','Sur l\'accueil, touche « Partager un moment », choisis une photo ou une vidéo, écris un petit message, puis « Publier ». Pour une story, utilise « Ta story » dans Messages.'],
  ['Comment écrire à quelqu\'un ?','Ouvre son profil (depuis le fil ou Découvrir), puis touche « Écrire ». Tes discussions sont dans l\'onglet Messages.'],
- ['Comment cacher mon numéro ?','Va sur ton profil, ligne « Téléphone », et éteins l\'interrupteur. Les autres membres verront « Numéro masqué ».'],
+ ['Qui voit mon numéro ?','Personne d\'autre que toi et l\'équipe Koris. Ton numéro n\'est jamais montré aux autres membres, pour te protéger des arnaques.'],
  ['C\'est quoi la certification ?','Pour 5 $ une seule fois, tu obtiens le badge à côté de ton nom et un nom d\'utilisateur @ que personne d\'autre ne peut prendre. Touche « Obtenir le badge certifié » sur ton profil.']];
 function findPeople(o={}){const meP=me()||{},mz=zoneOf(meP);
   let l=Object.entries(S.profiles).filter(([id,x])=>id!==S.be.uid&&x.paid&&!x.owner);
@@ -2760,10 +2796,10 @@ const GKB=[
  {k:['decouvrir','chercher','rechercher','trouver un membre','boussole','filtre','par ville'],a:()=>'Dans « Découvrir » (la boussole en bas), tu cherches des membres par nom ou par ville et tu vois leurs profils. Tu peux aussi me demander « qui est dispo aujourd\'hui à Lemba ? » et je te les propose.'},
  {k:['disponib','dispo','ma disponibilite','sortir ce soir','ce week end'],a:()=>'Sur ton profil, « Ma disponibilité » te permet de choisir Flirt, Rencontre ou Dîner (ou Pas dispo). Tu apparais alors dans la rubrique correspondante de Découvrir. Pour trouver quelqu\'un de dispo près de toi, demande-moi par exemple « femmes dispo ce soir à Gombe ».'},
  {k:['ecrire','envoyer un message','message prive','discuter','parler a','contacter un membre','chat'],a:()=>'Pour écrire à quelqu\'un : ouvre son profil (depuis le fil ou Découvrir) et touche « Écrire ». Toutes tes discussions sont dans l\'onglet Messages (la bulle en bas). Un point rouge signale un nouveau message.'},
- {k:['appel','appeler','telephoner','numero d un membre'],a:()=>'Dans Messages, l\'onglet « Appels » te permet d\'appeler un membre par ton téléphone, si ce membre affiche son numéro. Sur son profil, tu peux aussi copier son numéro s\'il est visible.'},
+ {k:['appel','appeler','telephoner','numero d un membre'],a:()=>'Pour la sécurité de tous, les numéros des membres sont privés : tu ne peux pas voir le numéro d\'un autre membre. Discute d\'abord dans Koris ; si vous vous faites confiance, vous pourrez échanger vos numéros vous-mêmes.'},
  {k:['en ligne','connecte','point vert','actif'],a:()=>'Un point vert sur la photo d\'un membre et « En ligne » sous son nom veulent dire qu\'il a Koris ouvert en ce moment.'},
  {k:['ecrit','en train d ecrire','trois points','typing'],a:()=>'Quand ton interlocuteur tape un message, tu vois « écrit… » avec trois points animés sous son nom et une petite bulle au-dessus de la zone de saisie.'},
- {k:['cacher mon numero','masquer','numero visible','vie privee','telephone visible'],a:()=>'Pour cacher ton numéro : sur ton profil, ligne « Téléphone », éteins l\'interrupteur. Les autres verront « Numéro masqué par le membre ». Rallume-le quand tu veux.'},
+ {k:['cacher mon numero','masquer','numero visible','vie privee','telephone visible'],a:()=>'Ton numéro est déjà protégé : il n\'est jamais montré aux autres membres, seulement à toi et à l\'équipe Koris. Ne le donne pas à quelqu\'un que tu ne connais pas encore bien.'},
  /* ---- Notifications ---- */
  {k:['notification','cloche','alerte','nouveau membre','nouvel inscrit','prevenu'],a:()=>'La cloche (en haut du fil et de Découvrir) affiche les nouveaux inscrits, avec l\'étiquette « Ta commune » ou « Ta ville ». Une alerte apparaît aussi quand quelqu\'un s\'inscrit pendant que tu es sur Koris. Dans la liste, touche « Activer les notifications du téléphone » pour être prévenu même quand Koris est en arrière-plan.'},
  /* ---- Certification ---- */
@@ -2780,7 +2816,7 @@ const GKB=[
  {k:['confidentialite','donnees','securite des donnees','vie privee','rgpd'],a:()=>'Tes données ne sont ni vendues ni utilisées pour de la publicité. Tes messages privés ne sont visibles que par toi et ton interlocuteur. Tous les détails sont dans « Confidentialité », en bas de l\'accueil.'},
  {k:['regle','interdit','charte','autorise'],a:()=>'Les règles de Koris : être majeur, utiliser ton vrai prénom et une vraie photo, respecter les autres, pas d\'arnaques ni de demandes d\'argent, pas de contenus choquants. Elles sont détaillées dans « À propos » (en haut de l\'accueil).'},
  /* ---- Sécurité et rencontres ---- */
- {k:['signaler','faux profil','arnaque','harcel','bloquer','escroc','fake'],a:()=>'Si un membre te dérange, te demande de l\'argent ou semble faux : ne réponds plus et signale-le tout de suite au service Koris (Réglages → « Aide et contact ») avec son nom. Ne t\'inquiète pas, le service agit vite.'},
+ {k:['signaler','faux profil','arnaque','harcel','bloquer','escroc','fake'],a:()=>'Si un membre te dérange, te demande de l\'argent ou semble faux : ne lui envoie rien, ne réponds plus et signale-le tout de suite au service Koris (Réglages → « Aide et contact ») avec son nom. L\'équipe vérifie la conversation et bloque le compte s\'il y a escroquerie.'},
  {k:['securite','rendez vous','premier rendez','danger','prudent','confiance'],a:()=>'Pour un premier rendez-vous en sécurité :\n1. Choisis un lieu public (restaurant, terrasse, bord du fleuve fréquenté).\n2. Préviens un proche de l\'endroit et de l\'heure.\n3. Garde ton propre moyen de transport.\n4. N\'envoie jamais d\'argent à un membre que tu ne connais pas.'},
  {k:['premier message','aborder','que dire','quoi ecrire','commencer une conversation','draguer','seduire'],a:()=>'Pour un bon premier message : salue avec son prénom, parle d\'un détail de son profil ou d\'une de ses photos (« J\'ai vu que tu aimes la musique, tu écoutes quoi en ce moment ? »), et pose une question ouverte. Reste simple, respectueux et sincère 😊'},
  {k:['beau profil','profil attirant','plus de likes','meilleure photo','bio','a propos de moi'],a:()=>'Pour un profil qui attire : une photo récente où l\'on voit bien ton visage et ton sourire, une belle couverture, et quelques phrases sincères dans « À propos » (ce que tu aimes, ce que tu cherches). Publie aussi de temps en temps dans le fil : ça donne envie de te connaître !'},
@@ -3767,15 +3803,15 @@ function mcCard(){const n=memberCount(),w=memberSince(7*864e5),d=memberSince(864
   return `<div class="glow mc-card"><span class="mc-ic">${I.user}</span><div><b class="mcount" data-n="${n}">${n.toLocaleString('fr-FR')}</b><small>membres inscrits sur Koris</small></div><span class="mc-new">${d?`+${d} aujourd'hui`:w?`+${w} cette semaine`:'En direct'}</span></div>`}
 
 /* =================== Admin : activer un membre à la main (paiement reçu hors de l'app) =================== */
-function memStatus(x){if(x.owner)return ['own','Propriétaire'];if(x.paid&&(!SUBSCRIPTION||!x.paidUntil||x.paidUntil>Date.now()))return ['ok',SUBSCRIPTION&&x.paidUntil?'Actif jusqu\'au '+untilTxt(x.paidUntil):'Accès payé'];
+function memStatus(x){if(x.owner)return ['own','Propriétaire'];if(x.banned)return ['ban','Bloqué'];if(x.paid&&(!SUBSCRIPTION||!x.paidUntil||x.paidUntil>Date.now()))return ['ok',SUBSCRIPTION&&x.paidUntil?'Actif jusqu\'au '+untilTxt(x.paidUntil):'Accès payé'];
   if(SUBSCRIPTION&&x.paid&&x.paidUntil)return ['exp','Expiré le '+untilTxt(x.paidUntil)];if(isActive(x))return ['free','Gratuit (essai)'];if(x.pay?.status==='pending')return ['wait','Paiement à vérifier'];return ['no','Pas encore payé']}
 function memListHtml(q){q=norm(q||'');const all=Object.entries(S.profiles).filter(([id,x])=>x&&x.firstName&&id!==S.be.uid)
    .filter(([,x])=>!q||norm([x.firstName,x.lastName,x.phone,x.city,x.commune].join(' ')).includes(q))
-   .sort((a,b)=>{const r=s=>({no:0,wait:0,exp:1,free:2,ok:3,own:4})[memStatus(s)[0]];return r(a[1])-r(b[1])||(b[1].at||0)-(a[1].at||0)}).slice(0,60);
+   .sort((a,b)=>{const r=s=>({ban:0,no:0,wait:0,exp:1,free:2,ok:3,own:4})[memStatus(s)[0]];return r(a[1])-r(b[1])||(b[1].at||0)-(a[1].at||0)}).slice(0,60);
   if(!all.length)return `<p class="hint" style="padding:8px 2px">Aucun membre trouvé.</p>`;
   return all.map(([id,x])=>{const [k,lbl]=memStatus(x);const on=k==='ok'||k==='own';
     return `<div class="mem-row"><button class="mem-who" data-profile="${esc(id)}">${av(x,40)}<span class="mid"><b>${esc(fullName(x))}</b><small>${esc([x.phone,x.city].filter(Boolean).join(' · '))}</small><span class="mem-st ${k}">${lbl}</span></span></button>
-     <div class="mem-acts">${k==='own'?'':SUBSCRIPTION?`<button type="button" class="mini solid" data-memadd="${esc(id)}" data-n="1">+1 mois</button><button type="button" class="mini" data-memadd="${esc(id)}" data-n="3">+3 mois</button>`
+     <div class="mem-acts">${k==='own'?'':`<button type="button" class="mini" data-admchats="${esc(id)}" aria-label="Lire ses conversations">💬</button>`}${k==='own'?'':k==='ban'?`<button type="button" class="mini" data-memban="${esc(id)}" data-on="0">Débloquer</button>`:SUBSCRIPTION?`<button type="button" class="mini solid" data-memadd="${esc(id)}" data-n="1">+1 mois</button><button type="button" class="mini" data-memadd="${esc(id)}" data-n="3">+3 mois</button>`
        :on?`<button type="button" class="mini" data-memoff="${esc(id)}">Retirer</button>`:`<button type="button" class="mini solid" data-memadd="${esc(id)}" data-n="0">Activer</button>${k==='free'?`<button type="button" class="mini" data-memoff="${esc(id)}">Retirer</button>`:''}`}</div></div>`}).join('')}
 async function memAdd(id,n,btn){const x=S.profiles[id];if(!x||!S.owner)return;const now=Date.now();
   const months=+n||0;const until=SUBSCRIPTION?Math.max(now,x.paidUntil||0)+Math.max(1,months)*MONTH:null;
@@ -3788,6 +3824,56 @@ async function memOff(id,btn){const x=S.profiles[id];if(!x||!S.owner)return;if(!
   btn.disabled=true;try{await S.be.updateProfileOf(id,{paid:false,noFree:true,paidUntil:null,pay:{...(x.pay||{}),status:'rejected',checkedAt:Date.now()}});toast(`Accès de ${x.firstName} retiré`);memRefresh()}catch(_){toast("L'action n'a pas abouti.");btn.disabled=false}}
 function memRefresh(){setTimeout(()=>{const el=$('#memList');if(el)el.innerHTML=memListHtml(($('#memQ')||{}).value||'')},700)}
 document.addEventListener('input',e=>{if(e.target.id==='memQ'){const el=$('#memList');if(el)el.innerHTML=memListHtml(e.target.value)}});
+
+/* =================== Admin : lire les conversations, bloquer un membre =================== */
+const BAN_IC='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M5.6 5.6l12.8 12.8"/></svg>';
+function vBanned(){const h=S.helpCfg||{};const wa=String(h.wa||'').replace(/\D/g,'');
+  return `<section class="banned"><div class="bn-ic">${BAN_IC}</div><h1>Compte suspendu</h1><p>Ton compte Koris a été suspendu par l'équipe, à la suite d'un signalement. Tu ne peux plus écrire, publier ni commenter.</p><p class="hint">Si tu penses que c'est une erreur, contacte le service Koris.</p>
+  ${wa?`<a class="btn btn-primary" href="https://wa.me/${wa}" target="_blank" rel="noopener" style="flex:none">${I.wa}Écrire au service Koris</a>`:''}${S.be?.signOut?`<button class="btn btn-ghost" data-banout="1" style="flex:none">Me déconnecter</button>`:''}</section>`}
+function admProfTools(id,x){return `<div class="adm-tools"><small>🔒 Outils admin</small><div><button type="button" class="mini" data-admchats="${esc(id)}">💬 Ses conversations</button>${x.banned?`<button type="button" class="mini" data-memban="${esc(id)}" data-on="0">Débloquer</button>`:`<button type="button" class="mini danger" data-memban="${esc(id)}" data-on="1">⛔ Bloquer</button>`}</div>${x.banned?`<small class="ban-why">Bloqué${x.bannedAt?' le '+untilTxt(x.bannedAt):''}${x.banReason?' · '+esc(x.banReason):''}</small>`:''}</div>`}
+S.adm={chats:null,err:'',msgs:{},q:''};
+const admName=id=>{const x=S.profiles[id];return x&&x.firstName?fullName(x):'Compte supprimé'};
+async function admChatsLoad(force){if(!S.be?.admChats){S.adm.chats=[];S.adm.err='Disponible seulement avec la vraie base.';return admChatsPaint()}
+  if(S.adm.chats&&!force)return admChatsPaint();
+  try{S.adm.chats=await S.be.admChats();S.adm.err=''}catch(e){S.adm.chats=S.adm.chats||[];S.adm.err="Impossible de charger les conversations. As-tu bien lancé le script SQL de modération dans Supabase ?"}admChatsPaint()}
+function vAdmChats(){const who=S.route.param||'';
+  return `<section class="adm admc"><div class="top" style="padding-inline:0"><button class="icon-btn" data-go="${who?'profile':'admin'}" ${who?`data-param="${esc(who)}"`:''} aria-label="Retour">${I.back}</button><h1 style="font-size:20px;flex:1;text-align:center">${who?'Conversations de '+esc(admName(who).split(' ')[0]):'Conversations'}</h1><button class="icon-btn" data-admreload="1" aria-label="Actualiser"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/></svg></button></div>
+  <p class="adm-lock">🔒 Visible seulement par toi (admin). À utiliser pour vérifier un signalement.</p>
+  ${who?`<button type="button" class="mini" data-admchats="" style="margin:0 0 10px">Voir toutes les conversations</button>`:`<label class="pill">${I.search}<input id="admQ" placeholder="Nom d'un membre ou mot dans le message…" autocomplete="off" value="${esc(S.adm.q)}" aria-label="Chercher"></label>`}
+  <div id="admCl" class="admc-list"><div class="loading" style="min-height:120px"><div class="spin"></div></div></div></section>`}
+function admChatsPaint(){const el=$('#admCl');if(!el)return;if(S.adm.chats===null)return;const who=S.route.param||'';const q=norm(S.adm.q||'');
+  let L=S.adm.chats.filter(c=>Array.isArray(c.members)&&c.members.length);
+  if(who)L=L.filter(c=>c.members.includes(who));
+  if(q)L=L.filter(c=>norm([...c.members.map(admName),c.lastText].join(' ')).includes(q));
+  el.innerHTML=(S.adm.err?`<p class="err" style="padding:6px 2px">${esc(S.adm.err)}</p>`:'')+(L.length?L.slice(0,300).map(c=>{const [a,b]=who?[who,c.members.find(m=>m!==who)||who]:c.members;const xa=S.profiles[a]||{},xb=S.profiles[b]||{};
+    return `<button class="admc-row" data-admchat="${esc(c.id)}"><span class="admc-av">${av(xa,40)}${av(xb,40)}</span><span class="mid"><b>${esc(admName(a).split(' ')[0])} ↔ ${esc(admName(b).split(' ')[0])}${xa.banned||xb.banned?' <em class="bn">bloqué</em>':''}</b><small>${c.lastFrom?esc(admName(c.lastFrom).split(' ')[0])+' : ':''}${esc(c.lastText||'…')}</small></span><time>${c.lastAt?ago(c.lastAt):''}</time></button>`}).join('')
+    :`<p class="hint" style="padding:10px 2px">${S.adm.err?'':'Aucune conversation trouvée.'}</p>`)}
+function vAdmChat(cid){const c=(S.adm.chats||[]).find(z=>z.id===cid)||{members:[]};const [a,b]=c.members;
+  const tools=id=>{if(!id)return '';const x=S.profiles[id]||{};return `<div class="admc-who"><button data-profile="${esc(id)}">${av(x,34)}<span><b>${esc(admName(id))}</b><small>${esc([x.phone,x.city].filter(Boolean).join(' · '))}</small></span></button>${x.firstName&&!x.owner?(x.banned?`<button type="button" class="mini" data-memban="${esc(id)}" data-on="0">Débloquer</button>`:`<button type="button" class="mini danger" data-memban="${esc(id)}" data-on="1">⛔ Bloquer</button>`):''}</div>`};
+  return `<section class="adm admc"><div class="top" style="padding-inline:0"><button class="icon-btn" data-admchats="${esc(S.adm.who||'')}" aria-label="Retour">${I.back}</button><h1 style="font-size:18px;flex:1;text-align:center">${esc(admName(a).split(' ')[0]||'?')} ↔ ${esc(admName(b).split(' ')[0]||'?')}</h1><span style="width:42px"></span></div>
+  <p class="adm-lock">🔒 Lecture seule · visible seulement par toi (admin)</p>${tools(a)}${tools(b)}
+  <div id="admMs" class="admc-msgs"><div class="loading" style="min-height:120px"><div class="spin"></div></div></div></section>`}
+async function admMsgsLoad(cid){if(!S.adm.chats)await admChatsLoad();if(S.route.v==='admchat'&&!$('#admMs .bub')){const el=$('#app');if(el&&S.adm.chats.find(z=>z.id===cid)&&!$('.admc-who'))el.innerHTML=vAdmChat(cid)}
+  try{S.adm.msgs[cid]=await S.be.admMsgs(cid)}catch(_){S.adm.msgs[cid]=null}
+  const el=$('#admMs');if(!el)return;const L=S.adm.msgs[cid];const c=(S.adm.chats||[]).find(z=>z.id===cid)||{members:[]};const a=c.members[0];
+  if(L===null){el.innerHTML=`<p class="err">Impossible de lire ces messages. As-tu bien lancé le script SQL de modération dans Supabase ?</p>`;return}
+  if(!L.length){el.innerHTML=`<p class="hint" style="text-align:center;padding:20px 0">Aucun message (ou messages supprimés).</p>`;return}
+  let day='';el.innerHTML=L.map(m=>{const d=new Date(m.at||0).toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});const sep=d!==day?`<span class="vs-day">${esc(d)}</span>`:'';day=d;
+    return `${sep}<div class="bub ${m.from===a?'them':'me'}"><small class="admc-from">${esc(admName(m.from).split(' ')[0])}</small>${esc(m.text)}<time>${hhmm(m.at)}</time></div>`}).join('')}
+async function memBan(id,on,btn){const x=S.profiles[id];if(!x||!S.owner)return;
+  if(!btn.dataset.armed){btn.dataset.armed='1';const t=btn.textContent;btn.textContent=on?'Confirmer le blocage ?':'Confirmer ?';setTimeout(()=>{if(btn.isConnected){delete btn.dataset.armed;btn.textContent=t}},3500);return}
+  btn.disabled=true;try{await S.be.updateProfileOf(id,on?{banned:true,bannedAt:Date.now(),banReason:'Escroquerie signalée'}:{banned:false,bannedAt:null,banReason:null});
+    toast(on?`${x.firstName} est bloqué : il ne peut plus écrire ni publier`:`${x.firstName} est débloqué`);on?fx.ok():fx.tap();
+    setTimeout(()=>{memRefresh();if(['profile','admchat','admchats'].includes(S.route.v)){const y=window.scrollY;render();admChatsPaint();if(S.route.v==='admchat')admMsgsLoad(S.route.param);window.scrollTo(0,y)}},700)}
+  catch(_){toast("L'action n'a pas abouti. Réessaie.");btn.disabled=false}}
+document.addEventListener('click',e=>{const t=e.target.closest&&e.target.closest('[data-memban],[data-admchats],[data-admchat],[data-admreload],[data-banout]');if(!t)return;
+  if(t.dataset.banout!==undefined){e.preventDefault();S.be.signOut&&S.be.signOut();return}
+  if(!S.owner)return;e.preventDefault();e.stopPropagation();
+  if(t.dataset.memban)return memBan(t.dataset.memban,t.dataset.on!=='0',t);
+  if(t.dataset.admchats!==undefined){S.adm.who=t.dataset.admchats||'';return go('admchats',S.adm.who)}
+  if(t.dataset.admchat)return go('admchat',t.dataset.admchat);
+  if(t.dataset.admreload!==undefined){S.adm.chats=null;const el=$('#admCl');if(el)el.innerHTML=`<div class="loading" style="min-height:120px"><div class="spin"></div></div>`;admChatsLoad(true)}},true);
+document.addEventListener('input',e=>{if(e.target.id==='admQ'){S.adm.q=e.target.value;admChatsPaint()}});
 
 /* =================== Abonnements entre membres =================== */
 /* Formule : abonnés de X = nombre de membres dont la liste « following » contient X ; abonnements de X = taille de sa propre liste. */
@@ -3817,10 +3903,10 @@ function attachBe(firstRoute){UNSUBS.forEach(f=>{try{f()}catch(_){}});UNSUBS=[];
   add(S.be.onHelpCfg(c=>{S.helpCfg=c}));
   add(S.be.onPayCfg(c=>{S.payCfg=c;if(S.route.v==='pay'){const el=$('#payDest');if(el)el.innerHTML=destHtml(S.payOp||me()?.pay?.op||'orange')}}));
   let first=true;
-  add(S.be.onProfiles(m=>{const prev=S.profiles;S.profiles=m;S.gotProfiles=true;if(first){first=false;S.route=firstRoute?firstRoute():restoreRoute();render();ntWelcome();openFromUrl();pushInvite()}else{try{ntCheck(prev,m)}catch(_){}try{actAvail(prev,m)}catch(_){}try{actFollow(prev,m)}catch(_){}softRender()}}));
-  add(S.be.onPosts(a=>{S.posts=a;try{actPosts(a)}catch(_){}if(!first)softRender()}));
+  add(S.be.onProfiles(m=>{const prev=S.profiles;S.profiles=m;S.gotProfiles=true;if(S.postsAll)S.posts=noBan(S.postsAll);if(S.commentsAll)S.comments=noBan(S.commentsAll);if(first){first=false;S.route=firstRoute?firstRoute():restoreRoute();render();ntWelcome();openFromUrl();pushInvite()}else{try{ntCheck(prev,m)}catch(_){}try{actAvail(prev,m)}catch(_){}try{actFollow(prev,m)}catch(_){}softRender()}}));
+  add(S.be.onPosts(a=>{S.postsAll=a;S.posts=noBan(a);try{actPosts(a)}catch(_){}if(!first)softRender()}));
   add(S.be.onChats(a=>{S.chats=a;chatWatch(a);if(!first)softRender()}));
-  add(S.be.onComments(a=>{S.comments=a;try{actComments(a)}catch(_){}refreshComments();if(!first)softRender()}));
+  add(S.be.onComments(a=>{S.commentsAll=a;S.comments=noBan(a);try{actComments(a)}catch(_){}refreshComments();if(!first)softRender()}));
   prInit()}
 async function startLive(uid,afterAuth){const sb=sbClient();S.be=makeSupabaseBackend(sb,uid);
   try{const {data}=await sb.from('admins').select('uid').eq('uid',uid).maybeSingle();S.owner=!!data}catch(_){S.owner=false}
