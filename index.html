@@ -320,6 +320,15 @@ html:root[data-theme] .fs-feed .fs-shade{background:linear-gradient(180deg,rgba(
 .fs-txt p{margin:0;color:#fff;font-size:24px;font-weight:700;line-height:1.35;text-align:center;text-wrap:balance;max-height:100%;overflow:auto}
 html:root[data-theme] .fs-feed .cl-post.fs.tx{background:transparent!important}
 html:root[data-theme] .fs-feed .fs-top .cl-pill{order:3}
+.wa-prog{margin:12px 2px 8px;font-size:13px;color:var(--k-mu)}.wa-prog b{color:var(--k-tx)}.wa-prog .lnk{color:var(--k-acc);font-weight:600;text-decoration:underline}
+.wa-tools{display:flex;gap:8px;flex-wrap:wrap;margin:-4px 0 12px}
+.wa-f{margin:0 0 12px!important}
+.wa-list{display:flex;flex-direction:column;gap:8px;padding-bottom:40px}
+.wa-row{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:20px;background:var(--k-sf);border:1px solid var(--k-bd);color:var(--k-tx)}
+.wa-row .mid{flex:1;min-width:0;display:flex;flex-direction:column}.wa-row .mid b{font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.wa-row .mid small{font-size:12px;color:var(--k-mu)}
+.wa-go{flex:none;padding:10px 14px;border-radius:14px;background:#25D366;color:#04140B;font-weight:700;font-size:13px;text-decoration:none}
+.wa-row.done{opacity:.6}.wa-row.done .wa-go{background:var(--k-sf2);color:var(--k-tx)}
+html:root[data-theme] .wa-go{color:#04140B!important}html:root[data-theme] .wa-row.done .wa-go{color:var(--k-tx)!important}html:root[data-theme] .wa-tools .mini{color:var(--k-tx)!important;background:var(--k-sf)!important;border:1px solid var(--k-bd)!important}
 </style></head><body><div id="ksplash" class="wait" role="img" aria-label="Koris" title="Touchez pour passer">
 <style>
 #ksplash.ks-quick{animation:none!important;cursor:default}#ksplash.ks-quick .ks-stage>:not(.ks-main),#ksplash.ks-quick .ks-main>:not(.ks-logo){display:none!important}#ksplash.ks-quick .ks-logo,#ksplash.ks-quick .ks-logo *{animation:none!important;opacity:1!important;stroke-dashoffset:0!important}#ksplash.ks-quick .ks-logo{animation:ksQk .6s cubic-bezier(.2,.9,.3,1.2) both!important}@keyframes ksQk{from{opacity:0;transform:scale(.82)}to{opacity:1;transform:none}}#ksplash{position:fixed;inset:0;z-index:99999;background:#070707;display:grid;place-items:center;overflow:hidden;cursor:pointer;animation:ksOut .7s cubic-bezier(.7,0,.3,1) 10.4s forwards}
@@ -2224,6 +2233,8 @@ function vAdmin(){
   <h2>Membres</h2><p class="hint" style="padding:0 2px 8px">Un membre t'a payé directement (Mobile Money sur ton numéro, espèces…) ? Cherche-le et touche <b>« +1 mois »</b> : il peut écrire tout de suite, pendant 30 jours.</p>
   <label class="pill">${I.search}<input id="memQ" placeholder="Nom, numéro, ville…" autocomplete="off" aria-label="Chercher un membre"></label>
   <div id="memList" class="mem-list">${memListHtml('')}</div>
+  <h2>Message WhatsApp à tous 📣</h2><p class="hint" style="padding:0 2px 8px">Prépare un seul message, puis envoie-le à chaque membre qui a un numéro, en un toucher par personne.</p>
+  <button class="btn btn-ghost" data-go="admwa" style="width:100%;flex:none;height:48px">${I.wa||'📣'}Écrire à tous les membres</button>
   <h2>Conversations des membres 🔍</h2><p class="hint" style="padding:0 2px 8px">Un membre signale une escroquerie ? Lis ses discussions pour vérifier, puis bloque le compte fautif. Visible seulement par toi.</p>
   <button class="btn btn-ghost" data-admchats="" style="width:100%;flex:none;height:48px">${I.chat}Lire les conversations</button>
   <h2>Certifications à vérifier (5 $)</h2><div id="admCert">${admCertHtml()}</div>
@@ -2662,19 +2673,19 @@ function render(){const app=$('#app');const r=S.route;
   if(r.v==='loading'){app.innerHTML=`<div class="loading"><div class="spin"></div></div>`;return}
   document.documentElement.classList.toggle('snapfeed',r.v==='feed');
   if(p&&p.banned&&!S.owner){app.classList.add('no-nav');app.innerHTML=vBanned();return}
-  const KNOWN=['admchats','admchat','auth','onboard','signup','pay','admin','certif','about','feed','discover','profile','me','messages','chat','shop','shopitem','visit','inbox'];
+  const KNOWN=['admwa','admchats','admchat','auth','onboard','signup','pay','admin','certif','about','feed','discover','profile','me','messages','chat','shop','shopitem','visit','inbox'];
   if(r.v==='inbox'&&!S.owner){S.route={v:'feed'};return render()}
   if(!KNOWN.includes(r.v)){S.route={v:p?(isActive(p)?'feed':'pay'):'onboard'};return render()}
   // garde-fous : pas de profil → onboarding ; profil non payé → paiement
   const open=['onboard','signup','pay','about','auth','shop','shopitem','visit'];
   shopTick();
   if(r.v==='auth'&&S.be.uid&&!S.pendingProf){S.route=p?(isActive(p)?{v:'feed'}:{v:'pay'}):{v:'signup'};return render()}
-  if(['admin','admchats','admchat'].includes(r.v)&&!S.owner){S.route={v:'feed'};return render()}
+  if(['admin','admchats','admchat','admwa'].includes(r.v)&&!S.owner){S.route={v:'feed'};return render()}
   if(!p&&!open.includes(r.v)){S.route={v:'onboard'};return render()}
-  if(p&&!isActive(p)&&!['signup','pay','about','onboard','admin','admchats','admchat','shop','shopitem','visit'].includes(r.v)){S.route={v:'pay'};return render()}
+  if(p&&!isActive(p)&&!['signup','pay','about','onboard','admin','admchats','admchat','admwa','shop','shopitem','visit'].includes(r.v)){S.route={v:'pay'};return render()}
   if(render.last!==r.v){render.last=r.v;app.classList.remove('enter');void app.offsetWidth;app.classList.add('enter');clearTimeout(render.t);render.t=setTimeout(()=>app.classList.remove('enter'),400)}
   if(['feed','discover','messages','me','chat','profile','about','admin','certif','shop','shopitem'].includes(r.v)&&me())ls.set('lastRoute',{v:r.v,param:r.param||null});
-  app.classList.toggle('no-nav',['admchats','admchat','auth','onboard','signup','pay','chat','profile','about','admin','certif','shop','shopitem','visit','inbox'].includes(r.v));
+  app.classList.toggle('no-nav',['admwa','admchats','admchat','auth','onboard','signup','pay','chat','profile','about','admin','certif','shop','shopitem','visit','inbox'].includes(r.v));
   loveMusic(false);
   document.body.classList.toggle('shop-mode',['shop','shopitem'].includes(r.v));
   if(r.v==='auth'){if(r.param)S.authMode=r.param;app.innerHTML=vAuth()}
@@ -2686,6 +2697,7 @@ function render(){const app=$('#app');const r=S.route;
   else if(r.v==='inbox'){app.innerHTML=vInbox();if(S.conc.cfg===null||S.conc.chats===null)concRefresh()}
   else if(r.v==='shopitem'){if(render.sdId!==r.param){render.sdId=r.param;S.shop.img=0}app.innerHTML=vShopItem(r.param);sdBind();if(S.shop.items&&S.shop.items.some(x=>x.id===r.param))shopView(r.param)}
   else if(r.v==='admin')app.innerHTML=vAdmin();
+  else if(r.v==='admwa')app.innerHTML=vAdmWa();
   else if(r.v==='admchats'){app.innerHTML=vAdmChats();admChatsLoad()}
   else if(r.v==='admchat'){app.innerHTML=vAdmChat(r.param);admMsgsLoad(r.param)}
   else if(r.v==='certif'){app.innerHTML=vCertif();checkHandle()}
@@ -4066,6 +4078,39 @@ document.addEventListener('click',e=>{const t=e.target.closest&&e.target.closest
   if(t.dataset.admreload!==undefined){S.adm.chats=null;const el=$('#admCl');if(el)el.innerHTML=`<div class="loading" style="min-height:120px"><div class="spin"></div></div>`;admChatsLoad(true)}},true);
 document.addEventListener('input',e=>{if(e.target.id==='admQ'){S.adm.q=e.target.value;admChatsPaint()}});
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-subgo]');if(!b)return;e.preventDefault();e.stopPropagation();S.payBack=b.dataset.subgo||null;go('pay')},true);
+
+/* =================== Admin : un message WhatsApp pour tous les membres =================== */
+const WA_DEF="Bonjour {prénom} 👋\nTon inscription sur Koris est validée ! Tu as maintenant accès à l'application : https://koris-rdc.github.io\n\nSur Android, tu peux aussi télécharger l'application directement : https://koris-rdc.github.io/koris.apk\n\nÀ très vite sur Koris 💚\nL'équipe Koris";
+/* numéro au format international sans « + » (RD Congo : 0812345678 → 243812345678) */
+function waNum(ph){let d=String(ph||'').replace(/\D/g,'');if(!d)return '';if(d.startsWith('00'))d=d.slice(2);if(d.length===10&&d[0]==='0')d='243'+d.slice(1);else if(d.length===9)d='243'+d;return d.length>=11&&d.length<=15?d:''}
+const waText=(tpl,x)=>String(tpl||'').replace(/\{pr[ée]nom\}/gi,(x.firstName||'').split(' ')[0]||'').replace(/\{ville\}/gi,x.city||'').replace(/ +\n/g,'\n').trim();
+S.wa={f:ls.get('waF','all'),msg:ls.get('waMsg',WA_DEF),sent:ls.get('waSent',{})};
+function waList(){const f=S.wa.f;return Object.entries(S.profiles).filter(([id,x])=>id!==S.be?.uid&&!x.owner&&!x.test&&x.firstName&&waNum(x.phone)&&!x.banned)
+  .filter(([id,x])=>f==='all'||(f==='sub'?subOn(x):!subOn(x))).sort((a,b)=>(a[1].firstName||'').localeCompare(b[1].firstName||''))}
+function waRows(){const L=waList();const sentN=L.filter(([id])=>S.wa.sent[id]).length;
+  return `<p class="wa-prog"><b>${sentN} / ${L.length}</b> envoyé${sentN>1?'s':''}${sentN?` · <button type="button" class="lnk" data-wareset="1">Tout remettre à zéro</button>`:''}</p>`+(L.length?L.map(([id,x])=>{const n=waNum(x.phone),done=!!S.wa.sent[id];
+    return `<div class="wa-row${done?' done':''}"><button data-profile="${esc(id)}" aria-label="Profil de ${esc(x.firstName)}">${av(x,42)}</button><div class="mid"><b>${esc(fullName(x))}</b><small>+${esc(n)}${x.city?' · '+esc(x.city):''}</small></div>
+      <a class="wa-go" data-wasend="${esc(id)}" href="https://wa.me/${n}?text=${encodeURIComponent(waText(S.wa.msg,x))}" target="_blank" rel="noopener">${done?'✓ Envoyé':'Envoyer'}</a></div>`}).join('')
+    :`<p class="hint" style="padding:12px 2px">Aucun membre avec un numéro dans ce groupe.</p>`)}
+function vAdmWa(){const L=waList();const nums=L.map(([,x])=>'+'+waNum(x.phone));
+  return `<section class="adm admwa"><div class="top" style="padding-inline:0"><button class="icon-btn" data-go="admin" aria-label="Retour">${I.back}</button><h1 style="font-size:20px;flex:1;text-align:center">Message à tous</h1><span style="width:42px"></span></div>
+  <p class="adm-lock">🔒 Visible seulement par toi. WhatsApp s'ouvre avec le message prêt : tu appuies sur envoyer, puis tu reviens ici pour le suivant.</p>
+  <label class="field"><span>Ton message <small>· {prénom} est remplacé par le prénom du membre</small></span><textarea id="waMsg" maxlength="1500" style="min-height:190px">${esc(S.wa.msg)}</textarea></label>
+  <div class="wa-tools"><button type="button" class="mini" data-wadef="1">Message par défaut</button><button type="button" class="mini" data-wanums="1">Copier les ${nums.length} numéros</button></div>
+  <div class="chips wa-f">${[['all','Tous'],['sub','Abonnés'],['free','Pas abonnés']].map(([k,l])=>`<button class="${S.wa.f===k?'on':''}" data-waf="${k}">${l}</button>`).join('')}</div>
+  <button type="button" class="btn btn-primary" data-wanext="1" style="width:100%;flex:none;height:50px">${I.wa||''}Envoyer au suivant</button>
+  <div id="waList" class="wa-list">${waRows()}</div></section>`}
+function waPaint(){const l=$('#waList');if(l)l.innerHTML=waRows()}
+document.addEventListener('input',e=>{if(e.target.id==='waMsg'){S.wa.msg=e.target.value;ls.set('waMsg',S.wa.msg);clearTimeout(waPaint.t);waPaint.t=setTimeout(waPaint,400)}});
+document.addEventListener('click',e=>{const a=e.target.closest&&e.target.closest('[data-wasend],[data-waf],[data-wareset],[data-wadef],[data-wanums],[data-wanext]');if(!a||!S.owner)return;
+  if(a.dataset.wasend){S.wa.sent[a.dataset.wasend]=Date.now();ls.set('waSent',S.wa.sent);setTimeout(waPaint,300);return}
+  e.preventDefault();
+  if(a.dataset.waf){S.wa.f=a.dataset.waf;ls.set('waF',S.wa.f);const y=scrollY;render();scrollTo(0,y);return}
+  if(a.dataset.wareset){S.wa.sent={};ls.set('waSent',{});waPaint();toast('Liste remise à zéro');return}
+  if(a.dataset.wadef){S.wa.msg=WA_DEF;ls.set('waMsg',WA_DEF);const m=$('#waMsg');if(m)m.value=WA_DEF;waPaint();return}
+  if(a.dataset.wanums){const t=waList().map(([,x])=>'+'+waNum(x.phone)).join('\n');(navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(()=>toast(`${waList().length} numéros copiés`),()=>toast("Copie impossible sur ce téléphone"));return}
+  if(a.dataset.wanext){const nx=waList().find(([id])=>!S.wa.sent[id]);if(!nx){toast('Tout le monde a reçu le message 🎉');return}const [id,x]=nx;
+    S.wa.sent[id]=Date.now();ls.set('waSent',S.wa.sent);window.open(`https://wa.me/${waNum(x.phone)}?text=${encodeURIComponent(waText(S.wa.msg,x))}`,'_blank');setTimeout(waPaint,300)}},true);
 
 /* =================== Abonnements entre membres =================== */
 /* Formule : abonnés de X = nombre de membres dont la liste « following » contient X ; abonnements de X = taille de sa propre liste. */
