@@ -250,6 +250,110 @@ html:root[data-theme] .sub-gate{background:linear-gradient(150deg,#FFDDAD,#FCB86
 html:root[data-theme] .sub-gate small{color:#7A4318!important}
 html:root[data-theme] .sub-gate .sg-ic{background:#2A1205!important;color:#FCB861!important}
 html:root[data-theme] .sub-gate .btn{background:#2A1205!important;color:#FCB861!important}
+/* ===== Mise en page « Spliter » : fond uni, cartes plus sombres, carte pêche, tuiles carrées, ticket ===== */
+html:root[data-theme=dark]{--k-bg:#2A190F;--ink:#2A190F;--k-sf:#1D110A;--k-sf2:#160C06;--k-card:#1D110A;--k-cardS:#1D110A;--panel:#1D110A;--panel-2:#160C06;--k-in:#160C06;--field:#160C06;--navbg:#160C06;
+ --k-tx:#FDF0E2;--k-tx2:#EBD5BF;--k-mu:#BFA48C;--k-ph:#8C7563;--k-bd:rgba(252,184,97,.08);--k-bd2:rgba(252,184,97,.16);--k-hero:#2A190F;--k-edge:transparent;--sp-sh:0 14px 28px -14px rgba(0,0,0,.75);--sp-raise:0 10px 18px -8px rgba(0,0,0,.6)}
+html:root[data-theme=light]{--k-bg:#F6E8D8;--ink:#F6E8D8;--k-sf:#ECD8C1;--k-sf2:#E3CBAF;--k-card:#ECD8C1;--k-cardS:#ECD8C1;--panel:#ECD8C1;--panel-2:#E3CBAF;--k-in:#FBF3EA;--field:#FBF3EA;--navbg:#E3CBAF;
+ --k-tx:#2A1205;--k-tx2:#4A2410;--k-mu:#7A5A43;--k-ph:#A4876F;--k-bd:rgba(106,43,9,.10);--k-bd2:rgba(106,43,9,.18);--k-hero:#F6E8D8;--k-edge:transparent;--sp-sh:0 14px 26px -16px rgba(106,43,9,.45);--sp-raise:0 10px 18px -10px rgba(106,43,9,.5)}
+html:root[data-theme] body,html:root[data-theme] #app{background:var(--k-bg)!important}
+/* en-tête sur deux lignes + tuile avatar */
+.sp-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:calc(18px + env(safe-area-inset-top)) 20px 6px;color:var(--k-tx)}
+.sp-tt{display:flex;flex-direction:column;min-width:0}.sp-tt>span{font-size:19px;font-weight:300;color:var(--k-tx2);line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sp-tt>b{font-size:28px;font-weight:800;line-height:1.1;letter-spacing:-.01em;color:var(--k-tx)}
+.sp-wm{display:inline-flex!important;align-items:center;gap:6px;font-size:19px!important;font-weight:300!important;letter-spacing:0!important;color:var(--k-tx2)!important}
+.sp-r{display:flex;align-items:flex-start;gap:8px;flex:none}
+html:root[data-theme] .sp-r .cl-ib,html:root[data-theme] .sp-r .icon-btn{width:46px;height:46px;border-radius:16px!important;background:var(--k-sf)!important;border:0!important;color:var(--k-tx)!important;box-shadow:var(--sp-raise)!important}
+.sp-me{display:flex;flex-direction:column;align-items:center;gap:3px;width:62px;padding:6px 0 5px;border-radius:18px;background:var(--k-sf);box-shadow:var(--sp-raise);color:var(--k-tx)}
+.sp-me .avatar{border-radius:14px!important;width:46px!important;height:46px!important}.sp-me .avatar img{border-radius:14px}.sp-me small{font-size:10.5px;font-weight:600;max-width:56px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* carte pêche principale */
+.sp-dash{display:flex;flex-direction:column;gap:14px;margin:6px 0 4px}
+.sp-hero{position:relative;display:flex;gap:12px;padding:20px 18px 20px 20px;border-radius:28px;background:linear-gradient(150deg,#FFD6A0 0%,#FCB861 55%,#F4A24F 100%);color:#2A1205;box-shadow:var(--sp-sh);margin:6px 0 14px;overflow:visible}
+.sp-hl{flex:1;display:flex;flex-direction:column;align-items:flex-start;min-width:0}
+.sp-lbl{font-size:13.5px;font-weight:600;color:#5A2C10}
+.sp-num{font-size:40px;font-weight:800;line-height:1.05;margin:4px 0 16px;color:#2A1205;letter-spacing:-.02em}.sp-num small{font-size:15px;font-weight:600;margin-left:6px;color:#5A2C10}
+.sp-btn{background:#2A1205;color:#FCB861;font-weight:700;font-size:14px;padding:13px 18px;border-radius:16px;box-shadow:0 12px 20px -10px rgba(42,18,5,.75)}
+.sp-hs{display:flex;flex-direction:column;align-items:center;gap:8px;flex:none;margin:-34px -6px -34px 0}
+.sp-hs .sp-lbl{order:-1;margin-top:34px}
+.sp-stack{display:flex;flex-direction:column;align-items:center;gap:0;padding:8px 6px;border-radius:999px;background:#FFFFFF;box-shadow:0 18px 30px -14px rgba(42,18,5,.55)}
+.sp-stack>button{display:block;margin-top:-10px}.sp-stack>button:first-child{margin-top:0}
+.sp-stack .avatar{box-shadow:0 0 0 3px #FFFFFF}
+.sp-plus{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:#F6A08C;color:#fff;margin-top:6px!important}.sp-plus svg{width:18px;height:18px}
+/* ligne d'information */
+.sp-info{display:flex;align-items:center;gap:12px;width:100%;padding:14px;border-radius:22px;background:var(--k-sf);color:var(--k-tx);text-align:left;box-shadow:var(--sp-sh)}
+.sp-ii{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;flex:none;background:var(--k-sf2);color:var(--k-tx);font-size:18px}.sp-ii svg{width:20px;height:20px}
+.sp-it{flex:1;min-width:0;display:flex;flex-direction:column}.sp-it b{font-size:14.5px}.sp-it small{font-size:12.5px;color:var(--k-mu);margin-top:2px}
+.sp-go{transform:rotate(180deg);opacity:.6;display:grid}.sp-go svg{width:18px;height:18px}
+/* tuile recherche + panneau de capsules */
+.sp-grid{display:flex;gap:12px;align-items:stretch}
+.sp-sq{width:78px;flex:none;border-radius:24px;background:linear-gradient(150deg,#FFD6A0,#FCB861);color:#2A1205;display:grid;place-items:center;box-shadow:var(--sp-sh);align-self:flex-start;height:78px}.sp-sq svg{width:26px;height:26px}
+.sp-panel{flex:1;min-width:0;border-radius:24px;background:var(--k-sf);padding:12px 12px 14px;box-shadow:var(--sp-sh)}
+.sp-ph{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}.sp-ph b{font-size:13.5px;color:var(--k-tx)}.sp-ph button{font-size:12px;color:var(--k-mu)}
+.sp-caps{display:flex;gap:10px;overflow-x:auto;scrollbar-width:none}.sp-caps::-webkit-scrollbar{display:none}
+.sp-cap{flex:none;display:flex;flex-direction:column;align-items:center;gap:5px;width:58px;padding:7px 0 8px;border-radius:999px;background:var(--k-sf2);color:var(--k-tx)}
+.sp-cap small{font-size:10.5px;font-weight:600;max-width:52px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sp-cap i{width:9px;height:9px;border-radius:50%;background:#8C7563}.sp-cap i.on{background:#FCB861;box-shadow:0 0 8px #FCB861}
+/* rangées d'avatars ronds */
+.sp-sec{display:flex;align-items:center;justify-content:space-between;margin:14px 2px 8px}.sp-sec b{font-size:15px;color:var(--k-tx)}
+.sp-rds{display:flex;gap:14px;overflow-x:auto;scrollbar-width:none;padding:2px 2px 6px}.sp-rds::-webkit-scrollbar{display:none}
+.sp-rd{flex:none;display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--k-tx)}.sp-rd small{font-size:11.5px;font-weight:600}
+.sp-rd .avatar{box-shadow:0 0 0 3px var(--k-bg),0 0 0 5px rgba(252,184,97,.55)}
+/* cartes générales plus arrondies et plus sombres que le fond */
+html:root[data-theme] .cl-box,html:root[data-theme] .cl-post,html:root[data-theme] .cl-about,html:root[data-theme] .conv,html:root[data-theme] .call,html:root[data-theme] .cl-empty{background:var(--k-sf)!important;border:0!important;border-radius:26px!important;box-shadow:var(--sp-sh)!important}
+html:root[data-theme] .cl-seg,html:root[data-theme] .seg{background:var(--k-sf)!important;border:0!important;border-radius:22px!important;padding:6px!important}
+html:root[data-theme] .cl-seg button.on,html:root[data-theme] .seg button.on{border-radius:16px!important}
+html:root[data-theme] .seg i{border-radius:16px!important}
+html:root[data-theme] .cl-ask{background:var(--k-sf2)!important;border:0!important;border-radius:16px!important}
+html:root[data-theme] .cl-ic{background:var(--k-sf2)!important;border:0!important;border-radius:14px!important}
+html:root[data-theme] .cl-send{background:linear-gradient(150deg,#FFD6A0,#FCB861)!important;color:#2A1205!important;border-radius:14px!important}
+html:root[data-theme] .search label{background:var(--k-sf)!important;border:0!important;border-radius:20px!important;box-shadow:var(--sp-sh)}
+html:root[data-theme] .intents button{background:var(--k-sf)!important;border:0!important;border-radius:22px!important;box-shadow:var(--sp-sh)}
+html:root[data-theme] .intents button.on{background:linear-gradient(150deg,#FFD6A0,#FCB861)!important;color:#2A1205!important}
+html:root[data-theme] .intents button.on *{color:#2A1205!important}
+html:root[data-theme] .chips button{background:var(--k-sf)!important;border:0!important}
+html:root[data-theme] .chips button.on{background:#2A1205!important;color:#FCB861!important}
+html:root[data-theme=light] .chips button.on{background:#2A1205!important}
+/* stories en capsules (comme « Nearby Friends ») */
+html:root[data-theme] .stories{gap:10px!important}
+html:root[data-theme] .story{background:var(--k-sf)!important;border-radius:999px!important;border:0!important;box-shadow:var(--sp-sh)}
+html:root[data-theme] .story .card{border-radius:999px!important;border:0!important}
+/* liste des discussions dans un panneau */
+html:root[data-theme] .conv .ar .avatar,html:root[data-theme] .conv .ar .avatar img{border-radius:18px!important}
+html:root[data-theme] .conv-del{border-radius:16px!important;background:var(--k-sf)!important}
+/* discussion : tuile retour carrée, barre d'écriture en pilule */
+html:root[data-theme] .chat-head{background:var(--k-bg)!important;box-shadow:none!important;border:0!important}
+html:root[data-theme] .chat-head .icon-btn{width:48px;height:48px;border-radius:16px!important;background:var(--k-sf)!important;color:var(--k-tx)!important;border:0!important;box-shadow:var(--sp-raise)!important}
+html:root[data-theme] .chat-head .who,html:root[data-theme] .chat-head .who *{color:var(--k-tx)!important}
+html:root[data-theme] .chat{background:var(--k-bg)!important}
+html:root[data-theme] .composer{background:var(--k-sf)!important;border:0!important;border-radius:28px!important;padding:8px 8px 8px 16px!important;box-shadow:var(--sp-sh)!important;margin:0 12px calc(12px + env(safe-area-inset-bottom))!important}
+html:root[data-theme] .composer input{background:transparent!important;border:0!important}
+html:root[data-theme] .composer .send{width:50px;height:50px;border-radius:20px!important;background:linear-gradient(150deg,#FFD6A0,#FCB861)!important;color:#2A1205!important;box-shadow:var(--sp-raise)!important}
+/* profil : carte « ticket » pêche avec encoches et pointillés */
+html:root[data-theme] .cl-cover{border-radius:0 0 30px 30px;overflow:hidden}
+html:root[data-theme] .cl-pcard{overflow:visible!important;border-radius:30px!important;padding-top:6px!important}
+.sp-tab{position:absolute;left:50%;top:-16px;translate:-50% 0;background:#2A1205;color:#FCB861;font-size:12.5px;font-weight:700;padding:7px 18px;border-radius:12px;box-shadow:0 10px 18px -8px rgba(42,18,5,.7);z-index:2;white-space:nowrap}
+html:root[data-theme] .cl-pcard .cl-pav{margin-top:-46px!important}
+html:root[data-theme] .cl-pcard .cl-stats{position:relative;margin:18px -16px 14px!important;padding:16px 16px 12px!important;border:0!important;border-top:2px dashed rgba(42,18,5,.28)!important;border-radius:0!important}
+html:root[data-theme] .cl-pcard .cl-stats::before,html:root[data-theme] .cl-pcard .cl-stats::after{content:"";position:absolute;top:-14px;width:26px;height:26px;border-radius:50%;background:var(--k-bg)}
+html:root[data-theme] .cl-pcard .cl-stats::before{left:-13px}html:root[data-theme] .cl-pcard .cl-stats::after{right:-13px}
+html:root[data-theme] .cl-pcard .cl-stats>*{border:0!important}
+html:root[data-theme] .cl-pcard .cl-stats{display:flex;gap:8px}
+html:root[data-theme] .cl-pcard .cl-stats>*{background:#2A1205!important;border-radius:18px!important;padding:10px 4px!important}
+html:root[data-theme] .cl-pcard .cl-stats>* b{color:#FCB861!important}html:root[data-theme] .cl-pcard .cl-stats>* small{color:#EBD5BF!important}
+html:root[data-theme] .cl-pcard .cl-btns{background:rgba(42,18,5,.10);border-radius:22px;padding:6px;gap:6px!important}
+/* barre du bas : conteneur en pilule */
+html:root[data-theme] .nav.cln .nav-in{background:var(--k-sf2)!important;border-radius:30px!important;padding:8px!important;box-shadow:0 18px 34px -16px rgba(0,0,0,.6)!important;gap:6px!important}
+html:root[data-theme] .nav.cln .nav-in>button{background:transparent!important;border:0!important;box-shadow:none!important;border-radius:20px!important}
+html:root[data-theme] .nav.cln .nav-in>button.on{background:linear-gradient(150deg,#FFD6A0,#FCB861)!important;color:#2A1205!important;box-shadow:0 10px 18px -8px rgba(0,0,0,.55)!important}
+html:root[data-theme] .nav.cln .nav-in>button.on svg{color:#2A1205!important}
+html:root[data-theme] .nav.cln .nav-in>button.on .nv-sm{stroke:#2A1205}
+html:root[data-theme] .nav.cln .nav-in>button:not(.on){color:var(--k-tx)!important}
+html:root[data-theme] .sp-head+.cl-body{margin-top:0!important;padding-top:4px!important}
+.sp-tt>b{font-size:25px!important}
+html:root[data-theme] .sp-r .cl-ib,html:root[data-theme] .sp-r .icon-btn{width:42px!important;height:42px!important;border-radius:14px!important}
+html:root[data-theme] .nav.cln .nav-in>button:not(.on) svg{color:var(--k-tx)!important}
+html:root[data-theme] .nav.cln .nav-in>button:not(.on) .nv-sm{stroke:var(--k-tx)!important}
+html:root[data-theme] .nav.cln .nav-in>button:not(.on) *{fill-opacity:1}
+html:root[data-theme] .composer{box-sizing:border-box!important;width:calc(100% - 24px)!important;max-width:calc(100% - 24px)!important}
 </style></head><body><div id="ksplash" class="wait" role="img" aria-label="Koris" title="Touchez pour passer">
 <style>
 #ksplash.ks-quick{animation:none!important;cursor:default}#ksplash.ks-quick .ks-stage>:not(.ks-main),#ksplash.ks-quick .ks-main>:not(.ks-logo){display:none!important}#ksplash.ks-quick .ks-logo,#ksplash.ks-quick .ks-logo *{animation:none!important;opacity:1!important;stroke-dashoffset:0!important}#ksplash.ks-quick .ks-logo{animation:ksQk .6s cubic-bezier(.2,.9,.3,1.2) both!important}@keyframes ksQk{from{opacity:0;transform:scale(.82)}to{opacity:1;transform:none}}#ksplash{position:fixed;inset:0;z-index:99999;background:#070707;display:grid;place-items:center;overflow:hidden;cursor:pointer;animation:ksOut .7s cubic-bezier(.7,0,.3,1) 10.4s forwards}
@@ -2208,14 +2312,37 @@ function clUnread(){return S.chats.some(c=>c.lastFrom!==S.be.uid&&c.lastAt>(S.re
 function clHello(){const h=new Date().getHours();return h<12?'Bonjour':h<18?'Bon après-midi':'Bonsoir'}
 const GKBOT='<svg class="gkb" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="8" width="16" height="12" rx="4.5"/><g class="gk-ant"><path d="M12 8V5"/><circle cx="12" cy="3.6" r="1.3"/></g><path class="gk-eye" d="M9.2 13.2v1.4"/><path class="gk-eye" d="M14.8 13.2v1.4"/><path d="M10 17.2c1.2.7 2.8.7 4 0"/><path d="M2 12.5v3M22 12.5v3"/></svg>';
 function clGucko(){return `<button class="cl-ib cl-gk" data-act="guide" aria-label="Gucko, ton assistant" title="Gucko">${I.spark}</button>`}
+/* ===== Composants de mise en page inspirés du modèle « Bill Spliter » ===== */
+function spHead(small,big,right){return `<header class="sp-head"><div class="sp-tt"><span>${small}</span><b>${big}</b></div><div class="sp-r">${right||''}</div></header>`}
+function spMe(){const p=me()||{};return `<button class="sp-me" data-go="me" aria-label="Mon profil">${av(p,46)}<small>${esc((p.firstName||'Moi').split(' ')[0])}</small></button>`}
+function spStack(ids,go){const L=ids.slice(0,4);return `<div class="sp-stack">${L.map(id=>`<button data-profile="${esc(id)}" aria-label="Profil de ${esc(S.profiles[id]?.firstName||'membre')}">${av(S.profiles[id]||{},40)}</button>`).join('')}<button class="sp-plus" data-go="${go||'discover'}" aria-label="Voir plus">${I.plus}</button></div>`}
+function spHero(o){return `<section class="sp-hero"><div class="sp-hl"><span class="sp-lbl">${o.label}</span><div class="sp-num">${o.num}${o.unit?`<small>${o.unit}</small>`:''}</div><button class="sp-btn" ${o.btn[1]}>${o.btn[0]}</button></div>${o.side?`<div class="sp-hs"><span class="sp-lbl">${o.side}</span>${spStack(o.ids||[],o.go)}</div>`:''}</section>`}
+function spInfo(ic,title,sub,attrs){return `<button class="sp-info" ${attrs||''}><span class="sp-ii">${ic}</span><span class="sp-it"><b>${title}</b><small>${sub}</small></span><span class="sp-go">${I.back}</span></button>`}
+function spCaps(ids){return ids.slice(0,6).map(id=>{const x=S.profiles[id]||{};const st=availOf(x);return `<button class="sp-cap" data-profile="${esc(id)}">${av(x,46)}<small>${esc((x.firstName||'Membre').split(' ')[0])}</small><i class="${st!=='off'?'on':''}"></i></button>`}).join('')}
+function spRound(ids){return ids.slice(0,8).map(id=>{const x=S.profiles[id]||{};return `<button class="sp-rd" data-profile="${esc(id)}">${av(x,54)}<small>${esc((x.firstName||'Membre').split(' ')[0])}</small></button>`}).join('')}
+function spPeople(){const meId=S.be?.uid,p=me()||{};const all=Object.entries(S.profiles).filter(([id,x])=>id!==meId&&isActive(x)&&!x.owner&&!x.test).map(([id,x])=>({id,x}));
+  const near=all.filter(o=>p.city&&o.x.city===p.city);const avail=all.filter(o=>availOf(o.x)!=='off');
+  const recent=[...all].sort((a,b)=>(b.x.at||0)-(a.x.at||0));
+  return {all,near:near.length?near:all,avail,recent}}
+function spDash(){const P=spPeople(),p=me()||{};const city=(p.city||'').split(',')[0];
+  const sub=S.owner?spInfo('👑','Espace administrateur',`${Object.keys(S.profiles).length} membres inscrits · paiements et messages`,'data-go="admin"')
+    :subOn(p)?spInfo(I.chat,'Messagerie active',`Tu peux écrire jusqu'au ${untilTxt(p.paidUntil)}`,'data-go="messages"')
+    :spInfo(I.chat,'Écris aux membres',`Abonnement ${fc(dueFor(p))} par mois · lire reste gratuit`,'data-go="pay"');
+  return `<div class="sp-dash">
+   ${spHero({label:city?`Membres à ${esc(city)}`:'Membres sur Koris',num:P.near.length,unit:P.near.length>1?'cœurs':'cœur',btn:['Découvrir','data-go="discover"'],side:'Nouveaux',ids:P.recent.map(o=>o.id),go:'discover'})}
+   ${sub}
+   <div class="sp-grid"><button class="sp-sq" data-go="discover" aria-label="Chercher un membre">${I.search}</button>
+    <div class="sp-panel"><div class="sp-ph"><b>Disponibles maintenant</b><button data-go="discover">Voir tout</button></div><div class="sp-caps">${P.avail.length?spCaps(P.avail.map(o=>o.id)):spCaps(P.recent.map(o=>o.id).slice(0,3))}</div></div></div>
+   ${P.recent.length?`<div class="sp-sec"><b>Récemment inscrits</b></div><div class="sp-rds">${spRound(P.recent.map(o=>o.id))}</div>`:''}
+  </div>`}
 function clHero(title,right,sub,cls){return `<header class="cl-hero${cls?' '+cls:''}"><div class="cl-row">${title}<div class="cl-acts">${right||''}</div></div>${sub?`<p class="cl-hi">${sub}</p>`:''}</header>`}
 function vFeed(){const p=me();const tab=S.route.tab==='ab'?'ab':'pt';const fol=followingOf(p);
   const L=tab==='ab'?S.posts.filter(x=>x.uid===S.be.uid||fol.includes(x.uid)):S.posts;
   const empty=tab==='ab'?`<div class="cl-empty">${I.user}<b>Personne à suivre pour l'instant</b><p>Abonne-toi à des membres : leurs publications apparaîtront ici.</p><button class="cl-btn dark" data-go="discover">Découvrir des membres</button></div>`
     :`<div class="cl-empty">${I.image}<b>Rien pour l'instant</b><p>Partage le premier moment : il apparaîtra ici pour tous les membres.</p><button class="cl-btn dark" data-act="compose" data-withpic="1">Publier</button></div>`;
   setTimeout(clVideos,60);
-  return `${clHero(`<div class="wordmark cl-wm" data-go="about" role="button" tabindex="0" aria-label="À propos de Koris"><i></i>KORIS</div>`,`${S.owner?clAdmin():bellHtml()}`,'','cl-mid')}
-  <div class="cl-body">${demoBanner()}
+  return `${spHead(`<span class="wordmark sp-wm" data-go="about" role="button" tabindex="0" aria-label="À propos de Koris"><i></i>Koris</span>`,`Salut ${esc((p.firstName||'').split(' ')[0])}`,`${S.owner?clAdmin():bellHtml()}${spMe()}`)}
+  <div class="cl-body">${demoBanner()}${spDash()}<div class="sp-sec"><b>Le fil</b></div>
    <div class="cl-box"><div class="cl-box-top"><label class="cl-cav" for="qPhoto" aria-label="${p.photo?'Changer ma photo de profil':'Ajouter une photo de profil'}">${av(p,34)}</label><input id="qPhoto" type="file" accept="image/*" class="fpick"><button class="cl-ask" data-act="compose">Partager un moment, ${esc(p.firstName||'')}…</button></div>
     <div class="cl-box-bot"><button class="cl-ic" data-act="compose" data-withpic="1" aria-label="Ajouter une photo">${CLI.img}</button><button class="cl-ic" data-act="compose" data-withpic="1" aria-label="Ajouter une vidéo">${CLI.vid}</button><button class="cl-ic" data-act="compose" aria-label="Écrire un texte">${CLI.doc}</button><span class="sp"></span><button class="gl-pill cl-send" data-act="compose" aria-label="Publier">${CLI.up}</button></div></div>
    <div class="cl-seg" role="tablist"><button data-tab="pt" class="${tab==='pt'?'on':''}">Pour toi</button><button data-tab="ab" class="${tab==='ab'?'on':''}">Abonnements</button></div>
@@ -2256,7 +2383,7 @@ function vProfile(id,self){const x=S.profiles[id];if(!x)return `<div class="empt
   return `<section class="clp"><header class="cl-cover" style="background-image:linear-gradient(180deg,rgba(14,14,16,.32),rgba(14,14,16,0) 34%,rgba(14,14,16,0) 72%,rgba(14,14,16,.3)),url('${coverFor(id,x)}')">
    ${self?'':`<button class="cl-ib glass" data-back aria-label="Retour">${I.back}</button>`}<span class="sp"></span>
    <div class="cl-tools">${self?`${clAdmin()}<button class="cl-ib" data-ccm="cover" aria-label="Changer ou recadrer l'image de couverture">${CLI.cam}</button><input id="cvPhoto" type="file" accept="image/*" class="fpick"><button class="cl-ib" data-act="settings" aria-label="Réglages">${PB.gear}</button>`:''}<button class="cl-ib" data-act="help" aria-label="Aide">${PB.help}</button></div></header>
-  <div class="cl-pcard">
+  <div class="cl-pcard"><span class="sp-tab">${self?'Mon profil':'Profil'}</span>
    ${self?`<button class="cl-pav" data-ccm="photo" aria-label="Changer ou recadrer ma photo de profil">${av(x,96)}<b class="cl-pcam">${CLI.cam}</b></button><input id="qPhoto" type="file" accept="image/*" class="fpick">`:`<button class="cl-pav" ${S.viewPics.length?'data-view="0"':''} aria-label="Voir la photo de profil">${av(x,96)}</button>`}
    <h1 class="cl-nm">${esc(x.firstName||fullName(x))}${x.certified?I.badge:''}</h1>${x.test?'<span class="demo-tag">PROFIL FICTIF · TEST</span>':''}
    <p class="cl-sub">${esc([x.certified&&x.handle?'@'+x.handle:'',x.age?x.age+' ans':'',[x.commune,x.city].filter(Boolean).join(', '),dist].filter(Boolean).join(' · '))}</p>
@@ -2468,7 +2595,7 @@ function vDiscover(){const q=(S.route.q||'').toLowerCase(),city=S.route.city||''
   const cols=[[],[]];list.forEach((e,i)=>cols[i%2].push([e,i]));
   const card=([[id,x],i])=>{const img=safeImg(x.photo);const fav=S.favs.has(id);return `<div class="pcard ${i%3===1?'tall':''}">${isNewM(x)?'<span class="new-flag">Nouveau</span>':''}<button data-profile="${esc(id)}" style="display:block;width:100%" aria-label="Voir le profil de ${esc(x.firstName)}"><div class="ph">${img?`<img src="${img}" alt="">`:`<div class="initials-ph">${esc(initials(x))}</div>`}</div>${availOf(x)!=='off'?`<span class="av-flag ${availOf(x)}">${INTENTS.find(t=>t[0]===availOf(x))[2]} ${INT_LBL[availOf(x)]}</span>`:''}</button>
     <div class="ov"><div><span class="loc">${I.pin.replace('<svg','<svg width="11" height="11"')}${esc([x.commune,x.city,x.country].filter(Boolean).join(', '))}</span><span class="nm"><span>${esc(x.firstName)}${x.age?', '+esc(x.age):''}</span>${x.certified?I.badge:''}</span><span class="job">${esc(x.job)}</span></div><button class="heart-mini ${fav?'on':''}" data-fav="${esc(id)}" aria-label="Coup de cœur">${I.heart}</button></div></div>`};
-  return `${clHero('<h1>Découvrir</h1>',bellHtml(),'Des personnes près de chez toi')}<div class="cl-body">
+  return `${spHead('Près de chez toi','Découvrir',`${bellHtml()}${spMe()}`)}<div class="cl-body">
   <div class="search"><label>${I.search.replace('<svg','<svg width="18" height="18"')}<input id="q" placeholder="Nom, métier, ville…" value="${esc(S.route.q||'')}" aria-label="Rechercher"></label></div>
   <div class="intents">${[['','Tous','✨'],...INTENTS].map(([k,l,e])=>`<button type="button" data-intent="${k}" class="${intent===k?'on '+k:''}"><span>${e}</span><b>${l}</b><small>${k?icount(k)+' dispo':all.length+' membres'}</small></button>`).join('')}</div>
   ${intent?`<div class="sec-head" style="margin:14px 0 10px"><h2>${intent==='diner'?'Disponibles pour un dîner':intent==='chill'?'Disponibles pour un flirt':'Disponibles pour une rencontre'}</h2><span class="count">${list.length}</span></div>`:''}
@@ -2522,7 +2649,10 @@ function vMessages(){const list=[...S.chats].filter(c=>(c.lastAt||0)>chatHid(c.i
   const calls=ids.length?`<p class="hint">${S.owner?'Admin : tu vois les numéros des membres. L\'appel passe par ton téléphone.':'🔒 Pour ta sécurité, les numéros restent privés. Discute d\'abord dans Koris.'}</p>${ids.map(id=>{const x=S.profiles[id];const vis=phoneOk(x,id);const tel=vis?String(x.phone||'').replace(/[^\d+]/g,''):'';
     return `<div class="call"><button data-profile="${esc(id)}" aria-label="Profil de ${esc(x.firstName)}"><span class="ar" style="padding:2px;border-radius:50%;background:var(--grad);display:block">${av(x,48)}</span></button><div class="mid"><b>${esc(fullName(x))}</b><small>${esc([x.city,vis?x.phone:''].filter(Boolean).join(' · '))}</small></div><button class="ca" data-chat="${esc(id)}" aria-label="Écrire à ${esc(x.firstName)}">${I.chat}</button>${tel?`<a class="ca go" href="tel:${esc(tel)}" target="_top" aria-label="Appeler ${esc(x.firstName)}">${I.phone}</a>`:''}</div>`}).join('')}`
     :`<div class="empty">${I.phone}<b>Personne à appeler pour l'instant</b><p>Les membres apparaîtront ici.</p></div>`;
-  return `${clHero('<h1>Messages</h1>',`<button class="cl-ib" data-go="discover" aria-label="Trouver quelqu'un">${I.search}</button>`,'Tes discussions privées')}<div class="cl-body">
+  const unr=list.filter(c=>c.lastFrom!==S.be.uid&&c.lastAt>(S.reads[c.id]||0)).length;
+  return `${spHead('Koris','Messages',`<button class="cl-ib" data-go="discover" aria-label="Trouver quelqu'un">${I.search}</button>${spMe()}`)}<div class="cl-body">
+  ${spHero({label:'Non lus',num:unr,unit:unr>1?'messages':'message',btn:['Nouvelle discussion','data-go="discover"'],side:'Récents',ids:list.map(c=>c.members.find(m=>m!==S.be.uid)).filter(Boolean),go:'discover'})}
+  <div class="sp-sec"><b>Stories</b></div>
   <div class="stories"><button class="story add" data-act="compose" data-withpic="1"><span class="card"><span class="plus">${I.plus}</span>Ta story</span></button>${st.map(story).join('')}</div>
   <div class="seg" role="tablist"><i id="segI" style="transform:translateX(${pane*100}%)"></i><button role="tab" data-pane="0" class="${pane?'':'on'}">Discussions</button><button role="tab" data-pane="1" class="${pane?'on':''}">Appels</button></div>
   <div class="pager" id="pager"><section class="pane">${convs}</section><section class="pane">${calls}</section></div>
