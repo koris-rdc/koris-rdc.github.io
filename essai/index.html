@@ -354,6 +354,31 @@ html:root[data-theme] .nav.cln .nav-in>button:not(.on) svg{color:var(--k-tx)!imp
 html:root[data-theme] .nav.cln .nav-in>button:not(.on) .nv-sm{stroke:var(--k-tx)!important}
 html:root[data-theme] .nav.cln .nav-in>button:not(.on) *{fill-opacity:1}
 html:root[data-theme] .composer{box-sizing:border-box!important;width:calc(100% - 24px)!important;max-width:calc(100% - 24px)!important}
+/* ===== Fil : photo / vidéo en plein écran, actions à gauche ===== */
+html:root[data-theme] .cl-post.fs{position:relative;padding:0!important;overflow:hidden;height:min(78svh,700px);min-height:440px;border-radius:30px!important;background:#000!important;margin-bottom:16px}
+.fs-media{position:absolute;inset:0}
+html:root[data-theme] .fs .cl-media{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;margin:0!important;border-radius:0!important;aspect-ratio:auto!important;background:#000!important}
+html:root[data-theme] .fs .cl-media>img{width:100%!important;height:100%!important;object-fit:cover!important}
+html:root[data-theme] .fs .cl-media .post-video{position:absolute!important;inset:0!important;height:100%!important;aspect-ratio:auto!important}
+html:root[data-theme] .fs .cl-media .post-video video,html:root[data-theme] .fs .cl-media .post-video img{object-fit:cover!important;height:100%!important}
+.fs-shade{position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(0,0,0,.55) 0%,rgba(0,0,0,0) 22%,rgba(0,0,0,0) 52%,rgba(0,0,0,.72) 100%)}
+.fs-top{position:absolute;left:0;right:0;top:0;display:flex;align-items:center;gap:10px;padding:14px 14px 0;color:#fff;z-index:2}
+.fs-top .avatar{box-shadow:0 0 0 2px rgba(255,255,255,.85)}
+.fs-who{flex:1;min-width:0;display:flex;flex-direction:column}.fs-who button{display:flex;align-items:center;gap:4px;color:#fff;text-align:left}.fs-who b{font-size:15px;text-shadow:0 1px 6px rgba(0,0,0,.5)}
+.fs-who small{font-size:12px;color:rgba(255,255,255,.82);text-shadow:0 1px 6px rgba(0,0,0,.5)}
+html:root[data-theme] .fs-top .cl-pill{background:rgba(0,0,0,.4)!important;color:#fff!important;border:0!important;backdrop-filter:blur(8px)}
+html:root[data-theme] .fs-top .cl-ib{background:rgba(0,0,0,.4)!important;color:#fff!important;border:0!important}
+.fs-acts{position:absolute;left:12px;bottom:16px;display:flex;flex-direction:column;gap:10px;z-index:2}
+.fs-acts button{display:flex;flex-direction:column;align-items:center;gap:3px;width:58px;padding:9px 0 7px;border-radius:18px;background:rgba(20,10,4,.42);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);color:#fff;border:1px solid rgba(255,255,255,.12)}
+.fs-acts button svg{width:24px;height:24px}.fs-acts button span{font-size:10.5px;font-weight:700;line-height:1.1}
+.fs-acts button.on{background:linear-gradient(150deg,#FFD6A0,#FCB861);color:#2A1205;border-color:transparent}
+.fs-cap{position:absolute;left:84px;right:16px;bottom:18px;margin:0;color:#fff;font-size:14.5px;line-height:1.4;text-shadow:0 1px 8px rgba(0,0,0,.6);z-index:2;max-height:7.2em;overflow:hidden;display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical}
+html:root[data-theme] .fs .post-video .play{background:transparent!important}
+/* publications texte : mêmes actions (avec « Enregistrer ») */
+html:root[data-theme] .cl-pf{gap:6px;flex-wrap:wrap}
+html:root[data-theme] .cl-pf button span{font-size:12px}
+html:root[data-theme] .cl-pf button[data-save].on{color:#C5620B}
+html:root[data-theme=dark] .cl-pf button[data-save].on{color:#FCB861}
 </style></head><body><div id="ksplash" class="wait" role="img" aria-label="Koris" title="Touchez pour passer">
 <style>
 #ksplash.ks-quick{animation:none!important;cursor:default}#ksplash.ks-quick .ks-stage>:not(.ks-main),#ksplash.ks-quick .ks-main>:not(.ks-logo){display:none!important}#ksplash.ks-quick .ks-logo,#ksplash.ks-quick .ks-logo *{animation:none!important;opacity:1!important;stroke-dashoffset:0!important}#ksplash.ks-quick .ks-logo{animation:ksQk .6s cubic-bezier(.2,.9,.3,1.2) both!important}@keyframes ksQk{from{opacity:0;transform:scale(.82)}to{opacity:1;transform:none}}#ksplash{position:fixed;inset:0;z-index:99999;background:#070707;display:grid;place-items:center;overflow:hidden;cursor:pointer;animation:ksOut .7s cubic-bezier(.7,0,.3,1) 10.4s forwards}
@@ -2313,6 +2338,8 @@ function clHello(){const h=new Date().getHours();return h<12?'Bonjour':h<18?'Bon
 const GKBOT='<svg class="gkb" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="8" width="16" height="12" rx="4.5"/><g class="gk-ant"><path d="M12 8V5"/><circle cx="12" cy="3.6" r="1.3"/></g><path class="gk-eye" d="M9.2 13.2v1.4"/><path class="gk-eye" d="M14.8 13.2v1.4"/><path d="M10 17.2c1.2.7 2.8.7 4 0"/><path d="M2 12.5v3M22 12.5v3"/></svg>';
 function clGucko(){return `<button class="cl-ib cl-gk" data-act="guide" aria-label="Gucko, ton assistant" title="Gucko">${I.spark}</button>`}
 /* ===== Composants de mise en page inspirés du modèle « Bill Spliter » ===== */
+const BKM=on=>`<svg viewBox="0 0 24 24" fill="${on?'currentColor':'none'}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12a1 1 0 0 1 1 1v17l-7-4.5L5 21V4a1 1 0 0 1 1-1z"/></svg>`;
+const savedOf=()=>Array.isArray(me()?.saved)?me().saved:[];
 function spHead(small,big,right){return `<header class="sp-head"><div class="sp-tt"><span>${small}</span><b>${big}</b></div><div class="sp-r">${right||''}</div></header>`}
 function spMe(){const p=me()||{};return `<button class="sp-me" data-go="me" aria-label="Mon profil">${av(p,46)}<small>${esc((p.firstName||'Moi').split(' ')[0])}</small></button>`}
 function spStack(ids,go){const L=ids.slice(0,4);return `<div class="sp-stack">${L.map(id=>`<button data-profile="${esc(id)}" aria-label="Profil de ${esc(S.profiles[id]?.firstName||'membre')}">${av(S.profiles[id]||{},40)}</button>`).join('')}<button class="sp-plus" data-go="${go||'discover'}" aria-label="Voir plus">${I.plus}</button></div>`}
@@ -2353,12 +2380,18 @@ function postHtml(x){const a=S.profiles[x.uid]||{};const likes=Array.isArray(x.l
   const ar=+(x&&x.ar),arS=ar>.2&&ar<5?` style="aspect-ratio:${ar}"`:'';
   const media=img?`<button class="cl-media${arS?' ar':''}"${arS} data-pimg="${esc(x.id)}" aria-label="Agrandir la photo"><img src="${img}" alt="Photo de ${esc(a.firstName||'membre')}" loading="lazy"></button>`
     :vid?`<div class="cl-media" data-vpid="${esc(x.id)}">${vidHtml(x)}</div>`:'';
+  const sv=savedOf().includes(x.id);
+  const acts=`<button class="${liked?'on':''}" data-like="${esc(x.id)}" aria-label="J'aime">${liked?I.heart:I.heartO}<span>${likes.length}</span></button><button data-cmt="${esc(x.id)}" aria-label="Commentaires">${I.comment}<span>${cms}</span></button><button data-share="${esc(x.id)}" aria-label="Partager">${CLI.share}<span>Partager</span></button><button class="${sv?'on':''}" data-save="${esc(x.id)}" aria-label="${sv?'Retirer des enregistrements':'Enregistrer'}">${BKM(sv)}<span>${sv?'Enregistré':'Enregistrer'}</span></button>`;
+  if(media)return `<article class="cl-post fs"><div class="fs-media">${media}</div><div class="fs-shade"></div>
+   <header class="fs-top"><button data-profile="${esc(x.uid)}" aria-label="Profil de ${esc(a.firstName||'membre')}">${av(a,40)}</button><div class="fs-who"><button data-profile="${esc(x.uid)}"><b>${esc(a.firstName||fullName(a))}${a.age?', '+esc(a.age):''}</b>${a.certified?I.badge:''}</button><small>${esc(where||a.country||'')}${where||a.country?' · ':''}${esc(ago(x.at))}</small></div>${st!=='off'?`<span class="cl-pill">${INTENTS.find(t=>t[0]===st)[2]} ${esc(INT_LBL[st])}</span>`:''}${mine?`<button class="cl-ib sm" data-del="${esc(x.id)}" aria-label="Supprimer la publication">${I.trash}</button>`:''}</header>
+   <div class="fs-acts">${acts}</div>
+   ${x.caption?`<p class="fs-cap">${esc(x.caption)}</p>`:''}</article>`;
   return `<article class="cl-post"><header class="cl-ph"><button data-profile="${esc(x.uid)}" aria-label="Profil de ${esc(a.firstName||'membre')}">${av(a,42)}</button>
    <div class="cl-who"><button data-profile="${esc(x.uid)}"><b>${esc(a.firstName||fullName(a))}${a.age?', '+esc(a.age):''}</b>${a.certified?I.badge:''}</button><small>${esc(where||a.country||'')}${where||a.country?' · ':''}${esc(ago(x.at))}</small></div>
    ${st!=='off'?`<span class="cl-pill">${INTENTS.find(t=>t[0]===st)[2]} ${esc(INT_LBL[st])}</span>`:''}${mine?`<button class="cl-ib sm" data-del="${esc(x.id)}" aria-label="Supprimer la publication">${I.trash}</button>`:''}</header>
   ${x.caption?`<p class="cl-cap${media?'':' big'}">${esc(x.caption)}</p>`:''}
   ${media}
-  <footer class="cl-pf"><button class="${liked?'on':''}" data-like="${esc(x.id)}" aria-label="J'aime">${liked?I.heart:I.heartO}<span>${likes.length}</span></button><button data-cmt="${esc(x.id)}" aria-label="Commentaires">${I.comment}<span>${cms}</span></button><button data-share="${esc(x.id)}" aria-label="Partager">${CLI.share}</button></footer></article>`}
+  <footer class="cl-pf">${acts}</footer></article>`}
 const LOCKI='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4.5" y="10.5" width="15" height="10" rx="2.6"/><path d="M8 10.5V7.6a4 4 0 0 1 8 0v2.9"/><path d="M12 14.6v2.2"/></svg>';
 const NVI={home:'<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M10.5 2.9a2.4 2.4 0 0 1 3 0l6.6 5.4c.6.5.9 1.2.9 1.9v8.1a3.2 3.2 0 0 1-3.2 3.2H6.2A3.2 3.2 0 0 1 3 18.3v-8.1c0-.7.3-1.4.9-1.9z"/><path class="nv-sm" d="M8.8 14.4c1.8 1.7 4.6 1.7 6.4 0" fill="none" stroke-width="2.1" stroke-linecap="round"/></svg>',search:'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="3.4"/><path fill="currentColor" d="M15.7 8.3l-1.8 4.6-2.8-2.8z"/><path fill="currentColor" opacity=".6" d="M8.3 15.7l1.8-4.6 2.8 2.8z"/></svg>',chat:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><path d="M12 3.6c4.8 0 8.4 3.3 8.4 7.5s-3.6 7.5-8.4 7.5c-1 0-2-.1-2.9-.4l-4.6 1.9 1.2-3.9c-1.4-1.4-2.1-3.1-2.1-5.1 0-4.2 3.6-7.5 8.4-7.5z"/><path d="M8.7 11.2h.01M12 11.2h.01M15.3 11.2h.01" stroke-width="2.9"/></svg>'};
 function navHtml(active){const un=clUnread();const p=me()||{};const ph=safeImg(p.photo);
@@ -2366,13 +2399,15 @@ function navHtml(active){const un=clUnread();const p=me()||{};const ph=safeImg(p
   return `<nav class="nav cln"><div class="nav-in">${b('feed',NVI.home,'Accueil')}${b('discover',NVI.search,'Découvrir')}${b('messages',NVI.chat,'Messages')}<button class="cl-gkn cl-disc${active==='visit'?' on':''}" data-go="visit" aria-label="Discussion avec l'équipe Koris" title="Discussion">${GHOSTI}</button>${b('me',`<span class="nv-av"${ph?` style="background-image:url('${ph}')"`:''}>${ph?'':esc((p.firstName||'K')[0])}</span>`,'Profil','nv-me')}</div></nav>`}
 function vProfile(id,self){const x=S.profiles[id];if(!x)return `<div class="empty">${I.user}<b>Profil introuvable</b><button class="btn btn-ghost" data-go="feed" style="flex:none">Retour au fil</button></div>`;
   const fav=S.favs.has(id);const own=S.posts.filter(p=>p.uid===id);const fo=followersOf(id).length,fi=followingOf(x).filter(u=>S.profiles[u]).length;
-  S.viewPics=[safeImg(x.photo)].filter(Boolean);const tab=S.route.tab==='info'?'info':'grid';const st=availOf(x);
+  S.viewPics=[safeImg(x.photo)].filter(Boolean);const tab=S.route.tab==='info'?'info':S.route.tab==='saved'&&self?'saved':'grid';const st=availOf(x);
   const dist=!self&&zoneOf(x)&&zoneOf(me())?kmTxt(km(zoneOf(me()),zoneOf(x))):'';
   const tile=p=>{const img=safeImg(p.img),vid=isVid(p),po=vid?safeImg(p.vid.poster):'';const pic=img||po;
     const act=img?`data-pimg="${esc(p.id)}"`:vid?`data-vview="${esc(p.id)}"`:`data-cmt="${esc(p.id)}"`;
     return `<button class="cl-tile${pic?'':' tx'}" ${act} aria-label="Ouvrir la publication">${pic?`<img src="${pic}" alt="" loading="lazy">`:`<span>${esc((p.caption||'').slice(0,120))}</span>`}${vid?`<b class="vb">${I.play}</b>`:''}</button>`};
   const row=(ic,l,v,extra='')=>v?`<div class="info-row"><span class="ic">${I[ic]}</span><div><small>${l}</small><b>${esc(v)}</b></div>${extra}</div>`:'';
-  const body=tab==='grid'?(own.length?`<div class="cl-grid">${own.map(tile).join('')}</div>`:`<div class="cl-empty">${I.image}<b>${self?'Partage ta première photo':'Aucune publication pour l\'instant'}</b>${self?`<button class="cl-btn dark" data-act="compose" data-withpic="1">Publier</button>`:''}</div>`)
+  const svL=self?savedOf().map(id=>S.posts.find(p=>p.id===id)).filter(Boolean):[];
+  const body=tab==='saved'?(svL.length?`<div class="cl-grid">${svL.map(tile).join('')}</div>`:`<div class="cl-empty">${BKM(false)}<b>Rien d'enregistré</b><p>Touche « Enregistrer » sous une photo ou une vidéo du fil pour la garder ici.</p></div>`)
+    :tab==='grid'?(own.length?`<div class="cl-grid">${own.map(tile).join('')}</div>`:`<div class="cl-empty">${I.image}<b>${self?'Partage ta première photo':'Aucune publication pour l\'instant'}</b>${self?`<button class="cl-btn dark" data-act="compose" data-withpic="1">Publier</button>`:''}</div>`)
     :`<div class="cl-info">${self?availPanel(x):''}
      ${self?(x.certified?'':x.cert?.status==='pending'?`<div class="cert-cta wait2">${I.badge}<div><b>Certification en vérification</b><small>@${esc(x.cert.handle)} · tu seras prévenu dès la validation</small></div></div>`:`<button class="cert-cta" data-go="certif">${I.badge}<div><b>Obtenir le badge certifié · 5 $</b><small>Badge à côté de ton nom + nom d'utilisateur réservé</small></div><span class="go-ar">${I.back}</span></button>`):''}
      <div class="info pf-info">${row('work','Poste',x.job)}
@@ -2395,7 +2430,7 @@ function vProfile(id,self){const x=S.profiles[id];if(!x)return `<div class="empt
    ${S.owner&&!self?admProfTools(id,x):''}
   </div>
   ${x.bio||x.job?`<div class="cl-about"><h3>À propos</h3>${x.bio?`<p>${esc(x.bio)}</p>`:''}${x.job?`<span>${I.work}${esc(x.job)}</span>`:''}</div>`:''}
-  <div class="cl-seg" role="tablist" style="margin-top:16px"><button data-tab="grid" class="${tab==='grid'?'on':''}">${CLI.grid}Publications</button><button data-tab="info" class="${tab==='info'?'on':''}">${I.user}Infos</button></div>
+  <div class="cl-seg" role="tablist" style="margin-top:16px"><button data-tab="grid" class="${tab==='grid'?'on':''}">${CLI.grid}Publications</button>${self?`<button data-tab="saved" class="${tab==='saved'?'on':''}">${BKM(tab==='saved')}Enregistrés</button>`:''}<button data-tab="info" class="${tab==='info'?'on':''}">${I.user}Infos</button></div>
   ${body}<div style="margin-top:12px">${self?demoBanner():''}</div></section>${self?navHtml('me'):''}`}
 
 /* Navigation animée (inspirée de la vidéo) : onde au toucher + page qui s'ouvre depuis l'endroit touché */
@@ -3150,6 +3185,8 @@ document.addEventListener('click',async e=>{const t=e.target.closest('button,[da
     if(!ok){try{await navigator.clipboard.writeText(text+' — '+location.href);ok=true;toast('Lien copié, colle-le où tu veux')}catch(_){toast('Partage impossible sur cet appareil')}}
     if(ok){try{await S.be.setShares(x.id,(+x.shares||0)+1)}catch(_){}}return}
   if(d.cdel){if(t.dataset.armed){try{await S.be.deleteComment(d.cdel)}catch(_){toast('Suppression impossible')}}else{t.dataset.armed='1';t.textContent='Confirmer ?';setTimeout(()=>{delete t.dataset.armed;t.textContent='Supprimer'},3000)}return}
+  if(d.save){const L=savedOf().filter(id=>id!==d.save);const was=savedOf().includes(d.save);if(!was)L.unshift(d.save);fx.tap();
+    try{await S.be.saveProfile({...me(),saved:L.slice(0,300)});toast(was?'Retiré de tes enregistrements':'Enregistré · retrouve-le dans ton profil');softRender()}catch(_){toast("L'enregistrement n'a pas abouti")}return}
   if(d.like){const p=S.posts.find(x=>x.id===d.like);if(!p)return;const l=Array.isArray(p.likes)?[...p.likes]:[];const i=l.indexOf(S.be.uid);i>=0?(l.splice(i,1),fx.unlike()):(l.push(S.be.uid),fx.like());try{await S.be.setLikes(p.id,l)}catch(_){toast("Le j'aime n'a pas été enregistré")}return}
   if(d.del){if(t.dataset.armed){try{const x=S.posts.find(p=>p.id===d.del);await S.be.deletePost(d.del);toast('Publication supprimée');if(x&&isVid(x))S.be.dropVideo(x.vid);S.comments.filter(c=>c.postId===d.del&&c.uid===S.be.uid).forEach(c=>S.be.deleteComment(c.id).catch(()=>{}))}catch(_){toast('Suppression impossible')}}else{t.dataset.armed='1';t.style.background='var(--danger)';toast('Appuie encore pour supprimer');setTimeout(()=>{delete t.dataset.armed;t.style.background=''},3000)}return}
   if(d.mm){S.payOp=d.mm;document.querySelectorAll('.mm button').forEach(b=>{const on=b===t;b.classList.toggle('on',on);b.setAttribute('aria-checked',on)});$('#payDest').innerHTML=destHtml(d.mm);return}
