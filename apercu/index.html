@@ -330,6 +330,10 @@ html:root[data-theme] .fs-feed .fs-top .cl-pill{order:3}
 .wa-row.done{opacity:.6}.wa-row.done .wa-go{background:var(--k-sf2);color:var(--k-tx)}
 html:root[data-theme] .wa-go{color:#1F0D0C!important}html:root[data-theme] .wa-row.done .wa-go{color:var(--k-tx)!important}html:root[data-theme] .wa-tools .mini{color:var(--k-tx)!important;background:var(--k-sf)!important;border:1px solid var(--k-bd)!important}
 html:root[data-theme] .cl-pcard .adm-tools .mini:not(.danger){color:#fff!important;background:rgba(0,0,0,.28)!important;border:0!important}
+html:root[data-theme] .sp-hero{background:linear-gradient(90deg,rgba(20,4,5,.72) 0%,rgba(20,4,5,.35) 48%,rgba(20,4,5,0) 75%),url(/hero-koris.webp) center/cover no-repeat,#6B0E12!important}
+.sp-full{width:100%}.sp-full .sp-caps{padding-bottom:2px}
+.sp-head{padding-right:34px!important}
+.sp-tt>b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:24px!important}.sp-r{gap:6px!important}
 </style></head><body><div id="ksplash" class="wait" role="img" aria-label="Koris" title="Touchez pour passer">
 <style>
 #ksplash.ks-quick{animation:none!important;cursor:default}#ksplash.ks-quick .ks-stage>:not(.ks-main),#ksplash.ks-quick .ks-main>:not(.ks-logo){display:none!important}#ksplash.ks-quick .ks-logo,#ksplash.ks-quick .ks-logo *{animation:none!important;opacity:1!important;stroke-dashoffset:0!important}#ksplash.ks-quick .ks-logo{animation:ksQk .6s cubic-bezier(.2,.9,.3,1.2) both!important}@keyframes ksQk{from{opacity:0;transform:scale(.82)}to{opacity:1;transform:none}}#ksplash{position:fixed;inset:0;z-index:99999;background:#070707;display:grid;place-items:center;overflow:hidden;cursor:pointer;animation:ksOut .7s cubic-bezier(.7,0,.3,1) 10.4s forwards}
@@ -2305,14 +2309,10 @@ function spPeople(){const meId=S.be?.uid,p=me()||{};const all=Object.entries(S.p
   const recent=[...all].sort((a,b)=>(b.x.at||0)-(a.x.at||0));
   return {all,near:near.length?near:all,avail,recent}}
 function spDash(){const P=spPeople(),p=me()||{};const city=(p.city||'').split(',')[0];
-  const sub=S.owner?spInfo('👑','Espace administrateur',`${Object.keys(S.profiles).length} membres inscrits · paiements et messages`,'data-go="admin"')
-    :subOn(p)?spInfo(I.chat,'Messagerie active',`Tu peux écrire jusqu'au ${untilTxt(p.paidUntil)}`,'data-go="messages"')
-    :spInfo(I.chat,'Écris aux membres',`Abonnement ${fc(dueFor(p))} par mois · lire reste gratuit`,'data-go="pay"');
+  const av_=P.avail.length?P.avail:P.near;
   return `<div class="sp-dash">
    ${spHero({label:city?`Membres à ${esc(city)}`:'Membres sur Koris',num:P.near.length,unit:P.near.length>1?'cœurs':'cœur',btn:['Découvrir','data-go="discover"'],side:'Près de toi',ids:P.near.map(o=>o.id),go:'discover'})}
-   ${sub}
-   <div class="sp-grid"><button class="sp-sq" data-go="discover" aria-label="Chercher un membre">${I.search}</button>
-    <div class="sp-panel"><div class="sp-ph"><b>Disponibles maintenant</b><button data-go="discover">Voir tout</button></div><div class="sp-caps">${P.avail.length?spCaps(P.avail.map(o=>o.id)):spCaps(P.recent.map(o=>o.id).slice(0,3))}</div></div></div>
+   <div class="sp-panel sp-full"><div class="sp-ph"><b>${P.avail.length?'Disponibles maintenant':'Membres près de toi'}</b><button data-go="discover">Voir tout</button></div><div class="sp-caps">${spCaps(av_.map(o=>o.id).slice(0,12))}</div></div>
   </div>`}
 function clHero(title,right,sub,cls){return `<header class="cl-hero${cls?' '+cls:''}"><div class="cl-row">${title}<div class="cl-acts">${right||''}</div></div>${sub?`<p class="cl-hi">${sub}</p>`:''}</header>`}
 function vFeed(){const p=me();const tab=S.route.tab==='ab'?'ab':'pt';const fol=followingOf(p);
