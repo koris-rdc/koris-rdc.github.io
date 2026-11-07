@@ -305,6 +305,21 @@ html:root[data-theme] .fs-top .cl-ib{background:rgba(0,0,0,.4)!important;color:#
 html:root[data-theme] .cl-pf{flex-wrap:wrap}
 html:root[data-theme] .cl-pf button[data-share] span,html:root[data-theme] .cl-pf button[data-save] span{display:none}
 html:root[data-theme] .cl-pf button[data-save].on{color:var(--k-acc)}
+/* ===== Fil façon TikTok : une publication = un écran, défilement aimanté ===== */
+html.snapfeed{scroll-snap-type:y mandatory;overscroll-behavior-y:contain}
+html.snapfeed .fs-intro{scroll-snap-align:start}
+.fs-feed{display:block;margin:0 -16px;padding:0}
+html.snapfeed .app{padding-bottom:0!important}
+html:root[data-theme] .fs-feed .cl-post.fs{scroll-snap-align:start;scroll-snap-stop:always;height:100svh!important;min-height:0!important;width:100%;margin:0!important;border-radius:0!important;box-shadow:none!important}
+html:root[data-theme] .fs-feed .fs-top{top:auto;bottom:calc(96px + env(safe-area-inset-bottom));left:66px;right:14px;padding:0 0 6px}
+html:root[data-theme] .fs-feed .fs-cap{bottom:calc(78px + env(safe-area-inset-bottom));left:66px;transform:translateY(-6px);max-height:4.3em;-webkit-line-clamp:3}
+html:root[data-theme] .fs-feed .cl-post.fs:has(.fs-cap) .fs-top{bottom:calc(150px + env(safe-area-inset-bottom))}
+html:root[data-theme] .fs-feed .fs-acts{bottom:calc(96px + env(safe-area-inset-bottom))}
+html:root[data-theme] .fs-feed .fs-shade{background:linear-gradient(180deg,rgba(0,0,0,.35) 0%,rgba(0,0,0,0) 18%,rgba(0,0,0,0) 50%,rgba(0,0,0,.78) 100%)}
+.fs-txt{position:absolute;inset:0;display:grid;place-items:center;padding:60px 28px 200px 70px;background:var(--kv-grad)}
+.fs-txt p{margin:0;color:#fff;font-size:24px;font-weight:700;line-height:1.35;text-align:center;text-wrap:balance;max-height:100%;overflow:auto}
+html:root[data-theme] .fs-feed .cl-post.fs.tx{background:transparent!important}
+html:root[data-theme] .fs-feed .fs-top .cl-pill{order:3}
 </style></head><body><div id="ksplash" class="wait" role="img" aria-label="Koris" title="Touchez pour passer">
 <style>
 #ksplash.ks-quick{animation:none!important;cursor:default}#ksplash.ks-quick .ks-stage>:not(.ks-main),#ksplash.ks-quick .ks-main>:not(.ks-logo){display:none!important}#ksplash.ks-quick .ks-logo,#ksplash.ks-quick .ks-logo *{animation:none!important;opacity:1!important;stroke-dashoffset:0!important}#ksplash.ks-quick .ks-logo{animation:ksQk .6s cubic-bezier(.2,.9,.3,1.2) both!important}@keyframes ksQk{from{opacity:0;transform:scale(.82)}to{opacity:1;transform:none}}#ksplash{position:fixed;inset:0;z-index:99999;background:#070707;display:grid;place-items:center;overflow:hidden;cursor:pointer;animation:ksOut .7s cubic-bezier(.7,0,.3,1) 10.4s forwards}
@@ -2293,13 +2308,13 @@ function vFeed(){const p=me();const tab=S.route.tab==='ab'?'ab':'pt';const fol=f
   const empty=tab==='ab'?`<div class="cl-empty">${I.user}<b>Personne à suivre pour l'instant</b><p>Abonne-toi à des membres : leurs publications apparaîtront ici.</p><button class="cl-btn dark" data-go="discover">Découvrir des membres</button></div>`
     :`<div class="cl-empty">${I.image}<b>Rien pour l'instant</b><p>Partage le premier moment : il apparaîtra ici pour tous les membres.</p><button class="cl-btn dark" data-act="compose" data-withpic="1">Publier</button></div>`;
   setTimeout(clVideos,60);
-  return `${spHead(`<span class="wordmark sp-wm" data-go="about" role="button" tabindex="0" aria-label="À propos de Koris"><i></i>Koris</span>`,`Salut ${esc((p.firstName||'').split(' ')[0])}`,`${S.owner?clAdmin():bellHtml()}${spMe()}`)}
+  return `<div class="fs-intro">${spHead(`<span class="wordmark sp-wm" data-go="about" role="button" tabindex="0" aria-label="À propos de Koris"><i></i>Koris</span>`,`Salut ${esc((p.firstName||'').split(' ')[0])}`,`${S.owner?clAdmin():bellHtml()}${spMe()}`)}
   <div class="cl-body">${demoBanner()}${spDash()}<div class="sp-sec"><b>Le fil</b></div>
    <div class="cl-box"><div class="cl-box-top"><label class="cl-cav" for="qPhoto" aria-label="${p.photo?'Changer ma photo de profil':'Ajouter une photo de profil'}">${av(p,34)}</label><input id="qPhoto" type="file" accept="image/*" class="fpick"><button class="cl-ask" data-act="compose">Partager un moment, ${esc(p.firstName||'')}…</button></div>
     <div class="cl-box-bot"><button class="cl-ic" data-act="compose" data-withpic="1" aria-label="Ajouter une photo">${CLI.img}</button><button class="cl-ic" data-act="compose" data-withpic="1" aria-label="Ajouter une vidéo">${CLI.vid}</button><button class="cl-ic" data-act="compose" aria-label="Écrire un texte">${CLI.doc}</button><span class="sp"></span><button class="gl-pill cl-send" data-act="compose" aria-label="Publier">${CLI.up}</button></div></div>
    <div class="cl-seg" role="tablist"><button data-tab="pt" class="${tab==='pt'?'on':''}">Pour toi</button><button data-tab="ab" class="${tab==='ab'?'on':''}">Abonnements</button></div>
-   ${L.length?`<div class="cl-feed">${L.map(postHtml).join('')}</div>`:empty}
-  </div>${navHtml('feed')}`}
+   ${L.length?'':empty}
+  </div></div>${L.length?`<div class="cl-feed fs-feed">${L.map(postHtml).join('')}</div>`:''}${navHtml('feed')}`}
 function postHtml(x){const a=S.profiles[x.uid]||{};const likes=Array.isArray(x.likes)?x.likes:[];const liked=likes.includes(S.be.uid);const mine=x.uid===S.be.uid;const img=safeImg(x.img);const vid=isVid(x);
   const cms=S.comments.filter(c=>c.postId===x.id).length;const st=availOf(a);const where=[a.commune,a.city].filter(Boolean).join(', ');
   const ar=+(x&&x.ar),arS=ar>.2&&ar<5?` style="aspect-ratio:${ar}"`:'';
@@ -2307,10 +2322,10 @@ function postHtml(x){const a=S.profiles[x.uid]||{};const likes=Array.isArray(x.l
     :vid?`<div class="cl-media" data-vpid="${esc(x.id)}">${vidHtml(x)}</div>`:'';
   const sv=savedOf().includes(x.id);
   const acts=`<button class="${liked?'on':''}" data-like="${esc(x.id)}" aria-label="J'aime">${liked?I.heart:I.heartO}<span>${likes.length}</span></button><button data-cmt="${esc(x.id)}" aria-label="Commentaires">${I.comment}<span>${cms}</span></button><button data-share="${esc(x.id)}" aria-label="Partager">${CLI.share}<span>Partager</span></button><button class="${sv?'on':''}" data-save="${esc(x.id)}" aria-label="${sv?'Retirer des enregistrements':'Enregistrer'}">${BKM(sv)}<span>${sv?'Enregistré':'Enregistrer'}</span></button>`;
-  if(media)return `<article class="cl-post fs"><div class="fs-media">${media}</div><div class="fs-shade"></div>
+  if(media||x.caption)return `<article class="cl-post fs${media?'':' tx'}"><div class="fs-media">${media||`<div class="fs-txt"><p>${esc(x.caption)}</p></div>`}</div><div class="fs-shade"></div>
    <header class="fs-top"><button data-profile="${esc(x.uid)}" aria-label="Profil de ${esc(a.firstName||'membre')}">${av(a,40)}</button><div class="fs-who"><button data-profile="${esc(x.uid)}"><b>${esc(a.firstName||fullName(a))}${a.age?', '+esc(a.age):''}</b>${a.certified?I.badge:''}</button><small>${esc(where||a.country||'')}${where||a.country?' · ':''}${esc(ago(x.at))}</small></div>${st!=='off'?`<span class="cl-pill">${INTENTS.find(t=>t[0]===st)[2]} ${esc(INT_LBL[st])}</span>`:''}${mine?`<button class="cl-ib sm" data-del="${esc(x.id)}" aria-label="Supprimer la publication">${I.trash}</button>`:''}</header>
    <div class="fs-acts">${acts}</div>
-   ${x.caption?`<p class="fs-cap">${esc(x.caption)}</p>`:''}</article>`;
+   ${x.caption&&media?`<p class="fs-cap">${esc(x.caption)}</p>`:''}</article>`;
   return `<article class="cl-post"><header class="cl-ph"><button data-profile="${esc(x.uid)}" aria-label="Profil de ${esc(a.firstName||'membre')}">${av(a,42)}</button>
    <div class="cl-who"><button data-profile="${esc(x.uid)}"><b>${esc(a.firstName||fullName(a))}${a.age?', '+esc(a.age):''}</b>${a.certified?I.badge:''}</button><small>${esc(where||a.country||'')}${where||a.country?' · ':''}${esc(ago(x.at))}</small></div>
    ${st!=='off'?`<span class="cl-pill">${INTENTS.find(t=>t[0]===st)[2]} ${esc(INT_LBL[st])}</span>`:''}${mine?`<button class="cl-ib sm" data-del="${esc(x.id)}" aria-label="Supprimer la publication">${I.trash}</button>`:''}</header>
@@ -2645,6 +2660,7 @@ function render(){const app=$('#app');const r=S.route;
   if(sphereStop){sphereStop();sphereStop=null}
   const p=me();
   if(r.v==='loading'){app.innerHTML=`<div class="loading"><div class="spin"></div></div>`;return}
+  document.documentElement.classList.toggle('snapfeed',r.v==='feed');
   if(p&&p.banned&&!S.owner){app.classList.add('no-nav');app.innerHTML=vBanned();return}
   const KNOWN=['admchats','admchat','auth','onboard','signup','pay','admin','certif','about','feed','discover','profile','me','messages','chat','shop','shopitem','visit','inbox'];
   if(r.v==='inbox'&&!S.owner){S.route={v:'feed'};return render()}
