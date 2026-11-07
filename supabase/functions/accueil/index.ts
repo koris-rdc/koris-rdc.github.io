@@ -18,7 +18,8 @@ const json = (b: unknown, status = 200) =>
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const MAX_PER_DAY = 40;
 const IMG = /\n?\[img:([\w\-\/.]+)\]/, AUD = /\n?\[aud:([\w\-\/.]+)\]/;
-const media = (t: string) => t.replace(IMG, " (photo envoyée)").replace(AUD, " (message vocal)").replace(/^📷 Photo envoyée|^🎤 Message vocal \(\d+ s\)/, "").trim() || "(message)";
+const PIMG = /\n?\[pimg:([\w\-\/.]+)\]/, PVID = /\n?\[pvid:([\w\-\/.]+)\]/;
+const media = (t: string) => t.replace(PIMG, " (photo de présentation envoyée par l'équipe)").replace(PVID, " (vidéo de présentation envoyée par l'équipe)").replace(IMG, " (photo envoyée)").replace(AUD, " (message vocal)").replace(/^📷 Photo envoyée|^🎤 Message vocal \(\d+ s\)/, "").trim() || "(message)";
 function b64(u: Uint8Array): string { let s = ""; for (let i = 0; i < u.length; i += 0x8000) s += String.fromCharCode(...u.subarray(i, i + 0x8000)); return btoa(s); }
 
 const RULES = `
@@ -123,13 +124,22 @@ Deno.serve(async (req) => {
       reply = "Merci pour votre message ! Un membre de l'équipe vous répond très vite ici.";
     }
     const rAt = Date.now();
+    // Première fois que cette personne écrit ? On lui envoie aussi la photo / vidéo de bienvenue choisie par l'équipe
+    const first = !(row?.msgs || []).some((m: any) => m.role === "ai" || m.role === "admin");
     if (reply) chat.msgs.push({ role: "ai", text: reply, at: rAt });
+    const more: any[] = [];
+    if (first) {
+      const wm = (Array.isArray(cfg.wmedia) ? cfg.wmedia : []).filter((m: any) => m && /^[\w\-\/.]+$/.test(String(m.path || ""))).slice(0, 4);
+      const cap = String(cfg.wcap || "").trim().slice(0, 300);
+      wm.forEach((m: any, i: number) => more.push({ role: "ai", text: (i === 0 && cap ? cap + "\n" : "") + `[${m.type === "vid" ? "pvid" : "pimg"}:${m.path}]`, at: rAt + 1 + i }));
+      chat.msgs.push(...more);
+    }
     chat.unread = true;
     chat.updated_at = new Date().toISOString();
     const { error } = await sb.from("visit_chats").upsert(chat);
     await notif;
     if (error) return json({ error: "enregistrement impossible" }, 500);
-    return json({ reply, at: rAt });
+    return json({ reply, at: rAt, more });
   } catch (e) {
     return json({ error: String(e) }, 500);
   }
